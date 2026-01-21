@@ -52,7 +52,7 @@ jobs:
                   server-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
                   server-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
                   gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-                  g-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+                  gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
             - name: Set version in pom.xml
               if: ${{ github.event.inputs.version != '' }}
