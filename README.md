@@ -9,6 +9,18 @@ Java SDK for programmatic control of GitHub Copilot CLI.
 
 > **Note:** This SDK may change in breaking ways.
 
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Try it with JBang](#try-it-with-jbang)
+- [Documentation](#documentation)
+- [Building and Testing](#building-and-testing)
+- [Projects Using This SDK](#projects-using-this-sdk)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Requirements
 
 - Java 17 or later
@@ -140,6 +152,14 @@ The pre-commit hook runs `mvn spotless:check` and will fail the commit if there 
 ```bash
 mvn spotless:apply
 ```
+
+## Projects Using This SDK
+
+| Project | Description |
+|---------|-------------|
+| [JMeter Copilot Plugin](https://github.com/brunoborges/jmeter-copilot-plugin) | A JMeter plugin that integrates GitHub Copilot for AI-assisted load testing |
+
+> Want to add your project? Open a PR!
 
 ## License
 
