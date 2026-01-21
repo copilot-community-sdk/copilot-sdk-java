@@ -69,11 +69,12 @@ jobs:
               run: mvn verify -DskipTests
 
             - name: Deploy to Maven Central
-              run: mvn deploy -DskipTests -Prelease
+              run: mvn -X deploy -DskipTests -Prelease
               env:
                   MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
                   MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
                   MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+                  MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
 
     github-release:
         name: Create GitHub Release
