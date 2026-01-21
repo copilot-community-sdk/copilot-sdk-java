@@ -117,7 +117,7 @@ jbang jbang-example.java
 The `jbang-example.java` file includes the dependency declaration and can be run directly:
 
 ```java
-//DEPS com.github.copilot:copilot-sdk:1.0.1-SNAPSHOT
+//DEPS io.github.copilot-community-sdk:copilot-sdk:1.0.1-SNAPSHOT
 ```
 
 ## Documentation
