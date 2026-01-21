@@ -6,18 +6,15 @@ env:
 on:
     workflow_dispatch:
         inputs:
-            dist-tag:
-                description: "Tag to publish under"
-                type: choice
-                required: true
-                default: "latest"
-                options:
-                    - latest
-                    - prerelease
             version:
-                description: "Version override (optional, e.g., 1.0.0). If empty, auto-increments."
+                description: "Version to publish (optional). If empty, uses version from pom.xml."
                 type: string
                 required: false
+            prerelease:
+                description: "Is this a prerelease?"
+                type: boolean
+                required: false
+                default: false
 
 permissions:
     contents: write
@@ -28,66 +25,23 @@ concurrency:
     cancel-in-progress: false
 
 jobs:
-    # Calculate version using the nodejs version script (shared across all SDKs)
-    version:
-        name: Calculate Version
-        runs-on: ubuntu-latest
-        outputs:
-            version: ${{ steps.version.outputs.VERSION }}
-            current: ${{ steps.version.outputs.CURRENT }}
-            current-prerelease: ${{ steps.version.outputs.CURRENT_PRERELEASE }}
-        defaults:
-            run:
-                working-directory: ./nodejs
-        steps:
-            - uses: actions/checkout@v6
-            - uses: actions/setup-node@v6
-              with:
-                  node-version: "22.x"
-            - run: npm ci --ignore-scripts
-            - name: Get version
-              id: version
-              run: |
-                  CURRENT="$(node scripts/get-version.js current)"
-                  echo "CURRENT=$CURRENT" >> $GITHUB_OUTPUT
-                  echo "Current latest version: $CURRENT" >> $GITHUB_STEP_SUMMARY
-                  CURRENT_PRERELEASE="$(node scripts/get-version.js current-prerelease)"
-                  echo "CURRENT_PRERELEASE=$CURRENT_PRERELEASE" >> $GITHUB_OUTPUT
-                  echo "Current prerelease version: $CURRENT_PRERELEASE" >> $GITHUB_STEP_SUMMARY
-                  if [ -n "${{ github.event.inputs.version }}" ]; then
-                    VERSION="${{ github.event.inputs.version }}"
-                    # Validate version format matches dist-tag
-                    if [ "${{ github.event.inputs.dist-tag }}" = "latest" ]; then
-                      if [[ "$VERSION" == *-* ]]; then
-                        echo "❌ Error: Version '$VERSION' has a prerelease suffix but dist-tag is 'latest'" >> $GITHUB_STEP_SUMMARY
-                        echo "Use a version without suffix (e.g., '1.0.0') for latest releases"
-                        exit 1
-                      fi
-                    else
-                      if [[ "$VERSION" != *-* ]]; then
-                        echo "❌ Error: Version '$VERSION' has no prerelease suffix but dist-tag is 'prerelease'" >> $GITHUB_STEP_SUMMARY
-                        echo "Use a version with suffix (e.g., '1.0.0-preview.0') for prerelease"
-                        exit 1
-                      fi
-                    fi
-                    echo "Using manual version override: $VERSION" >> $GITHUB_STEP_SUMMARY
-                  else
-                    VERSION="$(node scripts/get-version.js ${{ github.event.inputs.dist-tag }})"
-                    echo "Auto-incremented version: $VERSION" >> $GITHUB_STEP_SUMMARY
-                  fi
-                  echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-
     publish-maven:
         name: Publish Java SDK to Maven Central
-        needs: version
         runs-on: ubuntu-latest
-        defaults:
-            run:
-                working-directory: ./java
+        outputs:
+            version: ${{ steps.get-version.outputs.version }}
         steps:
             - uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+                  token: ${{ secrets.GITHUB_TOKEN }}
 
-            - uses: ./.github/actions/setup-copilot
+            - name: Configure Git for Maven Release
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+
+            - uses: ./.github/setup-copilot
 
             - name: Set up JDK 21
               uses: actions/setup-java@v5
@@ -95,13 +49,21 @@ jobs:
                   java-version: "21"
                   distribution: "temurin"
                   server-id: central
-                  server-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-                  server-password: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+                  server-username: MAVEN_USERNAME
+                  server-password: MAVEN_PASSWORD
                   gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-                  gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+                  gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
             - name: Set version in pom.xml
-              run: mvn versions:set -DnewVersion=${{ needs.version.outputs.version }} -DgenerateBackupPoms=false
+              if: ${{ github.event.inputs.version != '' }}
+              run: mvn versions:set -DnewVersion=${{ github.event.inputs.version }} -DgenerateBackupPoms=false
+
+            - name: Get version
+              id: get-version
+              run: |
+                  VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+                  echo "Publishing version: $VERSION" >> $GITHUB_STEP_SUMMARY
 
             - name: Build and verify
               run: mvn verify
@@ -115,35 +77,17 @@ jobs:
 
     github-release:
         name: Create GitHub Release
-        needs: [version, publish-maven]
+        needs: publish-maven
         if: github.ref == 'refs/heads/main'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
             - name: Create GitHub Release
-              if: github.event.inputs.dist-tag == 'latest'
               run: |
-                  NOTES_FLAG=""
-                  if git rev-parse "v${{ needs.version.outputs.current }}" >/dev/null 2>&1; then
-                    NOTES_FLAG="--notes-start-tag v${{ needs.version.outputs.current }}"
-                  fi
-                  gh release create "java/v${{ needs.version.outputs.version }}" \
-                    --title "Java SDK v${{ needs.version.outputs.version }}" \
-                    --generate-notes $NOTES_FLAG \
-                    --target ${{ github.sha }}
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            - name: Create GitHub Pre-Release
-              if: github.event.inputs.dist-tag == 'prerelease'
-              run: |
-                  NOTES_FLAG=""
-                  if git rev-parse "v${{ needs.version.outputs.current-prerelease }}" >/dev/null 2>&1; then
-                    NOTES_FLAG="--notes-start-tag v${{ needs.version.outputs.current-prerelease }}"
-                  fi
-                  gh release create "java/v${{ needs.version.outputs.version }}" \
-                    --prerelease \
-                    --title "Copilot SDK Java v${{ needs.version.outputs.version }}" \
-                    --generate-notes $NOTES_FLAG \
+                  gh release create "java/v${{ needs.publish-maven.outputs.version }}" \
+                    ${{ github.event.inputs.prerelease == 'true' && '--prerelease' || '' }} \
+                    --title "Java SDK v${{ needs.publish-maven.outputs.version }}" \
+                    --generate-notes \
                     --target ${{ github.sha }}
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
