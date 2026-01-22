@@ -122,6 +122,7 @@ jobs:
 
                   # Commit
                   git commit -m "Update documentation for version ${VERSION}"
+
     github-release:
         name: Create GitHub Release
         needs: publish-maven
