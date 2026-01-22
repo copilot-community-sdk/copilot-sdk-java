@@ -32,8 +32,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/copilot-community-sdk/copilot-sdk-java.git</connection>
-        <developerConnection>scm:git:ssh://github.com:copilot-community-sdk/copilot-sdk-java.git</developerConnection>
+        <connection>scm:git:https://github.com/copilot-community-sdk/copilot-sdk-java.git</connection>
+        <developerConnection>scm:git:https://github.com/copilot-community-sdk/copilot-sdk-java.git</developerConnection>
         <url>https://github.com/copilot-community-sdk/copilot-sdk-java</url>
     </scm>
 
