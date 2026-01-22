@@ -7,7 +7,7 @@
 
     <groupId>io.github.copilot-community-sdk</groupId>
     <artifactId>copilot-sdk</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>GitHub Copilot Community SDK :: Java</name>
