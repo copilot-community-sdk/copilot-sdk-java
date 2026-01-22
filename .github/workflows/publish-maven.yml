@@ -6,10 +6,14 @@ env:
 on:
     workflow_dispatch:
         inputs:
-            version:
-                description: "Version to publish (optional). If empty, uses version from pom.xml."
-                type: string
+            releaseVersion:
+                description: "Release version (e.g., 1.0.0). If empty, derives from pom.xml by removing -SNAPSHOT"
                 required: false
+                type: string
+            developmentVersion:
+                description: "Next development version (e.g., 1.0.1-SNAPSHOT). If empty, increments patch version"
+                required: false
+                type: string
             prerelease:
                 description: "Is this a prerelease?"
                 type: boolean
@@ -29,7 +33,7 @@ jobs:
         name: Publish Java SDK to Maven Central
         runs-on: ubuntu-latest
         outputs:
-            version: ${{ steps.get-version.outputs.version }}
+            version: ${{ steps.versions.outputs.release_version }}
         steps:
             - uses: actions/checkout@v6
               with:
@@ -54,24 +58,53 @@ jobs:
                   gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
                   gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
-            - name: Set version in pom.xml
-              if: ${{ github.event.inputs.version != '' }}
-              run: mvn versions:set -DnewVersion=${{ github.event.inputs.version }} -DgenerateBackupPoms=false
-
-            - name: Get version
-              id: get-version
+            - name: Determine versions
+              id: versions
               run: |
-                  VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-                  echo "version=$VERSION" >> $GITHUB_OUTPUT
-                  echo "Publishing version: $VERSION" >> $GITHUB_STEP_SUMMARY
+                  CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+                  echo "Current pom.xml version: $CURRENT_VERSION"
+                  
+                  # Determine release version
+                  if [ -n "${{ inputs.releaseVersion }}" ]; then
+                    RELEASE_VERSION="${{ inputs.releaseVersion }}"
+                  else
+                    # Remove -SNAPSHOT suffix if present
+                    RELEASE_VERSION="${CURRENT_VERSION%-SNAPSHOT}"
+                  fi
+                  echo "Release version: $RELEASE_VERSION"
+                  
+                  # Determine next development version
+                  if [ -n "${{ inputs.developmentVersion }}" ]; then
+                    DEV_VERSION="${{ inputs.developmentVersion }}"
+                  else
+                    # Increment patch version and add -SNAPSHOT
+                    IFS='.' read -r MAJOR MINOR PATCH <<< "$RELEASE_VERSION"
+                    NEXT_PATCH=$((PATCH + 1))
+                    DEV_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}-SNAPSHOT"
+                  fi
+                  echo "Next development version: $DEV_VERSION"
+                  
+                  echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+                  echo "dev_version=$DEV_VERSION" >> $GITHUB_OUTPUT
+                  
+                  echo "### Version Summary" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Release version:** $RELEASE_VERSION" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Next development version:** $DEV_VERSION" >> $GITHUB_STEP_SUMMARY
 
-            - name: Build and Deploy to Maven Central
-              run: mvn verify deploy -DskipTests -Prelease
-              env:
-                  MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-                  MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-                  MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-                  MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+            - name: Prepare Release
+              run: |
+                  mvn -B release:prepare \
+                    -DreleaseVersion=${{ steps.versions.outputs.release_version }} \
+                    -DdevelopmentVersion=${{ steps.versions.outputs.dev_version }} \
+                    -DtagNameFormat=v@{project.version} \
+                    -DpushChanges=true \
+                    -Darguments="-DskipTests"
+
+            - name: Perform Release and Deploy to Maven Central
+              run: |
+                  mvn -B release:perform \
+                    -Dgoals="deploy" \
+                    -Darguments="-DskipTests -Prelease"
 
     github-release:
         name: Create GitHub Release
@@ -80,6 +113,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
             - name: Create GitHub Release
               run: |
                   VERSION="${{ needs.publish-maven.outputs.version }}"
@@ -113,11 +148,11 @@ jobs:
                   EOF
                   )
                   
-                  gh release create "${VERSION}" \
-                    ${{ github.event.inputs.prerelease == 'true' && '--prerelease' || '' }} \
+                  gh release create "v${VERSION}" \
+                    ${{ inputs.prerelease == true && '--prerelease' || '' }} \
                     --title "Java SDK v${VERSION}" \
                     --notes "${RELEASE_NOTES}" \
                     --generate-notes \
-                    --target ${{ github.sha }}
+                    --target "v${VERSION}"
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
