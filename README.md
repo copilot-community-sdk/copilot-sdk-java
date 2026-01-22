@@ -75,7 +75,7 @@ public class Example {
 
             // Create a session
             var session = client.createSession(
-                new SessionConfig().setModel(CopilotModel.CLAUDE_SONNET_4_5.toString())
+                new SessionConfig().setModel("claude-sonnet-4.5")
             ).get();
 
             // Wait for response using session.idle event
