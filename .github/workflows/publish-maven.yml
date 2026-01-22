@@ -91,9 +91,6 @@ jobs:
                   echo "- **Release version:** $RELEASE_VERSION" >> $GITHUB_STEP_SUMMARY
                   echo "- **Next development version:** $DEV_VERSION" >> $GITHUB_STEP_SUMMARY
 
-            - name: Verify Build
-              run: mvn clean verify
-
             - name: Prepare Release
               run: |
                   mvn -B release:prepare \
