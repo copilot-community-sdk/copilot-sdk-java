@@ -9,6 +9,7 @@ This document provides detailed API reference and usage examples for the Copilot
   - [CopilotSession](#copilotsession)
 - [Event Types](#event-types)
 - [Streaming](#streaming)
+- [Listing Models](#listing-models)
 - [Advanced Usage](#advanced-usage)
   - [Manual Server Control](#manual-server-control)
   - [Tools](#tools)
@@ -83,6 +84,18 @@ Resume an existing session.
 
 Ping the server to check connectivity.
 
+##### `getStatus(): CompletableFuture<GetStatusResponse>`
+
+Get CLI status including version and protocol information.
+
+##### `getAuthStatus(): CompletableFuture<GetAuthStatusResponse>`
+
+Get current authentication status.
+
+##### `listModels(): CompletableFuture<List<ModelInfo>>`
+
+List available models with their metadata (id, name, capabilities, billing info).
+
 ##### `getState(): ConnectionState`
 
 Get current connection state. Returns one of: `DISCONNECTED`, `CONNECTING`, `CONNECTED`, `ERROR`.
@@ -111,6 +124,10 @@ Represents a single conversation session.
 
 #### Methods
 
+##### `send(String prompt): CompletableFuture<String>`
+
+Convenience method to send a simple text message. Equivalent to `send(new MessageOptions().setPrompt(prompt))`.
+
 ##### `send(MessageOptions options): CompletableFuture<String>`
 
 Send a message to the session.
@@ -123,9 +140,17 @@ Send a message to the session.
 
 Returns the message ID.
 
-##### `sendAndWait(MessageOptions options, long timeoutMs): CompletableFuture<AssistantMessageEvent>`
+##### `sendAndWait(String prompt): CompletableFuture<AssistantMessageEvent>`
+
+Convenience method to send a simple text message and wait for the session to become idle. Equivalent to `sendAndWait(new MessageOptions().setPrompt(prompt))`.
+
+##### `sendAndWait(MessageOptions options): CompletableFuture<AssistantMessageEvent>`
 
 Send a message and wait for the session to become idle. Default timeout is 60 seconds.
+
+##### `sendAndWait(MessageOptions options, long timeoutMs): CompletableFuture<AssistantMessageEvent>`
+
+Send a message and wait for the session to become idle with custom timeout.
 
 ##### `on(Consumer<AbstractSessionEvent> handler): Closeable`
 
@@ -210,6 +235,45 @@ session.on(evt -> {
 session.send(new MessageOptions().setPrompt("Tell me a short story")).get();
 done.get();
 ```
+
+## Listing Models
+
+Query available models and their capabilities before creating a session:
+
+```java
+try (var client = new CopilotClient()) {
+    client.start().get();
+
+    // List all available models
+    List<ModelInfo> models = client.listModels().get();
+    
+    for (ModelInfo model : models) {
+        System.out.println("Model: " + model.getId());
+        System.out.println("  Name: " + model.getName());
+        
+        if (model.getCapabilities() != null) {
+            System.out.println("  Max Output Tokens: " + model.getCapabilities().getMaxOutputTokens());
+        }
+        
+        if (model.getPolicy() != null) {
+            System.out.println("  State: " + model.getPolicy().getState());
+        }
+    }
+    
+    // Use a specific model from the list
+    var session = client.createSession(
+        new SessionConfig().setModel(models.get(0).getId())
+    ).get();
+}
+```
+
+Each `ModelInfo` contains:
+
+- `id` - Model identifier (e.g., "claude-sonnet-4.5", "gpt-4o")
+- `name` - Human-readable display name
+- `capabilities` - Model limits including max output tokens
+- `policy` - Policy state information
+- `billing` - Billing/usage information
 
 ## Advanced Usage
 
