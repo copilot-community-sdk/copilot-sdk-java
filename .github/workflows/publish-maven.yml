@@ -91,6 +91,20 @@ jobs:
                   echo "- **Release version:** $RELEASE_VERSION" >> $GITHUB_STEP_SUMMARY
                   echo "- **Next development version:** $DEV_VERSION" >> $GITHUB_STEP_SUMMARY
 
+            - name: Update documentation with release version
+              run: |
+                  VERSION="${{ steps.versions.outputs.release_version }}"
+                  
+                  # Update version in README.md
+                  sed -i "s|<version>[0-9]*\.[0-9]*\.[0-9]*</version>|<version>${VERSION}</version>|g" README.md
+                  sed -i "s|copilot-sdk:[0-9]*\.[0-9]*\.[0-9]*|copilot-sdk:${VERSION}|g" README.md
+                  
+                  # Update version in jbang-example.java
+                  sed -i "s|copilot-sdk:[0-9]*\.[0-9]*\.[0-9]*|copilot-sdk:${VERSION}|g" jbang-example.java
+                  
+                  # Stage the documentation changes (will be committed by release:prepare)
+                  git add README.md jbang-example.java
+
             - name: Prepare Release
               run: |
                   mvn -B release:prepare \
