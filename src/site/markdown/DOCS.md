@@ -4,21 +4,21 @@ This document provides detailed API reference and usage examples for the Copilot
 
 ## Table of Contents
 
-- [API Reference](#api-reference)
-  - [CopilotClient](#copilotclient)
-  - [CopilotSession](#copilotsession)
-- [Event Types](#event-types)
-- [Streaming](#streaming)
-- [Listing Models](#listing-models)
-- [Advanced Usage](#advanced-usage)
-  - [Manual Server Control](#manual-server-control)
-  - [Tools](#tools)
-  - [System Message Customization](#system-message-customization)
-  - [Multiple Sessions](#multiple-sessions)
-  - [File Attachments](#file-attachments)
-  - [Bring Your Own Key (BYOK)](#bring-your-own-key-byok)
-  - [Permission Handling](#permission-handling)
-- [Error Handling](#error-handling)
+- [API Reference](#API_Reference)
+  - [CopilotClient](#CopilotClient)
+  - [CopilotSession](#CopilotSession)
+- [Event Types](#Event_Types)
+- [Streaming](#Streaming)
+- [Listing Models](#Listing_Models)
+- [Advanced Usage](#Advanced_Usage)
+  - [Manual Server Control](#Manual_Server_Control)
+  - [Tools](#Tools)
+  - [System Message Customization](#System_Message_Customization)
+  - [Multiple Sessions](#Multiple_Sessions)
+  - [File Attachments](#File_Attachments)
+  - [Bring Your Own Key (BYOK)](#Bring_Your_Own_Key_.28BYOK.29)
+  - [Permission Handling](#Permission_Handling)
+- [Error Handling](#Error_Handling)
 
 ## API Reference
 

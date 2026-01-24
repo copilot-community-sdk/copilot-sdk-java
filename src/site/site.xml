@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  -->
+<project xmlns="http://maven.apache.org/DECORATION/1.8.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 https://maven.apache.org/xsd/decoration-1.8.0.xsd"
+         name="GitHub Copilot Community SDK :: Java">
+
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>2.0.0-M11</version>
+    </skin>
+
+    <body>
+        <breadcrumbs>
+            <item name="Home" href="index.html"/>
+        </breadcrumbs>
+
+        <menu name="Overview">
+            <item name="Introduction" href="index.html"/>
+            <item name="Documentation" href="docs.html"/>
+        </menu>
+
+        <menu name="Documentation">
+            <item name="API Reference" href="docs.html#API_Reference">
+                <item name="CopilotClient" href="docs.html#CopilotClient"/>
+                <item name="CopilotSession" href="docs.html#CopilotSession"/>
+            </item>
+            <item name="Event Types" href="docs.html#Event_Types"/>
+            <item name="Streaming" href="docs.html#Streaming"/>
+            <item name="Listing Models" href="docs.html#Listing_Models"/>
+            <item name="Advanced Usage" href="docs.html#Advanced_Usage">
+                <item name="Manual Server Control" href="docs.html#Manual_Server_Control"/>
+                <item name="Tools" href="docs.html#Tools"/>
+                <item name="System Message Customization" href="docs.html#System_Message_Customization"/>
+                <item name="Multiple Sessions" href="docs.html#Multiple_Sessions"/>
+                <item name="File Attachments" href="docs.html#File_Attachments"/>
+                <item name="Bring Your Own Key (BYOK)" href="docs.html#Bring_Your_Own_Key_.28BYOK.29"/>
+                <item name="Permission Handling" href="docs.html#Permission_Handling"/>
+            </item>
+            <item name="Error Handling" href="docs.html#Error_Handling"/>
+        </menu>
+
+        <menu ref="reports"/>
+
+    </body>
+</project>

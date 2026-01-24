@@ -10,7 +10,7 @@ Java SDK for programmatic control of GitHub Copilot CLI.
 > **Note:** This SDK may change in breaking ways.
 
 <p align="center">
-  <img src="image.png" alt="Copilot SDK for Java" />
+  <img src="src/site/resources/image.png" alt="Copilot SDK for Java" />
 </p>
 
 ## Table of Contents
@@ -122,7 +122,7 @@ The `jbang-example.java` file includes the dependency declaration and can be run
 
 ## Documentation
 
-For detailed API reference and advanced usage examples, see [DOCS.md](DOCS.md).
+For detailed API reference and advanced usage examples, see the [Documentation](src/site/markdown/docs.md).
 
 ## Building and Testing
 
