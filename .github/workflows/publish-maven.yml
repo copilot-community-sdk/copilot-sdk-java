@@ -153,10 +153,21 @@ jobs:
                   export VERSION GROUP_ID ARTIFACT_ID
                   RELEASE_NOTES=$(envsubst < .github/workflows/notes.template)
                   
-                  gh release create "v${VERSION}" \
-                    ${{ inputs.prerelease == true && '--prerelease' || '' }} \
-                    --title "Copilot Java SDK ${VERSION}" \
-                    --notes "${RELEASE_NOTES}" \
-                    --generate-notes
+                  # Get the previous tag for generating notes
+                  PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+                  
+                  # Build the gh release command
+                  GH_ARGS=("v${VERSION}")
+                  GH_ARGS+=("--title" "Copilot Java SDK ${VERSION}")
+                  GH_ARGS+=("--notes" "${RELEASE_NOTES}")
+                  GH_ARGS+=("--generate-notes")
+                  
+                  if [ -n "$PREV_TAG" ]; then
+                    GH_ARGS+=("--notes-start-tag" "$PREV_TAG")
+                  fi
+                  
+                  ${{ inputs.prerelease == true && 'GH_ARGS+=("--prerelease")' || '' }}
+                  
+                  gh release create "${GH_ARGS[@]}"
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
