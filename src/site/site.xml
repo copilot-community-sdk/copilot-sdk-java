@@ -52,6 +52,7 @@
                 <item name="File Attachments" href="documentation.html#File_Attachments"/>
                 <item name="Bring Your Own Key (BYOK)" href="documentation.html#Bring_Your_Own_Key_.28BYOK.29"/>
                 <item name="Permission Handling" href="documentation.html#Permission_Handling"/>
+                <item name="Infinite Sessions" href="documentation.html#Infinite_Sessions"/>
             </item>
             <item name="Error Handling" href="documentation.html#Error_Handling"/>
         </menu>
