@@ -18,6 +18,7 @@ This document provides detailed API reference and usage examples for the Copilot
   - [File Attachments](#File_Attachments)
   - [Bring Your Own Key (BYOK)](#Bring_Your_Own_Key_.28BYOK.29)
   - [Permission Handling](#Permission_Handling)
+  - [Infinite Sessions](#Infinite_Sessions)
 - [Error Handling](#Error_Handling)
 
 ## API Reference
@@ -411,6 +412,78 @@ var session = client.createSession(
             return CompletableFuture.completedFuture(result);
         })
 ).get();
+```
+
+### Infinite Sessions
+
+Infinite sessions enable automatic context management for long-running conversations. When enabled (default), the session automatically manages context window limits through background compaction and persists state to a workspace directory.
+
+#### How It Works
+
+As conversations grow, they eventually approach the model's context window limit. Infinite sessions solve this by:
+
+1. **Background Compaction**: When context utilization reaches the background threshold (default 80%), the session starts compacting older messages asynchronously while continuing to process new messages.
+
+2. **Buffer Exhaustion Protection**: If context reaches the exhaustion threshold (default 95%) before compaction completes, the session blocks until compaction finishes to prevent overflow.
+
+3. **Workspace Persistence**: Session state is persisted to a workspace directory containing:
+   - `checkpoints/` - Session checkpoints for resumption
+   - `plan.md` - Current conversation plan
+   - `files/` - Associated files
+
+#### Configuration
+
+```java
+var infiniteConfig = new InfiniteSessionConfig()
+    .setEnabled(true)
+    .setBackgroundCompactionThreshold(0.80)  // Start compacting at 80% utilization
+    .setBufferExhaustionThreshold(0.95);     // Block at 95% until compaction completes
+
+var session = client.createSession(
+    new SessionConfig()
+        .setModel("gpt-5")
+        .setInfiniteSessions(infiniteConfig)
+).get();
+```
+
+#### Configuration Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `enabled` | `true` | Whether infinite sessions are enabled |
+| `backgroundCompactionThreshold` | `0.80` | Context utilization (0.0-1.0) at which background compaction starts |
+| `bufferExhaustionThreshold` | `0.95` | Context utilization (0.0-1.0) at which the session blocks until compaction completes |
+
+#### Accessing the Workspace
+
+When infinite sessions are enabled, you can access the workspace path:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setModel("gpt-5")
+        .setInfiniteSessions(new InfiniteSessionConfig().setEnabled(true))
+).get();
+
+String workspacePath = session.getWorkspacePath();
+if (workspacePath != null) {
+    System.out.println("Session workspace: " + workspacePath);
+    // Access checkpoints/, plan.md, files/ subdirectories
+}
+```
+
+#### Disabling Infinite Sessions
+
+For short conversations where context management isn't needed:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setModel("gpt-5")
+        .setInfiniteSessions(new InfiniteSessionConfig().setEnabled(false))
+).get();
+
+// session.getWorkspacePath() will return null
 ```
 
 ## Error Handling
