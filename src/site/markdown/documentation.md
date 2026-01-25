@@ -1,5 +1,7 @@
 # Copilot SDK for Java - Documentation
 
+> ⚠️ **Disclaimer:** This is an **unofficial, community-driven SDK** and is **not supported or endorsed by GitHub**. Use at your own risk.
+
 This document provides detailed API reference and usage examples for the Copilot SDK for Java.
 
 ## Table of Contents
