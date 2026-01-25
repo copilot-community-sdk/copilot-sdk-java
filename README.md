@@ -5,11 +5,9 @@
 [![Java 17+](https://img.shields.io/badge/Java-17%2B-blue)](https://openjdk.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> ⚠️ **Disclaimer:** This is an **unofficial, community-driven SDK** and is **not supported or endorsed by GitHub**. Use at your own risk.
+> ⚠️ **Disclaimer:** This is an **unofficial, community-driven SDK** and is **not supported or endorsed by GitHub**. This SDK may change in breaking ways. This SDK may change in breaking ways. Use at your own risk.
 
 Java SDK for programmatic control of GitHub Copilot CLI.
-
-> **Note:** This SDK may change in breaking ways.
 
 <p align="center">
   <img width="480" src="image.png" alt="Copilot SDK for Java" />
