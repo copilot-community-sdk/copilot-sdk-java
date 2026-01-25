@@ -41,7 +41,7 @@ Run `mvn install` locally, then configure the dependency in your project.
 <dependency>
     <groupId>io.github.copilot-community-sdk</groupId>
     <artifactId>copilot-sdk</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -50,12 +50,12 @@ Run `mvn install` locally, then configure the dependency in your project.
 Groovy:
 
 ```groovy
-implementation 'io.github.copilot-community-sdk:copilot-sdk:1.0.1'
+implementation 'io.github.copilot-community-sdk:copilot-sdk:1.0.2'
 ```
 
 Kotlin
 ```kotlin
-implementation("io.github.copilot-community-sdk:copilot-sdk:1.0.1")
+implementation("io.github.copilot-community-sdk:copilot-sdk:1.0.2")
 ```
 
 ## Quick Start
@@ -117,7 +117,7 @@ jbang jbang-example.java
 The `jbang-example.java` file includes the dependency declaration and can be run directly:
 
 ```java
-//DEPS io.github.copilot-community-sdk:copilot-sdk:1.0.1
+//DEPS io.github.copilot-community-sdk:copilot-sdk:1.0.2
 ```
 
 ## Documentation
