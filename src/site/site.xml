@@ -139,6 +139,7 @@
             <item name="Introduction" href="index.html"/>
             <item name="Documentation" href="documentation.html"/>
             <item name="MCP Servers" href="mcp.html"/>
+            <item name="Javadoc" href="apidocs/index.html"/>
         </menu>
 
         <menu name="Documentation">
