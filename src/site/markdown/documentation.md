@@ -21,6 +21,7 @@ This document provides detailed API reference and usage examples for the Copilot
   - [Bring Your Own Key (BYOK)](#Bring_Your_Own_Key_.28BYOK.29)
   - [Permission Handling](#Permission_Handling)
   - [Infinite Sessions](#Infinite_Sessions)
+  - [MCP Servers](#MCP_Servers)
 - [Error Handling](#Error_Handling)
 
 ## API Reference
@@ -486,6 +487,27 @@ var session = client.createSession(
 ).get();
 
 // session.getWorkspacePath() will return null
+```
+
+### MCP Servers
+
+The Copilot SDK can integrate with MCP servers (Model Context Protocol) to extend the assistant's capabilities with external tools. MCP servers run as separate processes and expose tools that Copilot can invoke during conversations.
+
+📖 **[Full MCP documentation →](mcp.md)** - Learn about local vs remote servers, all configuration options, and troubleshooting.
+
+Quick example:
+
+```java
+Map<String, Object> filesystemServer = new HashMap<>();
+filesystemServer.put("type", "local");
+filesystemServer.put("command", "npx");
+filesystemServer.put("args", List.of("-y", "@modelcontextprotocol/server-filesystem", "/tmp"));
+filesystemServer.put("tools", List.of("*"));
+
+var session = client.createSession(
+    new SessionConfig()
+        .setMcpServers(Map.of("filesystem", filesystemServer))
+).get();
 ```
 
 ## Error Handling
