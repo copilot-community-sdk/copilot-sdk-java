@@ -73,21 +73,21 @@ jobs:
       - name: Build Maven Site with Javadoc
         run: ./mvnw clean site -DskipTests -Dcheckstyle.skip=true
 
-      - name: Checkout gh-pages branch
+      - name: Checkout site branch
         uses: actions/checkout@v6
         with:
-          ref: gh-pages
-          path: gh-pages
+          ref: site
+          path: site
         continue-on-error: true
 
-      - name: Initialize gh-pages if needed
+      - name: Initialize site if needed
         run: |
-          if [ ! -d "gh-pages/.git" ]; then
-            rm -rf gh-pages
-            mkdir -p gh-pages
-            cd gh-pages
+          if [ ! -d "site/.git" ]; then
+            rm -rf site
+            mkdir -p site
+            cd site
             git init
-            git checkout -b gh-pages
+            git checkout -b site
             git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
           fi
 
@@ -96,28 +96,28 @@ jobs:
           DEPLOY_PATH="${{ steps.version.outputs.deploy_path }}"
           
           # Remove old version of this specific path (if exists)
-          rm -rf "gh-pages/$DEPLOY_PATH"
+          rm -rf "site/$DEPLOY_PATH"
           
           # Copy new site to versioned path
-          mkdir -p "gh-pages/$DEPLOY_PATH"
-          cp -r target/site/* "gh-pages/$DEPLOY_PATH/"
+          mkdir -p "site/$DEPLOY_PATH"
+          cp -r target/site/* "site/$DEPLOY_PATH/"
           
           # For releases, also update the root (latest)
           if [[ "${{ steps.version.outputs.is_release }}" == "true" ]] || [[ "${{ inputs.publish_as_latest }}" == "true" ]]; then
             # Preserve versioned folders when updating root
-            find gh-pages -maxdepth 1 -type f -delete
-            find gh-pages -maxdepth 1 -type d -name "[0-9]*" -prune -o -type d ! -name gh-pages ! -name snapshot ! -name .git -exec rm -rf {} + 2>/dev/null || true
+            find site -maxdepth 1 -type f -delete
+            find site -maxdepth 1 -type d -name "[0-9]*" -prune -o -type d ! -name site ! -name snapshot ! -name .git -exec rm -rf {} + 2>/dev/null || true
             
             # Copy site to root (latest release)
-            cp -r target/site/* gh-pages/
+            cp -r target/site/* site/
           fi
           
           # Copy version index page from template
-          cp .github/templates/versions.html gh-pages/versions.html
+          cp .github/templates/versions.html site/versions.html
 
       - name: Update version list
         run: |
-          cd gh-pages
+          cd site
           
           # Find all version directories
           VERSIONS=$(find . -maxdepth 1 -type d -name "[0-9]*" | sed 's|./||' | sort -Vr)
@@ -144,7 +144,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         run: |
-          cd gh-pages
+          cd site
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
@@ -156,7 +156,7 @@ jobs:
           git diff --staged --quiet || git commit -m "Deploy documentation: ${{ steps.version.outputs.deploy_path }}"
           
           # Push, creating the branch if it doesn't exist
-          git push -u origin gh-pages --force
+          git push -u origin site --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -166,7 +166,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: 'gh-pages'
+          path: 'site'
 
       - name: Deploy to GitHub Pages
         id: deployment
