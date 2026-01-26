@@ -60,10 +60,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Checkout site branch
+      - name: Checkout gh-pages branch
         uses: actions/checkout@v6
         with:
-          ref: site
+          ref: gh-pages
           path: site
         continue-on-error: true
 
@@ -74,7 +74,7 @@ jobs:
             mkdir -p site
             cd site
             git init
-            git checkout -b site
+            git checkout -b gh-pages
             git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
           fi
 
@@ -239,7 +239,7 @@ jobs:
           git diff --staged --quiet || git commit -m "$COMMIT_MSG"
           
           # Push, creating the branch if it doesn't exist
-          git push -u origin site --force
+          git push -u origin gh-pages --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
