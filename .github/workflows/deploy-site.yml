@@ -190,25 +190,25 @@ jobs:
           # Get versions from git tags (already sorted by version, descending)
           VERSIONS=$(git -C .. tag -l | grep -E '^v?[0-9]+\.[0-9]+' | sed 's/^v//' | sort -Vr)
           HAS_SNAPSHOT=$([ -d "snapshot" ] && echo "true" || echo "false")
-          HAS_LATEST=$([ -d "latest" ] && echo "true" || echo "false")
           
           # Generate version links
           VERSION_HTML=""
-          
-          # Add latest link if exists
-          if [ "$HAS_LATEST" = "true" ]; then
-            VERSION_HTML+='<li><a href="./latest/">Latest Release</a><span class="badge latest">latest</span></li>'
-          fi
+          IS_FIRST_VERSION="true"
           
           # Add snapshot if exists
           if [ "$HAS_SNAPSHOT" = "true" ]; then
             VERSION_HTML+='<li><a href="./snapshot/">Development (main branch)</a><span class="badge snapshot">snapshot</span></li>'
           fi
           
-          # Add versioned releases from tags
+          # Add versioned releases from tags (first one is latest)
           for v in $VERSIONS; do
             if [ -d "$v" ]; then
-              VERSION_HTML+="<li><a href=\"./$v/\">Version $v</a><span class=\"badge archived\">$v</span></li>"
+              if [ "$IS_FIRST_VERSION" = "true" ]; then
+                VERSION_HTML+="<li class=\"latest-version\"><a href=\"./$v/\">Version $v</a><span class=\"badge latest\">latest</span></li>"
+                IS_FIRST_VERSION="false"
+              else
+                VERSION_HTML+="<li><a href=\"./$v/\">Version $v</a><span class=\"badge archived\">$v</span></li>"
+              fi
             fi
           done
           

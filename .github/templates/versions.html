@@ -43,6 +43,13 @@
     .version-list li:hover {
       background: #ebeef1;
     }
+    .version-list li.latest-version {
+      background: #d4edda;
+      border: 1px solid #28a745;
+    }
+    .version-list li.latest-version:hover {
+      background: #c3e6cb;
+    }
     .version-list a {
       color: #0366d6;
       text-decoration: none;
@@ -128,6 +135,38 @@
     .github-link svg {
       fill: white;
     }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+      padding: 15px;
+      background: #f6f8fa;
+      border-radius: 6px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #586069;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+    }
+    .legend-color.latest {
+      background: #d4edda;
+      border: 1px solid #28a745;
+    }
+    .legend-color.snapshot {
+      background: #ffc107;
+    }
+    .legend-color.archived {
+      background: #6c757d;
+    }
   </style>
 </head>
 <body>
@@ -154,6 +193,21 @@
     <ul class="version-list">
       <!-- VERSION_LIST_PLACEHOLDER -->
     </ul>
+    
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color latest"></div>
+        <span>Latest stable release</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color snapshot"></div>
+        <span>Development snapshot</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color archived"></div>
+        <span>Previous versions</span>
+      </div>
+    </div>
     
     <div class="footer">
       <p>
