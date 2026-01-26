@@ -206,7 +206,7 @@ jobs:
                 VERSION_HTML+="<li class=\"latest-version\"><a href=\"./$v/\">Version $v</a><span class=\"badge latest\">latest</span></li>"
                 IS_FIRST_VERSION="false"
               else
-                VERSION_HTML+="<li><a href=\"./$v/\">Version $v</a><span class=\"badge archived\">$v</span></li>"
+                VERSION_HTML+="<li><a href=\"./$v/\">Version $v</a></li>"
               fi
             fi
           done
