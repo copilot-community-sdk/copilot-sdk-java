@@ -35,8 +35,6 @@ Java SDK for programmatic control of GitHub Copilot CLI.
 
 ### Maven
 
-Run `mvn install` locally, then configure the dependency in your project.
-
 ```xml
 <dependency>
     <groupId>io.github.copilot-community-sdk</groupId>
@@ -53,7 +51,7 @@ Groovy:
 implementation 'io.github.copilot-community-sdk:copilot-sdk:1.0.3'
 ```
 
-Kotlin
+Kotlin:
 ```kotlin
 implementation("io.github.copilot-community-sdk:copilot-sdk:1.0.3")
 ```
