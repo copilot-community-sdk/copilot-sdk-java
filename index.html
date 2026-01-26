@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Documentation Versions - Copilot SDK for Java</title>
   <style>
     body {
@@ -39,6 +42,13 @@
     }
     .version-list li:hover {
       background: #ebeef1;
+    }
+    .version-list li.latest-version {
+      background: #d4edda;
+      border: 1px solid #28a745;
+    }
+    .version-list li.latest-version:hover {
+      background: #c3e6cb;
     }
     .version-list a {
       color: #0366d6;
@@ -95,12 +105,81 @@
     .footer a {
       color: #0366d6;
     }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #24292e;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 15px;
+      transition: background 0.2s;
+    }
+    .github-link:hover {
+      background: #1a1e22;
+      text-decoration: none;
+    }
+    .github-link svg {
+      fill: white;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+      padding: 15px;
+      background: #f6f8fa;
+      border-radius: 6px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #586069;
+    }
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+    }
+    .legend-color.latest {
+      background: #d4edda;
+      border: 1px solid #28a745;
+    }
+    .legend-color.snapshot {
+      background: #ffc107;
+    }
+    .legend-color.archived {
+      background: #6c757d;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📚 Copilot SDK for Java</h1>
-    <p class="subtitle">Documentation Versions</p>
+    <div class="header">
+      <img src="image.png" alt="Copilot SDK for Java - GitHub Octocat and Duke Java mascot">
+      <h1>📚 Copilot SDK for Java</h1>
+      <p class="subtitle">Documentation Versions</p>
+      <a href="https://github.com/copilot-community-sdk/copilot-sdk-java" class="github-link">
+        <svg height="20" width="20" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+        View on GitHub
+      </a>
+    </div>
     
     <div class="warning">
       ⚠️ <strong>Disclaimer:</strong> This is an <strong>unofficial, community-driven SDK</strong> and is <strong>not supported or endorsed by GitHub</strong>. Use at your own risk.
@@ -112,8 +191,23 @@
     
     <h2>Available Versions</h2>
     <ul class="version-list">
-      <li><a href="./latest/">Latest Release</a><span class="badge latest">latest</span></li><li><a href="./snapshot/">Development (main branch)</a><span class="badge snapshot">snapshot</span></li><li><a href="./1.0.3/">Version 1.0.3</a><span class="badge archived">1.0.3</span></li><li><a href="./1.0.2/">Version 1.0.2</a><span class="badge archived">1.0.2</span></li><li><a href="./1.0.1/">Version 1.0.1</a><span class="badge archived">1.0.1</span></li><li><a href="./1.0.0/">Version 1.0.0</a><span class="badge archived">1.0.0</span></li>
+      <li><a href="./snapshot/">Development (main branch)</a><span class="badge snapshot">snapshot</span></li><li class="latest-version"><a href="./1.0.3/">Version 1.0.3</a><span class="badge latest">latest</span></li><li><a href="./1.0.2/">Version 1.0.2</a><span class="badge archived">1.0.2</span></li><li><a href="./1.0.1/">Version 1.0.1</a><span class="badge archived">1.0.1</span></li><li><a href="./1.0.0/">Version 1.0.0</a><span class="badge archived">1.0.0</span></li>
     </ul>
+    
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color latest"></div>
+        <span>Latest stable release</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color snapshot"></div>
+        <span>Development snapshot</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color archived"></div>
+        <span>Previous versions</span>
+      </div>
+    </div>
     
     <div class="footer">
       <p>
