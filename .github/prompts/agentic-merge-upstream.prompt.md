@@ -80,7 +80,10 @@ For each change in the upstream diff, determine:
 | `dotnet/src/Generated/*.cs`        | `src/main/java/com/github/copilot/sdk/types/*.java`    |
 | `dotnet/test/*.cs`                 | `src/test/java/com/github/copilot/sdk/*Test.java`      |
 | `docs/getting-started.md`          | `README.md` and `src/site/markdown/*.md`               |
+| `docs/*.md` (new files)            | `src/site/markdown/*.md` + update `src/site/site.xml`  |
 | `sdk-protocol-version.json`        | (embedded in Java code or resource file)               |
+
+> **⚠️ Important:** When adding new documentation pages, always update `src/site/site.xml` to include them in the navigation menu.
 
 ## Step 5: Apply Changes to Java SDK
 
@@ -208,6 +211,7 @@ Before finishing:
 - [ ] `mvn test` passes
 - [ ] `mvn package` builds successfully
 - [ ] Documentation updated
+- [ ] `src/site/site.xml` updated if new documentation pages were added
 - [ ] `.lastmerge` file updated with new commit hash
 - [ ] Changes left uncommitted for review
 

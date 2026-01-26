@@ -138,6 +138,7 @@
         <menu name="Overview">
             <item name="Introduction" href="index.html"/>
             <item name="Documentation" href="documentation.html"/>
+            <item name="MCP Servers" href="mcp.html"/>
         </menu>
 
         <menu name="Documentation">
@@ -157,6 +158,7 @@
                 <item name="Bring Your Own Key (BYOK)" href="documentation.html#Bring_Your_Own_Key_.28BYOK.29"/>
                 <item name="Permission Handling" href="documentation.html#Permission_Handling"/>
                 <item name="Infinite Sessions" href="documentation.html#Infinite_Sessions"/>
+                <item name="MCP Servers" href="documentation.html#MCP_Servers"/>
             </item>
             <item name="Error Handling" href="documentation.html#Error_Handling"/>
         </menu>
