@@ -4,6 +4,8 @@
   
 📦 [View on Maven Central](https://central.sonatype.com/artifact/${GROUP_ID}/${ARTIFACT_ID}/${VERSION})
 
+📖 [Documentation](https://copilot-community-sdk.github.io/copilot-sdk-java/${VERSION}/) · [Javadoc](https://copilot-community-sdk.github.io/copilot-sdk-java/${VERSION}/apidocs/index.html)
+
 ## Maven
 ```xml
 <dependency>
