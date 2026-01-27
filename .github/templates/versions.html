@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -135,6 +136,32 @@
     .github-link svg {
       fill: white;
     }
+    .maven-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #6f42c1;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 15px;
+      transition: background 0.2s;
+    }
+    .maven-link:hover {
+      background: #5a32a3;
+      text-decoration: none;
+    }
+    .maven-link svg {
+      fill: white;
+    }
+    .header-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
     .legend {
       display: flex;
       flex-wrap: wrap;
@@ -167,16 +194,58 @@
     .legend-color.archived {
       background: #6c757d;
     }
+    .collapsible {
+      margin-top: 30px;
+    }
+    .collapsible-toggle {
+      background: #f6f8fa;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 12px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 16px;
+      font-weight: 500;
+      color: #24292e;
+      transition: background 0.2s;
+    }
+    .collapsible-toggle:hover {
+      background: #ebeef1;
+    }
+    .collapsible-toggle::after {
+      content: '▶';
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+    .collapsible-toggle.open::after {
+      transform: rotate(90deg);
+    }
+    .collapsible-content {
+      display: none;
+      padding-top: 10px;
+    }
+    .collapsible-content.open {
+      display: block;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>📚 Copilot SDK for Java</h1>
-      <a href="https://github.com/copilot-community-sdk/copilot-sdk-java" class="github-link">
-        <svg height="20" width="20" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
-        View on GitHub
-      </a>
+      <h1>Copilot SDK for Java</h1>
+      <div class="header-buttons">
+        <a href="https://github.com/copilot-community-sdk/copilot-sdk-java" class="github-link">
+          <svg height="20" width="20" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+          View on GitHub
+        </a>
+        <a href="https://central.sonatype.com/artifact/io.github.copilot-community-sdk/copilot-sdk" class="maven-link">
+          <svg height="20" width="20" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+          View on Maven Central
+        </a>
+      </div>
     </div>
     
     <div class="warning">
@@ -189,8 +258,19 @@
     
     <h2>Available Versions</h2>
     <ul class="version-list">
-      <!-- VERSION_LIST_PLACEHOLDER -->
+      <!-- CURRENT_VERSIONS_PLACEHOLDER -->
     </ul>
+    
+    <div class="collapsible">
+      <button class="collapsible-toggle" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+        Older Releases
+      </button>
+      <div class="collapsible-content">
+        <ul class="version-list">
+          <!-- OLDER_VERSIONS_PLACEHOLDER -->
+        </ul>
+      </div>
+    </div>
     
     <div class="legend">
       <div class="legend-item">
@@ -206,7 +286,8 @@
     <div class="footer">
       <p>
         <a href="https://github.com/copilot-community-sdk/copilot-sdk-java">GitHub Repository</a> · 
-        <a href="https://central.sonatype.com/artifact/io.github.copilot-community-sdk/copilot-sdk">Maven Central</a>
+        <a href="https://central.sonatype.com/artifact/io.github.copilot-community-sdk/copilot-sdk">Maven Central</a> · 
+        <a href="https://github.com/copilot-community-sdk/copilot-sdk-java/blob/main/LICENSE">MIT License</a>
       </p>
     </div>
   </div>

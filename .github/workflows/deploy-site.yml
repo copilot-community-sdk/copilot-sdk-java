@@ -191,28 +191,30 @@ jobs:
           HAS_SNAPSHOT=$([ -d "snapshot" ] && echo "true" || echo "false")
           
           # Generate version links
-          VERSION_HTML=""
+          CURRENT_HTML=""
+          OLDER_HTML=""
           IS_FIRST_VERSION="true"
           
-          # Add snapshot if exists
+          # Add snapshot if exists (goes to current versions)
           if [ "$HAS_SNAPSHOT" = "true" ]; then
-            VERSION_HTML+='<li><a href="./snapshot/">Development (main branch)</a><span class="badge snapshot">snapshot</span></li>'
+            CURRENT_HTML+='<li><a href="./snapshot/">Development (main branch)</a><span class="badge snapshot">snapshot</span></li>'
           fi
           
-          # Add versioned releases from tags (first one is latest)
+          # Add versioned releases from tags (first one is latest, rest go to older)
           for v in $VERSIONS; do
             if [ -d "$v" ]; then
               if [ "$IS_FIRST_VERSION" = "true" ]; then
-                VERSION_HTML+="<li class=\"latest-version\"><a href=\"./$v/\">Version $v</a><span class=\"badge latest\">latest</span></li>"
+                CURRENT_HTML+="<li class=\"latest-version\"><a href=\"./$v/\">Version $v</a><span class=\"badge latest\">latest</span></li>"
                 IS_FIRST_VERSION="false"
               else
-                VERSION_HTML+="<li><a href=\"./$v/\">Version $v</a></li>"
+                OLDER_HTML+="<li><a href=\"./$v/\">Version $v</a></li>"
               fi
             fi
           done
           
-          # Update the index.html using the placeholder
-          sed -i "s|<!-- VERSION_LIST_PLACEHOLDER -->|$VERSION_HTML|" index.html
+          # Update the index.html using the placeholders
+          sed -i "s|<!-- CURRENT_VERSIONS_PLACEHOLDER -->|$CURRENT_HTML|" index.html
+          sed -i "s|<!-- OLDER_VERSIONS_PLACEHOLDER -->|$OLDER_HTML|" index.html
 
       - name: Deploy to GitHub Pages
         run: |
