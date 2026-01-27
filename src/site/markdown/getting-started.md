@@ -29,7 +29,9 @@ copilot --version
 
 ## Step 1: Install the SDK
 
-### Maven
+> If you want to test a _-SNAPSHOT_ version, you may have to clone the project's repository and install the library locally with _mvn install_.
+
+### Apache Maven
 
 Add the dependency to your `pom.xml`:
 
@@ -51,7 +53,7 @@ implementation 'io.github.copilot-community-sdk:copilot-sdk:${project.version}'
 
 ### JBang (Quick Start)
 
-For the fastest way to try the SDK without setting up a project:
+For the fastest way to try the SDK without setting up a project, use [JBang](https://www.jbang.dev/). Create a file named `HelloCopilot.java` with the following header, and then proceed to Step 2 by appending the proposed content into this same file.
 
 ```bash
 //DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
@@ -85,10 +87,12 @@ public class HelloCopilot {
 }
 ```
 
-Run it:
+Run the code with your preferred build tool or IDE. 
+
+Or run it directly with JBang:
 
 ```bash
-java HelloCopilot.java
+jbang HelloCopilot.java
 ```
 
 **You should see:**
