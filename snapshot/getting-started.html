@@ -277,7 +277,6 @@ public class StreamingExample {
 <pre class="prettyprint"><code class="language-java">import com.github.copilot.sdk.*;
 import com.github.copilot.sdk.events.*;
 import com.github.copilot.sdk.json.*;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -301,8 +300,8 @@ public class ToolExample {
                     &quot;required&quot;, List.of(&quot;city&quot;)
                 ),
                 invocation -&gt; {
-                    JsonNode params = (JsonNode) invocation.getArguments();
-                    String city = params.get(&quot;city&quot;).asText();
+                    Map&lt;String, Object&gt; params = invocation.getArguments();
+                    String city = (String) params.get(&quot;city&quot;);
                     
                     // In a real app, you'd call a weather API here
                     String[] conditions = {&quot;sunny&quot;, &quot;cloudy&quot;, &quot;rainy&quot;, &quot;partly cloudy&quot;};
@@ -351,7 +350,6 @@ public class ToolExample {
 <pre class="prettyprint"><code class="language-java">import com.github.copilot.sdk.*;
 import com.github.copilot.sdk.events.*;
 import com.github.copilot.sdk.json.*;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -376,8 +374,8 @@ public class WeatherAssistant {
                     &quot;required&quot;, List.of(&quot;city&quot;)
                 ),
                 invocation -&gt; {
-                    JsonNode params = (JsonNode) invocation.getArguments();
-                    String city = params.get(&quot;city&quot;).asText();
+                    Map&lt;String, Object&gt; params = invocation.getArguments();
+                    String city = (String) params.get(&quot;city&quot;);
                     String[] conditions = {&quot;sunny&quot;, &quot;cloudy&quot;, &quot;rainy&quot;, &quot;partly cloudy&quot;};
                     int temp = new Random().nextInt(30) + 50;
                     String condition = conditions[new Random().nextInt(conditions.length)];
@@ -439,9 +437,9 @@ public class WeatherAssistant {
 <p><strong>Explore more:</strong></p>
 <ul>
 
-<li><a href="documentation.html">API Documentation</a> - Complete API reference</li>
-<li><a href="mcp.html">MCP Integration</a> - Connect to Model Context Protocol servers</li>
-<li><a href="https://github.com/copilot-community-sdk/copilot-sdk-java/tree/main/examples" class="externalLink">Examples on GitHub</a></li>
+<li><a href="documentation.html">Documentation</a> - Basic usage and session management</li>
+<li><a href="advanced.html">Advanced Usage</a> - Tools, BYOK, infinite sessions, and more</li>
+<li><a href="mcp.html">MCP Servers</a> - Connect to Model Context Protocol servers</li>
 </ul></section><section><a id="Troubleshooting"></a>
 <h2>Troubleshooting</h2><section><a id="a.E2.80.9CCopilot_CLI_not_found.E2.80.9D"></a>
 <h3>&#x201c;Copilot CLI not found&#x201d;</h3>
