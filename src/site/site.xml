@@ -35,7 +35,9 @@
 
         <menu name="Overview">
             <item name="Introduction" href="index.html"/>
+            <item name="Getting Started" href="getting-started.html"/>
             <item name="Documentation" href="documentation.html"/>
+            <item name="Advanced Usage" href="advanced.html"/>
             <item name="MCP Servers" href="mcp.html"/>
             <item name="Javadoc" href="apidocs/index.html"/>
         </menu>
@@ -48,18 +50,19 @@
             <item name="Event Types" href="documentation.html#Event_Types"/>
             <item name="Streaming" href="documentation.html#Streaming"/>
             <item name="Listing Models" href="documentation.html#Listing_Models"/>
-            <item name="Advanced Usage" href="documentation.html#Advanced_Usage">
-                <item name="Manual Server Control" href="documentation.html#Manual_Server_Control"/>
-                <item name="Tools" href="documentation.html#Tools"/>
-                <item name="System Message Customization" href="documentation.html#System_Message_Customization"/>
-                <item name="Multiple Sessions" href="documentation.html#Multiple_Sessions"/>
-                <item name="File Attachments" href="documentation.html#File_Attachments"/>
-                <item name="Bring Your Own Key (BYOK)" href="documentation.html#Bring_Your_Own_Key_.28BYOK.29"/>
-                <item name="Permission Handling" href="documentation.html#Permission_Handling"/>
-                <item name="Infinite Sessions" href="documentation.html#Infinite_Sessions"/>
-                <item name="MCP Servers" href="documentation.html#MCP_Servers"/>
-            </item>
-            <item name="Error Handling" href="documentation.html#Error_Handling"/>
+        </menu>
+
+        <menu name="Advanced">
+            <item name="Manual Server Control" href="advanced.html#Manual_Server_Control"/>
+            <item name="Tools" href="advanced.html#Tools"/>
+            <item name="System Message Customization" href="advanced.html#System_Message_Customization"/>
+            <item name="Multiple Sessions" href="advanced.html#Multiple_Sessions"/>
+            <item name="File Attachments" href="advanced.html#File_Attachments"/>
+            <item name="Bring Your Own Key (BYOK)" href="advanced.html#Bring_Your_Own_Key_.28BYOK.29"/>
+            <item name="Permission Handling" href="advanced.html#Permission_Handling"/>
+            <item name="Infinite Sessions" href="advanced.html#Infinite_Sessions"/>
+            <item name="MCP Servers" href="advanced.html#MCP_Servers"/>
+            <item name="Error Handling" href="advanced.html#Error_Handling"/>
         </menu>
 
         <menu ref="reports"/>
