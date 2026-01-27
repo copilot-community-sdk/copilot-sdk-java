@@ -2,7 +2,7 @@
 <!--
   ~ Copyright (c) Microsoft Corporation. All rights reserved.
   -->
-<project xmlns="http://maven.apache.org/SITE/2.0.0"
+<site xmlns="http://maven.apache.org/SITE/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd"
          name="GitHub Copilot Community SDK :: Java">
@@ -25,108 +25,6 @@
                 <ribbonOrientation>right</ribbonOrientation>
                 <ribbonColor>gray</ribbonColor>
             </gitHub>
-            <head>
-                <!-- Cache control meta tags to prevent stale content -->
-                <![CDATA[
-                <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-                <meta http-equiv="Pragma" content="no-cache"/>
-                <meta http-equiv="Expires" content="0"/>
-                <style>
-                    .version-banner {
-                        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-                        color: #fff;
-                        padding: 8px 15px;
-                        text-align: center;
-                        font-size: 14px;
-                        position: relative;
-                        z-index: 1000;
-                    }
-                    .version-banner a {
-                        color: #58a6ff;
-                        text-decoration: none;
-                    }
-                    .version-banner a:hover {
-                        text-decoration: underline;
-                    }
-                    .version-banner select {
-                        margin-left: 10px;
-                        padding: 3px 8px;
-                        border-radius: 4px;
-                        border: 1px solid #444;
-                        background: #2d2d44;
-                        color: #fff;
-                        cursor: pointer;
-                    }
-                    .disclaimer-banner {
-                        background: #fff3cd;
-                        color: #856404;
-                        padding: 10px 15px;
-                        text-align: center;
-                        font-size: 13px;
-                        border-bottom: 1px solid #ffc107;
-                    }
-                    .snapshot-warning {
-                        background: #f8d7da;
-                        color: #721c24;
-                        padding: 8px 15px;
-                        text-align: center;
-                        font-size: 13px;
-                        border-bottom: 1px solid #f5c6cb;
-                        display: none;
-                    }
-                </style>
-                ]]>
-            </head>
-            <footer>
-                <![CDATA[
-                <script>
-                (function() {
-                    // Detect current version from URL path
-                    var path = window.location.pathname;
-                    var currentVersion = 'latest';
-                    var isSnapshot = false;
-                    
-                    // Check if we're in a versioned path
-                    var versionMatch = path.match(/\/(\d+\.\d+\.\d+)\//);
-                    var snapshotMatch = path.match(/\/snapshot\//);
-                    
-                    if (versionMatch) {
-                        currentVersion = versionMatch[1];
-                    } else if (snapshotMatch) {
-                        currentVersion = 'snapshot';
-                        isSnapshot = true;
-                    }
-                    
-                    // Create disclaimer banner
-                    var disclaimerBanner = document.createElement('div');
-                    disclaimerBanner.className = 'disclaimer-banner';
-                    disclaimerBanner.innerHTML = '⚠️ <strong>Disclaimer:</strong> This is an <strong>unofficial, community-driven SDK</strong> and is <strong>not supported or endorsed by GitHub</strong>. Use at your own risk.';
-                    
-                    // Create version banner
-                    var versionBanner = document.createElement('div');
-                    versionBanner.className = 'version-banner';
-                    versionBanner.innerHTML = '📚 Documentation version: <strong>' + currentVersion + '</strong> | ' +
-                        '<a href="../versions.html">View all versions</a> | ' +
-                        '<a href="../">Latest release</a>' +
-                        (currentVersion !== 'snapshot' ? ' | <a href="../snapshot/">Development (snapshot)</a>' : '');
-                    
-                    // Create snapshot warning
-                    var snapshotWarning = document.createElement('div');
-                    snapshotWarning.className = 'snapshot-warning';
-                    snapshotWarning.innerHTML = '🚧 <strong>Development Documentation:</strong> You are viewing documentation for unreleased features. Some APIs may change before the next release.';
-                    if (isSnapshot) {
-                        snapshotWarning.style.display = 'block';
-                    }
-                    
-                    // Insert banners at the top of the body
-                    var body = document.body;
-                    body.insertBefore(snapshotWarning, body.firstChild);
-                    body.insertBefore(versionBanner, body.firstChild);
-                    body.insertBefore(disclaimerBanner, body.firstChild);
-                })();
-                </script>
-                ]]>
-            </footer>
         </fluidoSkin>
     </custom>
 
@@ -167,4 +65,4 @@
         <menu ref="reports"/>
 
     </body>
-</project>
+</site>
