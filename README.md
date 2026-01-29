@@ -18,14 +18,14 @@ Java SDK for programmatic control of GitHub Copilot CLI, enabling you to build A
 <dependency>
     <groupId>io.github.copilot-community-sdk</groupId>
     <artifactId>copilot-sdk</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'io.github.copilot-community-sdk:copilot-sdk:1.0.5'
+implementation 'io.github.copilot-community-sdk:copilot-sdk:1.0.4'
 ```
 
 ## Quick Start
