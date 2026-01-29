@@ -58,18 +58,37 @@ For more control, subscribe to events and use `send()`:
 ```java
 var done = new CompletableFuture<Void>();
 
-session.on(event -> {
-    if (event instanceof AssistantMessageEvent msg) {
-        System.out.println("Response: " + msg.getData().getContent());
-    } else if (event instanceof SessionErrorEvent err) {
-        System.err.println("Error: " + err.getData().getMessage());
-    } else if (event instanceof SessionIdleEvent) {
-        done.complete(null);
-    }
+// Type-safe event handlers (recommended)
+session.on(AssistantMessageEvent.class, msg -> {
+    System.out.println("Response: " + msg.getData().getContent());
+});
+
+session.on(SessionErrorEvent.class, err -> {
+    System.err.println("Error: " + err.getData().getMessage());
+});
+
+session.on(SessionIdleEvent.class, idle -> {
+    done.complete(null);
 });
 
 session.send("Tell me a joke").get();
 done.get(); // Wait for completion
+```
+
+You can also use a single handler for all events:
+
+```java
+session.on(event -> {
+    switch (event) {
+        case AssistantMessageEvent msg -> 
+            System.out.println("Response: " + msg.getData().getContent());
+        case SessionErrorEvent err -> 
+            System.err.println("Error: " + err.getData().getMessage());
+        case SessionIdleEvent idle -> 
+            done.complete(null);
+        default -> { }
+    }
+});
 ```
 
 ### Key Event Types
@@ -82,6 +101,9 @@ done.get(); // Wait for completion
 | `SessionErrorEvent` | An error occurred |
 | `ToolExecutionStartEvent` | Tool invocation started |
 | `ToolExecutionCompleteEvent` | Tool invocation completed |
+| `SessionCompactionStartEvent` | Context compaction started (infinite sessions) |
+| `SessionCompactionCompleteEvent` | Context compaction completed |
+| `SessionUsageInfoEvent` | Token usage information |
 
 See the [events package Javadoc](apidocs/com/github/copilot/sdk/events/package-summary.html) for all event types.
 
@@ -185,6 +207,6 @@ client.deleteSession(sessionId).get();
 
 ## Next Steps
 
-- 📖 **[Advanced Usage](advanced.html)** - Tools, BYOK, MCP Servers, System Messages, Infinite Sessions
+- 📖 **[Advanced Usage](advanced.html)** - Tools, BYOK, MCP Servers, System Messages, Infinite Sessions, Skills
 - 📖 **[MCP Servers](mcp.html)** - Integrate external tools via Model Context Protocol
 - 📖 **[API Javadoc](apidocs/index.html)** - Complete API reference

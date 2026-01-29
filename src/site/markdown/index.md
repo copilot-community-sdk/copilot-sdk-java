@@ -69,7 +69,7 @@ public class Example {
 | Document | Description |
 |----------|-------------|
 | [Documentation](documentation.html) | Basic usage, streaming, handling responses, and session management |
-| [Advanced Usage](advanced.html) | Tools, BYOK, MCP servers, infinite sessions, and more |
+| [Advanced Usage](advanced.html) | Tools, BYOK, MCP servers, infinite sessions, skills, and more |
 | [MCP Servers](mcp.html) | Integrating Model Context Protocol servers |
 | [Javadoc](apidocs/index.html) | Generated API documentation |
 

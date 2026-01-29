@@ -130,6 +130,22 @@ var session = client.createSession(
 String workspace = session.getWorkspacePath();
 ```
 
+### Compaction Events
+
+When compaction occurs, the session emits events that you can listen for:
+
+```java
+session.on(event -> {
+    if (event instanceof SessionCompactionStartEvent start) {
+        System.out.println("Compaction started");
+    } else if (event instanceof SessionCompactionCompleteEvent complete) {
+        var data = complete.getData();
+        System.out.println("Compaction completed - success: " + data.isSuccess() 
+            + ", tokens removed: " + data.getTokensRemoved());
+    }
+});
+```
+
 For short conversations, disable to avoid overhead:
 
 ```java
@@ -157,6 +173,63 @@ var session = client.createSession(
 ```
 
 📖 **[Full MCP documentation →](mcp.html)** for local/remote servers and all options.
+
+---
+
+## Skills Configuration
+
+Load custom skills from directories to extend the AI's capabilities with domain-specific knowledge.
+
+### Loading Skills
+
+Skills are loaded from `SKILL.md` files in subdirectories of the specified skill directories:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setSkillDirectories(List.of("/path/to/skills"))
+).get();
+```
+
+Each skill subdirectory should contain a `SKILL.md` file with YAML frontmatter:
+
+```markdown
+---
+name: my-skill
+description: A skill that provides domain-specific knowledge
+---
+
+# Skill Instructions
+
+Your skill instructions go here...
+```
+
+### Disabling Skills
+
+Disable specific skills by name:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setSkillDirectories(List.of("/path/to/skills"))
+        .setDisabledSkills(List.of("my-skill"))
+).get();
+```
+
+---
+
+## Custom Configuration Directory
+
+Use a custom configuration directory for session settings:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setConfigDir("/path/to/custom/config")
+).get();
+```
+
+This is useful when you need to isolate session configuration or use different settings for different environments.
 
 ---
 
