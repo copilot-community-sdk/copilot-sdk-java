@@ -187,6 +187,9 @@ jobs:
         name: Deploy Documentation
         needs: [publish-maven, github-release]
         runs-on: ubuntu-latest
+        permissions:
+            actions: write
+            contents: read
         steps:
             - name: Trigger site deployment
               run: |
