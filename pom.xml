@@ -126,6 +126,29 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>fix-test-harness-json-parsing</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>patch</executable>
+                            <workingDirectory>${copilot.sdk.clone.dir}</workingDirectory>
+                            <arguments>
+                                <argument>-p1</argument>
+                                <argument>-N</argument>  <!-- Don't apply if already applied -->
+                                <argument>-r</argument>
+                                <argument>-</argument>   <!-- Don't create reject files -->
+                                <argument>-i</argument>
+                                <argument>${project.basedir}/fix-test-harness.patch</argument>
+                            </arguments>
+                            <successCodes>
+                                <successCode>0</successCode>
+                                <successCode>1</successCode> <!-- Patch already applied -->
+                            </successCodes>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>install-harness-dependencies</id>
                         <phase>generate-test-resources</phase>
                         <goals>

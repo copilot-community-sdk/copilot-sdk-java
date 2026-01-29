@@ -1,0 +1,22 @@
+--- a/test/harness/replayingCapiProxy.ts
++++ b/test/harness/replayingCapiProxy.ts
+@@ -533,7 +533,17 @@ export function createReplayingCapiProxyForTest(
+ async function parseHttpExchange(
+   requestBody: string,
+   responseBody: string | undefined,
+ ): Promise<ParsedHttpExchange> {
+-  const request = JSON.parse(requestBody) as ChatCompletionCreateParamsBase;
++  if (!requestBody || requestBody.trim() === '') {
++    throw new Error('Empty request body provided to parseHttpExchange');
++  }
++  
++  let request: ChatCompletionCreateParamsBase;
++  try {
++    request = JSON.parse(requestBody) as ChatCompletionCreateParamsBase;
++  } catch (error) {
++    throw new Error(`Failed to parse request body as JSON: ${error}. Body: "${requestBody}"`);
++  }
++  
+   const response = await parseOpenAIResponse(responseBody);
+   return { request, response };
+ }
