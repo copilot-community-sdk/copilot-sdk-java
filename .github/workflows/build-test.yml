@@ -27,7 +27,8 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-copilot
+      - id: setup-copilot
+        uses: ./.github/actions/setup-copilot
       - uses: actions/setup-java@v5
         with:
           java-version: "17"
@@ -48,5 +49,5 @@ jobs:
       - name: Run Java SDK tests
         env:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
-          COPILOT_CLI_PATH: ${{ steps.cli-path.outputs.path }}
+          COPILOT_CLI_PATH: ${{ steps.setup-copilot.outputs.cli-path }}
         run: mvn verify
