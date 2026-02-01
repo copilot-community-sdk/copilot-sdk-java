@@ -12,6 +12,11 @@ Java SDK for programmatic control of GitHub Copilot CLI, enabling you to build A
 
 ## Installation
 
+### Requirements
+
+- Java 17 or later
+- GitHub Copilot CLI 0.0.400 or later installed and in PATH (or provide custom `cliPath`)
+
 ### Maven
 
 ```xml
@@ -70,11 +75,6 @@ public class Example {
 - [Getting Started](https://copilot-community-sdk.github.io/copilot-sdk-java/documentation.html)
 - [Javadoc API Reference](https://copilot-community-sdk.github.io/copilot-sdk-java/apidocs/)
 - [MCP Servers Integration](https://copilot-community-sdk.github.io/copilot-sdk-java/mcp.html)
-
-## Requirements
-
-- Java 17 or later
-- GitHub Copilot CLI installed and in PATH (or provide custom `cliPath`)
 
 ## Projects Using This SDK
 
