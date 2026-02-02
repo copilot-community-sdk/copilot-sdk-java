@@ -92,12 +92,54 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.1</version>
             </plugin>
-            <!-- Copy image.png to site resources directory -->
+            <!-- Clone or update the official copilot-sdk repository for test resources, and copy image to site -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <executions>
+                    <execution>
+                        <id>clone-or-update-copilot-sdk</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target xmlns:if="ant:if" xmlns:unless="ant:unless">
+                                <!-- Check if .git directory exists -->
+                                <condition property="repo.exists">
+                                    <available file="${copilot.sdk.clone.dir}/.git" type="dir" />
+                                </condition>
+
+                                <!-- If repo exists, fetch and reset -->
+                                <sequential if:set="repo.exists">
+                                    <echo message="Updating existing copilot-sdk repository..." />
+                                    <exec executable="git" dir="${copilot.sdk.clone.dir}" failonerror="true">
+                                        <arg value="fetch" />
+                                        <arg value="origin" />
+                                    </exec>
+                                    <exec executable="git" dir="${copilot.sdk.clone.dir}" failonerror="true">
+                                        <arg value="reset" />
+                                        <arg value="--hard" />
+                                        <arg value="origin/main" />
+                                    </exec>
+                                </sequential>
+
+                                <!-- If repo doesn't exist, clone it -->
+                                <sequential unless:set="repo.exists">
+                                    <echo message="Cloning copilot-sdk repository..." />
+                                    <delete dir="${copilot.sdk.clone.dir}" quiet="true" />
+                                    <exec executable="git" failonerror="true">
+                                        <arg value="clone" />
+                                        <arg value="--depth" />
+                                        <arg value="1" />
+                                        <arg value="https://github.com/github/copilot-sdk.git" />
+                                        <arg value="${copilot.sdk.clone.dir}" />
+                                    </exec>
+                                </sequential>
+                            </target>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>copy-image-to-site</id>
                         <phase>pre-site</phase>
@@ -111,34 +153,21 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Required for if:set and unless:set -->
+                    <dependency>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant</artifactId>
+                        <version>1.10.15</version>
+                    </dependency>
+                </dependencies>
             </plugin>
-            <!-- Clone the official copilot-sdk repository for test resources -->
+            <!-- Install harness dependencies -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.6.2</version>
                 <executions>
-                    <execution>
-                        <id>clone-copilot-sdk</id>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>git</executable>
-                            <arguments>
-                                <argument>clone</argument>
-                                <argument>--depth</argument>
-                                <argument>1</argument>
-                                <argument>https://github.com/github/copilot-sdk.git</argument>
-                                <argument>${copilot.sdk.clone.dir}</argument>
-                            </arguments>
-                            <successCodes>
-                                <successCode>0</successCode>
-                                <successCode>128</successCode> <!-- Already exists -->
-                            </successCodes>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>install-harness-dependencies</id>
                         <phase>generate-test-resources</phase>
@@ -318,6 +347,23 @@
     </reporting>
 
     <profiles>
+        <!-- Debug profile for FINE logging during tests -->
+        <profile>
+            <id>debug</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <java.util.logging.config.file>${project.basedir}/src/test/resources/logging-debug.properties</java.util.logging.config.file>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>release</id>
             <build>

@@ -194,6 +194,53 @@ Follow the existing Java SDK patterns:
 - **Match the style of surrounding code** - Consistency with existing code is more important than upstream patterns
 - **Prefer existing abstractions** - If the Java SDK already solves a problem differently than .NET, keep the Java approach
 
+## Step 7.5: Port Tests
+
+After porting implementation changes, **always check for new or updated tests** in the upstream repository:
+
+### Check for New Tests
+
+```bash
+cd "$TEMP_DIR/copilot-sdk"
+git diff "$LAST_MERGE_COMMIT"..origin/main --stat -- dotnet/test/
+git diff "$LAST_MERGE_COMMIT"..origin/main --stat -- test/snapshots/
+```
+
+### Port Test Cases
+
+For each new or modified test file in `dotnet/test/`:
+
+1. **Create corresponding Java test class** in `src/test/java/com/github/copilot/sdk/`
+2. **Follow existing test patterns** - Look at existing tests like `PermissionsTest.java` for structure
+3. **Use the E2ETestContext** infrastructure for tests that need the test harness
+4. **Match snapshot directory names** - Test snapshots in `test/snapshots/` must match the directory name used in `ctx.configureForTest()`
+
+### Test File Mapping
+
+| Upstream Test (.NET)        | Java SDK Test                                          |
+|-----------------------------|--------------------------------------------------------|
+| `dotnet/test/AskUserTests.cs`  | `src/test/java/com/github/copilot/sdk/AskUserTest.java`  |
+| `dotnet/test/HooksTests.cs`    | `src/test/java/com/github/copilot/sdk/HooksTest.java`    |
+| `dotnet/test/ClientTests.cs`   | `src/test/java/com/github/copilot/sdk/CopilotClientTest.java` |
+| `dotnet/test/*Tests.cs`        | `src/test/java/com/github/copilot/sdk/*Test.java`        |
+
+### Test Snapshot Compatibility
+
+New test snapshots are stored in `test/snapshots/` in the upstream repository. These snapshots are automatically cloned during the Maven build process.
+
+If tests fail with errors like `TypeError: Cannot read properties of undefined`, the test harness may not yet support the new RPC methods. In this case:
+
+1. **Mark tests as `@Disabled`** with a clear reason (e.g., `@Disabled("Requires test harness update with X support - see upstream PR #NNN")`)
+2. **Document the dependency** in the test class Javadoc
+3. **Enable tests later** once the harness is updated
+
+### Unit Tests vs E2E Tests
+
+- **Unit tests** (like auth option validation) can run without the test harness
+- **E2E tests** require the test harness with matching snapshots
+
+Commit tests separately or together with their corresponding implementation changes.
+
 ## Step 8: Format and Run Tests
 
 After applying changes, format the code and run the test suite:
@@ -295,6 +342,8 @@ Before finishing:
 - [ ] Diff analyzed between `.lastmerge` commit and HEAD
 - [ ] New features/fixes identified
 - [ ] Changes ported to Java SDK following conventions
+- [ ] **New/updated tests ported from upstream** (check `dotnet/test/` and `test/snapshots/`)
+- [ ] Tests marked `@Disabled` if harness doesn't support new features yet
 - [ ] Changes committed incrementally with descriptive messages
 - [ ] `mvn test` passes
 - [ ] `mvn package` builds successfully
