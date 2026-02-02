@@ -233,6 +233,51 @@ This is useful when you need to isolate session configuration or use different s
 
 ---
 
+## User Input Handling
+
+Handle user input requests when the AI uses the `ask_user` tool to gather information from the user.
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setOnUserInputRequest((request, invocation) -> {
+            System.out.println("Agent asks: " + request.getQuestion());
+            
+            // Check if choices are provided
+            if (request.getChoices() != null && !request.getChoices().isEmpty()) {
+                System.out.println("Options: " + request.getChoices());
+                // Return one of the provided choices
+                String selectedChoice = request.getChoices().get(0);
+                return CompletableFuture.completedFuture(
+                    new UserInputResponse()
+                        .setAnswer(selectedChoice)
+                        .setWasFreeform(false)
+                );
+            }
+            
+            // Freeform input
+            String userAnswer = getUserInput(); // your input method
+            return CompletableFuture.completedFuture(
+                new UserInputResponse()
+                    .setAnswer(userAnswer)
+                    .setWasFreeform(true)
+            );
+        })
+).get();
+```
+
+The `UserInputRequest` contains:
+- `getQuestion()` - The question the AI is asking
+- `getChoices()` - Optional list of choices for the user to select from
+
+The `UserInputResponse` should include:
+- `setAnswer(String)` - The user's answer
+- `setWasFreeform(boolean)` - `true` if the answer was freeform text, `false` if it was from the provided choices
+
+See [UserInputHandler](apidocs/com/github/copilot/sdk/json/UserInputHandler.html) Javadoc for more details.
+
+---
+
 ## Permission Handling
 
 Approve or deny permission requests from the AI.
