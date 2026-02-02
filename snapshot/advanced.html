@@ -319,7 +319,50 @@ Your skill instructions go here...
         .setConfigDir(&quot;/path/to/custom/config&quot;)
 ).get();
 </code></pre>
-<p>This is useful when you need to isolate session configuration or use different settings for different environments.</p><hr /></section><section><a id="Permission_Handling"></a>
+<p>This is useful when you need to isolate session configuration or use different settings for different environments.</p><hr /></section><section><a id="User_Input_Handling"></a>
+<h2>User Input Handling</h2>
+<p>Handle user input requests when the AI uses the <code>ask_user</code> tool to gather information from the user.</p>
+
+<pre class="prettyprint"><code class="language-java">var session = client.createSession(
+    new SessionConfig()
+        .setOnUserInputRequest((request, invocation) -&gt; {
+            System.out.println(&quot;Agent asks: &quot; + request.getQuestion());
+            
+            // Check if choices are provided
+            if (request.getChoices() != null &amp;&amp; !request.getChoices().isEmpty()) {
+                System.out.println(&quot;Options: &quot; + request.getChoices());
+                // Return one of the provided choices
+                String selectedChoice = request.getChoices().get(0);
+                return CompletableFuture.completedFuture(
+                    new UserInputResponse()
+                        .setAnswer(selectedChoice)
+                        .setWasFreeform(false)
+                );
+            }
+            
+            // Freeform input
+            String userAnswer = getUserInput(); // your input method
+            return CompletableFuture.completedFuture(
+                new UserInputResponse()
+                    .setAnswer(userAnswer)
+                    .setWasFreeform(true)
+            );
+        })
+).get();
+</code></pre>
+<p>The <code>UserInputRequest</code> contains:</p>
+<ul>
+
+<li><code>getQuestion()</code> - The question the AI is asking</li>
+<li><code>getChoices()</code> - Optional list of choices for the user to select from</li>
+</ul>
+<p>The <code>UserInputResponse</code> should include:</p>
+<ul>
+
+<li><code>setAnswer(String)</code> - The user's answer</li>
+<li><code>setWasFreeform(boolean)</code> - <code>true</code> if the answer was freeform text, <code>false</code> if it was from the provided choices</li>
+</ul>
+<p>See <a href="apidocs/com/github/copilot/sdk/json/UserInputHandler.html">UserInputHandler</a> Javadoc for more details.</p><hr /></section><section><a id="Permission_Handling"></a>
 <h2>Permission Handling</h2>
 <p>Approve or deny permission requests from the AI.</p>
 
