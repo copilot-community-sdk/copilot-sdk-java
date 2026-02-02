@@ -282,12 +282,60 @@ Verify:
 
 ## Step 10: Update Documentation
 
-Review and update documentation as needed:
+**Documentation is critical for new features.** Every new feature ported from upstream must be documented before the merge is complete.
 
-1. **README.md**: Update if there are new features or API changes
-2. **src/site/markdown/documentation.md**: Update detailed documentation
-3. **Javadoc**: Add/update Javadoc comments for new/changed public APIs
-4. **CHANGELOG**: (if exists) Add entry for the changes
+### Documentation Checklist
+
+For each new feature or significant change:
+
+1. **README.md**: Update the main README if there are user-facing changes
+2. **src/site/markdown/index.md**: Update if requirements or quick start examples change
+3. **src/site/markdown/documentation.md**: Add sections for new basic usage patterns
+4. **src/site/markdown/advanced.md**: Add sections for new advanced features (tools, handlers, configurations)
+5. **src/site/markdown/mcp.md**: Update if MCP-related changes are made
+6. **Javadoc**: Add/update Javadoc comments for all new/changed public APIs
+7. **src/site/site.xml**: Update if new documentation pages were added
+
+### Documentation Requirements for New Features
+
+When adding a new feature, ensure the documentation includes:
+
+- **What it does**: Clear explanation of the feature's purpose
+- **How to use it**: Code example showing typical usage
+- **API reference**: Link to relevant Javadoc
+- **Configuration options**: All available settings/properties
+
+### Example: Documenting a New Handler
+
+If a new handler (like `UserInputHandler`, `PermissionHandler`) is added, create a section in `advanced.md`:
+
+```markdown
+## Feature Name
+
+Brief description of what the feature does.
+
+\`\`\`java
+var session = client.createSession(
+    new SessionConfig()
+        .setOnFeatureRequest((request, invocation) -> {
+            // Handle the request
+            return CompletableFuture.completedFuture(result);
+        })
+).get();
+\`\`\`
+
+Explain the request/response objects and their properties.
+
+See [FeatureHandler](apidocs/com/github/copilot/sdk/json/FeatureHandler.html) Javadoc for more details.
+```
+
+### Verify Documentation Consistency
+
+Ensure consistency across all documentation files:
+
+- Requirements section should match in `README.md` and `src/site/markdown/index.md`
+- Code examples should use the same patterns and be tested
+- Links to Javadoc should use correct paths (`apidocs/...`)
 
 ## Step 11: Update Last Merge Reference
 
@@ -347,7 +395,12 @@ Before finishing:
 - [ ] Changes committed incrementally with descriptive messages
 - [ ] `mvn test` passes
 - [ ] `mvn package` builds successfully
-- [ ] Documentation updated
+- [ ] **Documentation updated for new features:**
+  - [ ] `README.md` updated if user-facing changes
+  - [ ] `src/site/markdown/index.md` updated if requirements changed
+  - [ ] `src/site/markdown/documentation.md` updated for new basic usage
+  - [ ] `src/site/markdown/advanced.md` updated for new advanced features
+  - [ ] Javadoc added/updated for new public APIs
 - [ ] `src/site/site.xml` updated if new documentation pages were added
 - [ ] `.lastmerge` file updated with new commit hash
 - [ ] Branch pushed to remote
