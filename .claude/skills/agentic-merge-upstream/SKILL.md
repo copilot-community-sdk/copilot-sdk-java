@@ -4,4 +4,4 @@ description: Merge upstream changes from the official Copilot SDK into this Java
 license: MIT
 ---
 
-Follow instructions in the  [agentic-merge-upstream prompt](../../prompts/agentic-merge-upstream.prompt.md) to merge upstream changes from the official Copilot SDK into this Java SDK.
+Follow instructions in the  [agentic-merge-upstream prompt](../../../.github/prompts/agentic-merge-upstream.prompt.md) to merge upstream changes from the official Copilot SDK into this Java SDK.
