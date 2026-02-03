@@ -1,0 +1,76 @@
+name: "Test Report"
+description: "Generate and publish test reports with summary for Java SDK tests."
+inputs:
+  report-path:
+    description: "Path to the test report XML files (glob pattern)"
+    required: false
+    default: "target/surefire-reports/TEST-*.xml"
+  check-name:
+    description: "Name for the check run"
+    required: false
+    default: "Java SDK Test Results"
+runs:
+  using: "composite"
+  steps:
+    - name: Generate Test Summary
+      shell: bash
+      run: |
+        echo "## 🧪 Java SDK Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        REPORT_DIR=$(dirname "${{ inputs.report-path }}")
+        REPORT_PATTERN=$(basename "${{ inputs.report-path }}")
+
+        if [ -d "$REPORT_DIR" ]; then
+          TESTS_RUN=$(grep -h "tests=" ${{ inputs.report-path }} 2>/dev/null | sed 's/.*tests="\([0-9]*\)".*/\1/' | awk '{s+=$1} END {print s}')
+          FAILURES=$(grep -h "failures=" ${{ inputs.report-path }} 2>/dev/null | sed 's/.*failures="\([0-9]*\)".*/\1/' | awk '{s+=$1} END {print s}')
+          ERRORS=$(grep -h "errors=" ${{ inputs.report-path }} 2>/dev/null | sed 's/.*errors="\([0-9]*\)".*/\1/' | awk '{s+=$1} END {print s}')
+          SKIPPED=$(grep -h "skipped=" ${{ inputs.report-path }} 2>/dev/null | sed 's/.*skipped="\([0-9]*\)".*/\1/' | awk '{s+=$1} END {print s}')
+
+          TESTS_RUN=${TESTS_RUN:-0}
+          FAILURES=${FAILURES:-0}
+          ERRORS=${ERRORS:-0}
+          SKIPPED=${SKIPPED:-0}
+          PASSED=$((TESTS_RUN - FAILURES - ERRORS - SKIPPED))
+
+          if [ "$FAILURES" -eq 0 ] && [ "$ERRORS" -eq 0 ]; then
+            echo "### ✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Some tests failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| ✅ Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
+          echo "| ❌ Failed | $FAILURES |" >> $GITHUB_STEP_SUMMARY
+          echo "| 💥 Errors | $ERRORS |" >> $GITHUB_STEP_SUMMARY
+          echo "| ⏭️ Skipped | $SKIPPED |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📊 Total | $TESTS_RUN |" >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Classes" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Class | Tests | Passed | Failed | Errors | Time |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|--------|--------|--------|------|" >> $GITHUB_STEP_SUMMARY
+
+          for file in ${{ inputs.report-path }}; do
+            if [ -f "$file" ]; then
+              CLASS=$(basename "$file" .xml | sed 's/TEST-//')
+              T=$(grep -o 'tests="[0-9]*"' "$file" | head -1 | sed 's/[^0-9]//g')
+              F=$(grep -o 'failures="[0-9]*"' "$file" | head -1 | sed 's/[^0-9]//g')
+              E=$(grep -o 'errors="[0-9]*"' "$file" | head -1 | sed 's/[^0-9]//g')
+              TIME=$(grep -o 'time="[0-9.]*"' "$file" | head -1 | sed 's/[^0-9.]//g')
+              P=$((T - F - E))
+
+              STATUS="✅"
+              if [ "${F:-0}" -gt 0 ] || [ "${E:-0}" -gt 0 ]; then
+                STATUS="❌"
+              fi
+
+              echo "| $STATUS $CLASS | ${T:-0} | ${P:-0} | ${F:-0} | ${E:-0} | ${TIME:-0}s |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+        else
+          echo "⚠️ No test reports found at ${{ inputs.report-path }}" >> $GITHUB_STEP_SUMMARY
+        fi
