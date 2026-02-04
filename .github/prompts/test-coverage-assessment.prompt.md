@@ -20,7 +20,7 @@ First, examine the source code to identify all components that should be tested:
 ls src/main/java/com/github/copilot/sdk/events/
 
 # Check the event type mapping in SessionEventParser
-grep -A 50 "TYPE_MAP.put" src/main/java/com/github/copilot/sdk/events/SessionEventParser.java
+grep -n "TYPE_MAP.put" src/main/java/com/github/copilot/sdk/events/SessionEventParser.java
 ```
 
 Extract the list of all registered event types from `SessionEventParser.java`.
