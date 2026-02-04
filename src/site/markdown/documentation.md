@@ -99,8 +99,10 @@ session.on(event -> {
 | `AssistantMessageDeltaEvent` | Streaming chunk (when streaming enabled) |
 | `SessionIdleEvent` | Session finished processing |
 | `SessionErrorEvent` | An error occurred |
+| `SessionShutdownEvent` | Session is shutting down (with reason and exit code) |
 | `ToolExecutionStartEvent` | Tool invocation started |
 | `ToolExecutionCompleteEvent` | Tool invocation completed |
+| `SkillInvokedEvent` | A skill was invoked |
 | `SessionCompactionStartEvent` | Context compaction started (infinite sessions) |
 | `SessionCompactionCompleteEvent` | Context compaction completed |
 | `SessionUsageInfoEvent` | Token usage information |
