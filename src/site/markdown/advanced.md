@@ -312,6 +312,67 @@ client.stop().get();    // Stop manually
 
 ---
 
+## Session Lifecycle Events
+
+Subscribe to lifecycle events to be notified when sessions are created, deleted, updated, or change foreground/background state.
+
+### Subscribing to All Lifecycle Events
+
+```java
+AutoCloseable subscription = client.onLifecycle(event -> {
+    System.out.println("Session " + event.getSessionId() + ": " + event.getType());
+    
+    if (event.getMetadata() != null) {
+        System.out.println("  Summary: " + event.getMetadata().getSummary());
+    }
+});
+
+// Later, when done listening:
+subscription.close();
+```
+
+### Subscribing to Specific Event Types
+
+```java
+import com.github.copilot.sdk.json.SessionLifecycleEventTypes;
+
+// Listen only for session creation
+AutoCloseable subscription = client.onLifecycle(
+    SessionLifecycleEventTypes.CREATED,
+    event -> System.out.println("New session: " + event.getSessionId())
+);
+```
+
+Available event types:
+- `SessionLifecycleEventTypes.CREATED` - Session was created
+- `SessionLifecycleEventTypes.DELETED` - Session was deleted
+- `SessionLifecycleEventTypes.UPDATED` - Session was updated
+- `SessionLifecycleEventTypes.FOREGROUND` - Session moved to foreground (TUI+server mode)
+- `SessionLifecycleEventTypes.BACKGROUND` - Session moved to background (TUI+server mode)
+
+---
+
+## Foreground Session Control (TUI+Server Mode)
+
+When connecting to a server running in TUI+server mode (`--ui-server`), you can control which session is displayed in the TUI.
+
+### Getting the Foreground Session
+
+```java
+String sessionId = client.getForegroundSessionId().get();
+if (sessionId != null) {
+    System.out.println("TUI is displaying session: " + sessionId);
+}
+```
+
+### Setting the Foreground Session
+
+```java
+client.setForegroundSessionId("session-123").get();
+```
+
+---
+
 ## Error Handling
 
 All SDK methods return `CompletableFuture`. Errors surface via `ExecutionException`:
