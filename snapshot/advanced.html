@@ -37,6 +37,7 @@
             <li><a href="getting-started.html">Getting Started</a></li>
             <li><a href="documentation.html">Documentation</a></li>
             <li><a href="mcp.html">MCP Servers</a></li>
+            <li><a href="hooks.html">Session Hooks</a></li>
             <li><a>Advanced Usage</a></li>
             <li><a href="apidocs/index.html">API Javadoc</a></li>
         </ul>
@@ -60,6 +61,7 @@
             <li><a href="advanced.html#Bring_Your_Own_Key_.28BYOK.29">BYOK</a></li>
             <li><a href="advanced.html#Infinite_Sessions">Infinite Sessions</a></li>
             <li><a href="advanced.html#MCP_Servers">MCP Servers</a></li>
+            <li><a href="hooks.html">Session Hooks</a></li>
         </ul>
       </li>
       <li class="dropdown">
@@ -118,6 +120,7 @@
     <li><a href="getting-started.html">Getting Started</a></li>
     <li><a href="documentation.html">Documentation</a></li>
     <li><a href="mcp.html">MCP Servers</a></li>
+    <li><a href="hooks.html">Session Hooks</a></li>
     <li class="active"><a>Advanced Usage</a></li>
     <li><a href="apidocs/index.html">API Javadoc</a></li>
    <li class="nav-header">Guides</li>
@@ -133,6 +136,7 @@
     <li><a href="advanced.html#Bring_Your_Own_Key_.28BYOK.29">BYOK</a></li>
     <li><a href="advanced.html#Infinite_Sessions">Infinite Sessions</a></li>
     <li><a href="advanced.html#MCP_Servers">MCP Servers</a></li>
+    <li><a href="hooks.html">Session Hooks</a></li>
    <li class="nav-header">Project Documentation</li>
     <li><a href="project-info.html"><span class="icon-chevron-right"></span>Project Information</a></li>
     <li><a href="project-reports.html"><span class="icon-chevron-right"></span>Project Reports</a></li>
@@ -375,7 +379,27 @@ Your skill instructions go here...
             return CompletableFuture.completedFuture(result);
         })
 ).get();
-</code></pre><hr /></section><section><a id="Manual_Server_Control"></a>
+</code></pre><hr /></section><section><a id="Session_Hooks"></a>
+<h2>Session Hooks</h2>
+<p>Intercept tool execution and session lifecycle events using hooks.</p>
+
+<pre class="prettyprint"><code class="language-java">var hooks = new SessionHooks()
+    .setOnPreToolUse((input, invocation) -&gt; {
+        System.out.println(&quot;Tool: &quot; + input.getToolName());
+        return CompletableFuture.completedFuture(
+            new PreToolUseHookOutput().setPermissionDecision(&quot;allow&quot;)
+        );
+    })
+    .setOnPostToolUse((input, invocation) -&gt; {
+        System.out.println(&quot;Result: &quot; + input.getToolResult());
+        return CompletableFuture.completedFuture(null);
+    });
+
+var session = client.createSession(
+    new SessionConfig().setHooks(hooks)
+).get();
+</code></pre>
+<p>&#x1f4d6; <strong><a href="hooks.html">Full Session Hooks documentation &#x2192;</a></strong> for all 5 hook types, inputs/outputs, and examples.</p><hr /></section><section><a id="Manual_Server_Control"></a>
 <h2>Manual Server Control</h2>
 <p>Control the CLI lifecycle yourself instead of auto-start.</p>
 

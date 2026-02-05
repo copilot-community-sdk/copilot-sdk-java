@@ -37,6 +37,7 @@
             <li><a href="getting-started.html">Getting Started</a></li>
             <li><a>Documentation</a></li>
             <li><a href="mcp.html">MCP Servers</a></li>
+            <li><a href="hooks.html">Session Hooks</a></li>
             <li><a href="advanced.html">Advanced Usage</a></li>
             <li><a href="apidocs/index.html">API Javadoc</a></li>
         </ul>
@@ -60,6 +61,7 @@
             <li><a href="advanced.html#Bring_Your_Own_Key_.28BYOK.29">BYOK</a></li>
             <li><a href="advanced.html#Infinite_Sessions">Infinite Sessions</a></li>
             <li><a href="advanced.html#MCP_Servers">MCP Servers</a></li>
+            <li><a href="hooks.html">Session Hooks</a></li>
         </ul>
       </li>
       <li class="dropdown">
@@ -118,6 +120,7 @@
     <li><a href="getting-started.html">Getting Started</a></li>
     <li class="active"><a>Documentation</a></li>
     <li><a href="mcp.html">MCP Servers</a></li>
+    <li><a href="hooks.html">Session Hooks</a></li>
     <li><a href="advanced.html">Advanced Usage</a></li>
     <li><a href="apidocs/index.html">API Javadoc</a></li>
    <li class="nav-header">Guides</li>
@@ -133,6 +136,7 @@
     <li><a href="advanced.html#Bring_Your_Own_Key_.28BYOK.29">BYOK</a></li>
     <li><a href="advanced.html#Infinite_Sessions">Infinite Sessions</a></li>
     <li><a href="advanced.html#MCP_Servers">MCP Servers</a></li>
+    <li><a href="hooks.html">Session Hooks</a></li>
    <li class="nav-header">Project Documentation</li>
     <li><a href="project-info.html"><span class="icon-chevron-right"></span>Project Information</a></li>
     <li><a href="project-reports.html"><span class="icon-chevron-right"></span>Project Reports</a></li>
@@ -159,7 +163,9 @@
 
 <li><a href="#Basic_Usage">Basic Usage</a></li>
 <li><a href="#Handling_Responses">Handling Responses</a></li>
+<li><a href="#Event_Types_Reference">Event Types Reference</a></li>
 <li><a href="#Streaming_Responses">Streaming Responses</a></li>
+<li><a href="#Session_Operations">Session Operations</a></li>
 <li><a href="#Choosing_a_Model">Choosing a Model</a></li>
 <li><a href="#Session_Management">Session Management</a></li>
 </ul><hr /></section><section><a id="Basic_Usage"></a>
@@ -242,31 +248,215 @@ done.get(); // Wait for completion
 <td>Session finished processing</td></tr>
 <tr class="a">
 <td><code>SessionErrorEvent</code></td>
-<td>An error occurred</td></tr>
-<tr class="b">
-<td><code>SessionShutdownEvent</code></td>
-<td>Session is shutting down (with reason and exit code)</td></tr>
-<tr class="a">
-<td><code>ToolExecutionStartEvent</code></td>
-<td>Tool invocation started</td></tr>
-<tr class="b">
-<td><code>ToolExecutionCompleteEvent</code></td>
-<td>Tool invocation completed</td></tr>
-<tr class="a">
-<td><code>SkillInvokedEvent</code></td>
-<td>A skill was invoked</td></tr>
-<tr class="b">
-<td><code>SessionCompactionStartEvent</code></td>
-<td>Context compaction started (infinite sessions)</td></tr>
-<tr class="a">
-<td><code>SessionCompactionCompleteEvent</code></td>
-<td>Context compaction completed</td></tr>
-<tr class="b">
-<td><code>SessionUsageInfoEvent</code></td>
-<td>Token usage information</td></tr></tbody>
+<td>An error occurred</td></tr></tbody>
 </table>
 
-<p>See the <a href="apidocs/com/github/copilot/sdk/events/package-summary.html">events package Javadoc</a> for all event types.</p><hr /></section></section><section><a id="Streaming_Responses"></a>
+<p>For the complete list of all 33 event types, see <a href="#Event_Types_Reference">Event Types Reference</a> below.</p><hr /></section></section><section><a id="Event_Types_Reference"></a>
+<h2>Event Types Reference</h2>
+<p>The SDK supports 33 event types organized by category. All events extend <code>AbstractSessionEvent</code>.</p><section><a id="Session_Events"></a>
+<h3>Session Events</h3>
+<table class="table table-striped">
+<thead>
+<tr class="a">
+<th>Event</th>
+<th>Type String</th>
+<th>Description</th></tr></thead><tbody>
+<tr class="b">
+<td><code>SessionStartEvent</code></td>
+<td><code>session.start</code></td>
+<td>Session has started</td></tr>
+<tr class="a">
+<td><code>SessionResumeEvent</code></td>
+<td><code>session.resume</code></td>
+<td>Session was resumed</td></tr>
+<tr class="b">
+<td><code>SessionIdleEvent</code></td>
+<td><code>session.idle</code></td>
+<td>Session finished processing, ready for input</td></tr>
+<tr class="a">
+<td><code>SessionErrorEvent</code></td>
+<td><code>session.error</code></td>
+<td>An error occurred in the session</td></tr>
+<tr class="b">
+<td><code>SessionInfoEvent</code></td>
+<td><code>session.info</code></td>
+<td>Informational message from the session</td></tr>
+<tr class="a">
+<td><code>SessionShutdownEvent</code></td>
+<td><code>session.shutdown</code></td>
+<td>Session is shutting down (includes reason and exit code)</td></tr>
+<tr class="b">
+<td><code>SessionModelChangeEvent</code></td>
+<td><code>session.model_change</code></td>
+<td>The model was changed mid-session</td></tr>
+<tr class="a">
+<td><code>SessionHandoffEvent</code></td>
+<td><code>session.handoff</code></td>
+<td>Session handed off to another agent</td></tr>
+<tr class="b">
+<td><code>SessionTruncationEvent</code></td>
+<td><code>session.truncation</code></td>
+<td>Context was truncated due to limits</td></tr>
+<tr class="a">
+<td><code>SessionSnapshotRewindEvent</code></td>
+<td><code>session.snapshot_rewind</code></td>
+<td>Session rewound to a previous snapshot</td></tr>
+<tr class="b">
+<td><code>SessionUsageInfoEvent</code></td>
+<td><code>session.usage_info</code></td>
+<td>Token usage information</td></tr>
+<tr class="a">
+<td><code>SessionCompactionStartEvent</code></td>
+<td><code>session.compaction_start</code></td>
+<td>Context compaction started (infinite sessions)</td></tr>
+<tr class="b">
+<td><code>SessionCompactionCompleteEvent</code></td>
+<td><code>session.compaction_complete</code></td>
+<td>Context compaction completed</td></tr></tbody>
+</table>
+</section><section><a id="Assistant_Events"></a>
+<h3>Assistant Events</h3>
+<table class="table table-striped">
+<thead>
+<tr class="a">
+<th>Event</th>
+<th>Type String</th>
+<th>Description</th></tr></thead><tbody>
+<tr class="b">
+<td><code>AssistantTurnStartEvent</code></td>
+<td><code>assistant.turn_start</code></td>
+<td>Assistant began processing</td></tr>
+<tr class="a">
+<td><code>AssistantIntentEvent</code></td>
+<td><code>assistant.intent</code></td>
+<td>Assistant's detected intent</td></tr>
+<tr class="b">
+<td><code>AssistantReasoningEvent</code></td>
+<td><code>assistant.reasoning</code></td>
+<td>Full reasoning content (reasoning models)</td></tr>
+<tr class="a">
+<td><code>AssistantReasoningDeltaEvent</code></td>
+<td><code>assistant.reasoning_delta</code></td>
+<td>Streaming reasoning chunk</td></tr>
+<tr class="b">
+<td><code>AssistantMessageEvent</code></td>
+<td><code>assistant.message</code></td>
+<td>Complete assistant message</td></tr>
+<tr class="a">
+<td><code>AssistantMessageDeltaEvent</code></td>
+<td><code>assistant.message_delta</code></td>
+<td>Streaming message chunk</td></tr>
+<tr class="b">
+<td><code>AssistantTurnEndEvent</code></td>
+<td><code>assistant.turn_end</code></td>
+<td>Assistant finished processing</td></tr>
+<tr class="a">
+<td><code>AssistantUsageEvent</code></td>
+<td><code>assistant.usage</code></td>
+<td>Token usage for this turn</td></tr></tbody>
+</table>
+</section><section><a id="Tool_Events"></a>
+<h3>Tool Events</h3>
+<table class="table table-striped">
+<thead>
+<tr class="a">
+<th>Event</th>
+<th>Type String</th>
+<th>Description</th></tr></thead><tbody>
+<tr class="b">
+<td><code>ToolUserRequestedEvent</code></td>
+<td><code>tool.user_requested</code></td>
+<td>User requested a tool invocation</td></tr>
+<tr class="a">
+<td><code>ToolExecutionStartEvent</code></td>
+<td><code>tool.execution_start</code></td>
+<td>Tool execution started</td></tr>
+<tr class="b">
+<td><code>ToolExecutionProgressEvent</code></td>
+<td><code>tool.execution_progress</code></td>
+<td>Tool execution progress update</td></tr>
+<tr class="a">
+<td><code>ToolExecutionPartialResultEvent</code></td>
+<td><code>tool.execution_partial_result</code></td>
+<td>Partial result from tool</td></tr>
+<tr class="b">
+<td><code>ToolExecutionCompleteEvent</code></td>
+<td><code>tool.execution_complete</code></td>
+<td>Tool execution completed</td></tr></tbody>
+</table>
+</section><section><a id="User_Events"></a>
+<h3>User Events</h3>
+<table class="table table-striped">
+<thead>
+<tr class="a">
+<th>Event</th>
+<th>Type String</th>
+<th>Description</th></tr></thead><tbody>
+<tr class="b">
+<td><code>UserMessageEvent</code></td>
+<td><code>user.message</code></td>
+<td>User sent a message</td></tr>
+<tr class="a">
+<td><code>PendingMessagesModifiedEvent</code></td>
+<td><code>pending_messages.modified</code></td>
+<td>Pending message queue changed</td></tr></tbody>
+</table>
+</section><section><a id="Subagent_Events"></a>
+<h3>Subagent Events</h3>
+<table class="table table-striped">
+<thead>
+<tr class="a">
+<th>Event</th>
+<th>Type String</th>
+<th>Description</th></tr></thead><tbody>
+<tr class="b">
+<td><code>SubagentStartedEvent</code></td>
+<td><code>subagent.started</code></td>
+<td>Subagent was spawned</td></tr>
+<tr class="a">
+<td><code>SubagentSelectedEvent</code></td>
+<td><code>subagent.selected</code></td>
+<td>Subagent was selected for task</td></tr>
+<tr class="b">
+<td><code>SubagentCompletedEvent</code></td>
+<td><code>subagent.completed</code></td>
+<td>Subagent completed its task</td></tr>
+<tr class="a">
+<td><code>SubagentFailedEvent</code></td>
+<td><code>subagent.failed</code></td>
+<td>Subagent failed</td></tr></tbody>
+</table>
+</section><section><a id="Other_Events"></a>
+<h3>Other Events</h3>
+<table class="table table-striped">
+<thead>
+<tr class="a">
+<th>Event</th>
+<th>Type String</th>
+<th>Description</th></tr></thead><tbody>
+<tr class="b">
+<td><code>AbortEvent</code></td>
+<td><code>abort</code></td>
+<td>Operation was aborted</td></tr>
+<tr class="a">
+<td><code>HookStartEvent</code></td>
+<td><code>hook.start</code></td>
+<td>Hook execution started</td></tr>
+<tr class="b">
+<td><code>HookEndEvent</code></td>
+<td><code>hook.end</code></td>
+<td>Hook execution completed</td></tr>
+<tr class="a">
+<td><code>SystemMessageEvent</code></td>
+<td><code>system.message</code></td>
+<td>System-level message</td></tr>
+<tr class="b">
+<td><code>SkillInvokedEvent</code></td>
+<td><code>skill.invoked</code></td>
+<td>A skill was invoked</td></tr></tbody>
+</table>
+
+<p>See the <a href="apidocs/com/github/copilot/sdk/events/package-summary.html">events package Javadoc</a> for detailed event data structures.</p><hr /></section></section><section><a id="Streaming_Responses"></a>
 <h2>Streaming Responses</h2>
 <p>Enable streaming to receive response chunks as they're generated:</p>
 
@@ -290,7 +480,69 @@ session.on(event -&gt; {
 
 session.send(&quot;Write a haiku about Java&quot;).get();
 done.get();
-</code></pre><hr /></section><section><a id="Choosing_a_Model"></a>
+</code></pre><hr /></section><section><a id="Session_Operations"></a>
+<h2>Session Operations</h2><section><a id="Get_Conversation_History"></a>
+<h3>Get Conversation History</h3>
+<p>Retrieve all messages and events from a session using <code>getMessages()</code>:</p>
+
+<pre class="prettyprint"><code class="language-java">List&lt;AbstractSessionEvent&gt; history = session.getMessages().get();
+
+for (AbstractSessionEvent event : history) {
+    switch (event) {
+        case UserMessageEvent user -&gt; 
+            System.out.println(&quot;User: &quot; + user.getData().getContent());
+        case AssistantMessageEvent assistant -&gt; 
+            System.out.println(&quot;Assistant: &quot; + assistant.getData().getContent());
+        case ToolExecutionCompleteEvent tool -&gt; 
+            System.out.println(&quot;Tool: &quot; + tool.getData().getToolName());
+        default -&gt; { }
+    }
+}
+</code></pre>
+<p>This is useful for:</p>
+<ul>
+
+<li>Displaying conversation history in a UI</li>
+<li>Persisting conversations for later review</li>
+<li>Debugging and logging session state</li>
+</ul></section><section><a id="Abort_Current_Operation"></a>
+<h3>Abort Current Operation</h3>
+<p>Cancel a long-running operation using <code>abort()</code>:</p>
+
+<pre class="prettyprint"><code class="language-java">// Start a potentially long operation
+var messageFuture = session.send(&quot;Analyze this large codebase...&quot;);
+
+// User clicks cancel button
+session.abort().get();
+
+// The session will emit an AbortEvent
+session.on(AbortEvent.class, evt -&gt; {
+    System.out.println(&quot;Operation was cancelled&quot;);
+});
+</code></pre>
+<p>Use cases:</p>
+<ul>
+
+<li>User-initiated cancellation in interactive applications</li>
+<li>Timeout handling in automated pipelines</li>
+<li>Graceful shutdown when application is closing</li>
+</ul></section><section><a id="Custom_Timeout"></a>
+<h3>Custom Timeout</h3>
+<p>Use <code>sendAndWait</code> with a custom timeout for CI/CD pipelines:</p>
+
+<pre class="prettyprint"><code class="language-java">try {
+    // 30-second timeout
+    var response = session.sendAndWait(
+        new MessageOptions().setPrompt(&quot;Quick question&quot;),
+        30000  // timeout in milliseconds
+    ).get();
+} catch (ExecutionException e) {
+    if (e.getCause() instanceof TimeoutException) {
+        System.err.println(&quot;Request timed out&quot;);
+        session.abort().get();
+    }
+}
+</code></pre><hr /></section></section><section><a id="Choosing_a_Model"></a>
 <h2>Choosing a Model</h2><section><a id="List_Available_Models"></a>
 <h3>List Available Models</h3>
 <p>Query available models before creating a session:</p>
@@ -345,6 +597,7 @@ client.deleteSession(sessionId).get();
 <ul>
 
 <li>&#x1f4d6; <strong><a href="advanced.html">Advanced Usage</a></strong> - Tools, BYOK, MCP Servers, System Messages, Infinite Sessions, Skills</li>
+<li>&#x1f4d6; <strong><a href="hooks.html">Session Hooks</a></strong> - Intercept tool execution and session lifecycle events</li>
 <li>&#x1f4d6; <strong><a href="mcp.html">MCP Servers</a></strong> - Integrate external tools via Model Context Protocol</li>
 <li>&#x1f4d6; <strong><a href="apidocs/index.html">API Javadoc</a></strong> - Complete API reference</li>
 </ul></section></section>        </main>

@@ -37,6 +37,7 @@
             <li><a href="getting-started.html">Getting Started</a></li>
             <li><a href="documentation.html">Documentation</a></li>
             <li><a href="mcp.html">MCP Servers</a></li>
+            <li><a href="hooks.html">Session Hooks</a></li>
             <li><a href="advanced.html">Advanced Usage</a></li>
             <li><a href="apidocs/index.html">API Javadoc</a></li>
         </ul>
@@ -60,6 +61,7 @@
             <li><a href="advanced.html#Bring_Your_Own_Key_.28BYOK.29">BYOK</a></li>
             <li><a href="advanced.html#Infinite_Sessions">Infinite Sessions</a></li>
             <li><a href="advanced.html#MCP_Servers">MCP Servers</a></li>
+            <li><a href="hooks.html">Session Hooks</a></li>
         </ul>
       </li>
       <li class="dropdown">
@@ -118,6 +120,7 @@
     <li><a href="getting-started.html">Getting Started</a></li>
     <li><a href="documentation.html">Documentation</a></li>
     <li><a href="mcp.html">MCP Servers</a></li>
+    <li><a href="hooks.html">Session Hooks</a></li>
     <li><a href="advanced.html">Advanced Usage</a></li>
     <li><a href="apidocs/index.html">API Javadoc</a></li>
    <li class="nav-header">Guides</li>
@@ -133,6 +136,7 @@
     <li><a href="advanced.html#Bring_Your_Own_Key_.28BYOK.29">BYOK</a></li>
     <li><a href="advanced.html#Infinite_Sessions">Infinite Sessions</a></li>
     <li><a href="advanced.html#MCP_Servers">MCP Servers</a></li>
+    <li><a href="hooks.html">Session Hooks</a></li>
    <li class="nav-header">Project Documentation</li>
     <li><a href="project-info.html"><span class="icon-chevron-down"></span>Project Information</a>
      <ul class="nav nav-list">
@@ -605,7 +609,7 @@ _stq.push([ "clickTrackerInit", "210318891", "395" ]);
 <script data-service="jetpack-statistics" data-category="statistics" type="text/plain" data-cmplz-src="https://stats.wp.com/e-202606.js" id="jetpack-stats-js" defer="defer" data-wp-strategy="defer"></script>
 <script type="text/javascript" id="cmplz-cookiebanner-js-extra">
 /* <![CDATA[ */
-var complianz = {"prefix":"cmplz_","user_banner_id":"1","set_cookies":[],"block_ajax_content":"","banner_version":"134","version":"7.4.4.2","store_consent":"","do_not_track_enabled":"1","consenttype":"optin","region":"eu","geoip":"","dismiss_timeout":"","disable_cookiebanner":"1","soft_cookiewall":"","dismiss_on_scroll":"","cookie_expiry":"365","url":"https://opensource.org/wp-json/complianz/v1/","locale":"lang=en&locale=en_US","set_cookies_on_root":"","cookie_domain":"","current_policy_id":"22","cookie_path":"/","categories":{"statistics":"statistics","marketing":"marketing"},"tcf_active":"","placeholdertext":"Click to accept {category} cookies and enable this content","css_file":"https://opensource.org/wp-content/uploads/complianz/css/banner-{banner_id}-{type}.css?v=134","page_links":{"eu":{"cookie-statement":{"title":"","url":"https://opensource.org/license/gpl-3-0"}}},"tm_categories":"","forceEnableStats":"","preview":"","clean_cookies":"","aria_label":"Click to accept {category} cookies and enable this content"};
+var complianz = {"prefix":"cmplz_","user_banner_id":"1","set_cookies":[],"block_ajax_content":"","banner_version":"134","version":"7.4.4.2","store_consent":"","do_not_track_enabled":"1","consenttype":"optin","region":"eu","geoip":"","dismiss_timeout":"","disable_cookiebanner":"1","soft_cookiewall":"","dismiss_on_scroll":"","cookie_expiry":"365","url":"https://opensource.org/wp-json/complianz/v1/","locale":"lang=en&locale=en_US","set_cookies_on_root":"","cookie_domain":"","current_policy_id":"22","cookie_path":"/","categories":{"statistics":"statistics","marketing":"marketing"},"tcf_active":"","placeholdertext":"Click to accept {category} cookies and enable this content","css_file":"https://opensource.org/wp-content/uploads/complianz/css/banner-{banner_id}-{type}.css?v=134","page_links":{"eu":{"cookie-statement":{"title":"","url":"https://opensource.org/blog/participate-in-the-2026-state-of-open-source-survey"}}},"tm_categories":"","forceEnableStats":"","preview":"","clean_cookies":"","aria_label":"Click to accept {category} cookies and enable this content"};
 //# sourceURL=cmplz-cookiebanner-js-extra
 /* ]]> */
 </script>
@@ -621,7 +625,7 @@ const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(
 /* ]]> */
 </script>
 
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c95a91c3e9b4adb',t:'MTc3MDMyODYxNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></section></section>        </main>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c95c197be5fdb5e',t:'MTc3MDMyOTYxOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></section></section>        </main>
       </div>
     </div>
     <hr/>
