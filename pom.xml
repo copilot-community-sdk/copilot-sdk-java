@@ -42,6 +42,8 @@
         <!-- Directory where the copilot-sdk repo will be cloned for tests -->
         <copilot.sdk.clone.dir>${project.build.directory}/copilot-sdk</copilot.sdk.clone.dir>
         <copilot.tests.dir>${copilot.sdk.clone.dir}/test</copilot.tests.dir>
+        <!-- Test coverage output locations -->
+        <coverage.reports.dir>${project.build.directory}/coverage-reports</coverage.reports.dir>
     </properties>
 
     <dependencies>
@@ -212,6 +214,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.4</version>
                 <configuration>
+                    <!-- Inject JaCoCo agent for coverage collection during test runs -->
+                    <argLine>${testExecutionAgentArgs}</argLine>
                     <systemPropertyVariables>
                         <copilot.tests.dir>${copilot.tests.dir}</copilot.tests.dir>
                         <copilot.sdk.dir>${copilot.sdk.clone.dir}</copilot.sdk.dir>
@@ -236,6 +240,47 @@
                         </indent>
                     </java>
                 </configuration>
+            </plugin>
+            <!-- Coverage tracking for CopilotClient/CopilotSession interactions with CLI -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <!-- Instrument bytecode before E2ETestContext runs tests with CapiProxy -->
+                    <execution>
+                        <id>wire-up-coverage-instrumentation</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Store exec file alongside other build artifacts -->
+                            <destFile>${project.build.directory}/jacoco-test-results/sdk-tests.exec</destFile>
+                            <!-- Pass agent args via this property to surefire -->
+                            <propertyName>testExecutionAgentArgs</propertyName>
+                            <!-- Focus on SDK package, exclude test harness utilities -->
+                            <includes>
+                                <include>com/github/copilot/sdk/**</include>
+                            </includes>
+                            <excludes>
+                                <exclude>com/github/copilot/sdk/E2ETestContext*</exclude>
+                                <exclude>com/github/copilot/sdk/CapiProxy*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <!-- Generate HTML/XML reports after tests complete -->
+                    <execution>
+                        <id>build-coverage-report-from-tests</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <dataFile>${project.build.directory}/jacoco-test-results/sdk-tests.exec</dataFile>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-coverage</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -362,6 +407,19 @@
                     <reportSet>
                         <reports>
                             <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <!-- Test coverage for CopilotClient, CopilotSession, JsonRpcClient and supporting classes -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
                         </reports>
                     </reportSet>
                 </reportSets>
