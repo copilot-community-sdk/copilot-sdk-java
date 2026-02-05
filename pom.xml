@@ -42,8 +42,6 @@
         <!-- Directory where the copilot-sdk repo will be cloned for tests -->
         <copilot.sdk.clone.dir>${project.build.directory}/copilot-sdk</copilot.sdk.clone.dir>
         <copilot.tests.dir>${copilot.sdk.clone.dir}/test</copilot.tests.dir>
-        <!-- Test coverage output locations -->
-        <coverage.reports.dir>${project.build.directory}/coverage-reports</coverage.reports.dir>
     </properties>
 
     <dependencies>
