@@ -5,6 +5,10 @@ inputs:
     description: "Path to the test report XML files (glob pattern)"
     required: false
     default: "target/surefire-reports/TEST-*.xml"
+  jacoco-path:
+    description: "Path to the JaCoCo XML report"
+    required: false
+    default: "target/site/jacoco/jacoco.xml"
   check-name:
     description: "Name for the check run"
     required: false
@@ -81,4 +85,74 @@ runs:
           done
         else
           echo "⚠️ No test reports found at ${{ inputs.report-path }}" >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: Generate Coverage Summary
+      shell: bash
+      run: |
+        JACOCO_XML="${{ inputs.jacoco-path }}"
+        
+        if [ -f "$JACOCO_XML" ]; then
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Code Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # JaCoCo XML may be on a single line - split it for parsing
+          # Extract report-level counters (last occurrence of each type before </report>)
+          extract_counter() {
+            local type=$1
+            local field=$2
+            # Split XML on > to get one tag per line, find counter, extract value
+            sed 's/>/>\n/g' "$JACOCO_XML" | grep "<counter type=\"$type\"" | tail -1 | sed "s/.*$field=\"\([0-9]*\)\".*/\1/"
+          }
+          
+          INSTR_MISSED=$(extract_counter "INSTRUCTION" "missed")
+          INSTR_COVERED=$(extract_counter "INSTRUCTION" "covered")
+          
+          BRANCH_MISSED=$(extract_counter "BRANCH" "missed")
+          BRANCH_COVERED=$(extract_counter "BRANCH" "covered")
+          
+          LINE_MISSED=$(extract_counter "LINE" "missed")
+          LINE_COVERED=$(extract_counter "LINE" "covered")
+          
+          METHOD_MISSED=$(extract_counter "METHOD" "missed")
+          METHOD_COVERED=$(extract_counter "METHOD" "covered")
+          
+          CLASS_MISSED=$(extract_counter "CLASS" "missed")
+          CLASS_COVERED=$(extract_counter "CLASS" "covered")
+          
+          # Calculate percentages
+          calc_pct() {
+            local covered=$1
+            local missed=$2
+            if [ -n "$covered" ] && [ -n "$missed" ]; then
+              local total=$((covered + missed))
+              if [ "$total" -gt 0 ]; then
+                echo "scale=1; $covered * 100 / $total" | bc
+              else
+                echo "0"
+              fi
+            else
+              echo "N/A"
+            fi
+          }
+          
+          INSTR_PCT=$(calc_pct "${INSTR_COVERED:-0}" "${INSTR_MISSED:-0}")
+          BRANCH_PCT=$(calc_pct "${BRANCH_COVERED:-0}" "${BRANCH_MISSED:-0}")
+          LINE_PCT=$(calc_pct "${LINE_COVERED:-0}" "${LINE_MISSED:-0}")
+          METHOD_PCT=$(calc_pct "${METHOD_COVERED:-0}" "${METHOD_MISSED:-0}")
+          CLASS_PCT=$(calc_pct "${CLASS_COVERED:-0}" "${CLASS_MISSED:-0}")
+          
+          echo "| Metric | Covered | Missed | Coverage |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|---------|--------|----------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 📝 Instructions | ${INSTR_COVERED:-0} | ${INSTR_MISSED:-0} | ${INSTR_PCT}% |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🌿 Branches | ${BRANCH_COVERED:-0} | ${BRANCH_MISSED:-0} | ${BRANCH_PCT}% |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📏 Lines | ${LINE_COVERED:-0} | ${LINE_MISSED:-0} | ${LINE_PCT}% |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔧 Methods | ${METHOD_COVERED:-0} | ${METHOD_MISSED:-0} | ${METHOD_PCT}% |" >> $GITHUB_STEP_SUMMARY
+          echo "| 📦 Classes | ${CLASS_COVERED:-0} | ${CLASS_MISSED:-0} | ${CLASS_PCT}% |" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Code Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ No JaCoCo report found at $JACOCO_XML" >> $GITHUB_STEP_SUMMARY
         fi
