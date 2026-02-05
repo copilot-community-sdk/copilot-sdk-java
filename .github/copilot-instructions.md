@@ -169,3 +169,4 @@ Test method names are converted to lowercase snake_case for snapshot filenames t
 - Site docs in `src/site/markdown/` (filtered for `${project.version}` substitution)
 - Update `src/site/site.xml` when adding new documentation pages
 - Javadoc required for public APIs except `json` and `events` packages (self-documenting DTOs)
+- **Copilot CLI Version**: When updating the required Copilot CLI version in `README.md`, also update it in `src/site/markdown/index.md` to keep them in sync
