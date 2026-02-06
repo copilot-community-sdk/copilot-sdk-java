@@ -114,7 +114,8 @@ jobs:
       - name: Build snapshot documentation (main branch)
         if: steps.tags.outputs.is_release == 'false' && inputs.rebuild_all_versions != true
         run: |
-          ./mvnw clean site -DskipTests -Dcheckstyle.skip=true
+          # Run tests with JaCoCo coverage for snapshot builds
+          ./mvnw clean verify site -Dcheckstyle.skip=true
           
           rm -rf "site/snapshot"
           mkdir -p "site/snapshot"
@@ -171,9 +172,9 @@ jobs:
             
           done <<< "${{ steps.tags.outputs.all_tags }}"
           
-          # Return to main and build snapshot
+          # Return to main and build snapshot with JaCoCo coverage
           git checkout main
-          ./mvnw clean site -DskipTests -Dcheckstyle.skip=true
+          ./mvnw clean verify site -Dcheckstyle.skip=true
           
           rm -rf "site/snapshot"
           mkdir -p "site/snapshot"
