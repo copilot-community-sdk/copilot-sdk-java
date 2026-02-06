@@ -41,13 +41,13 @@ session.setEventErrorHandler((event, exception) -> {
 ```
 
 #### EventErrorPolicy for Dispatch Control
-Added `EventErrorPolicy` enum to control whether event dispatch continues or stops when a handler throws an exception. The default policy is `SUPPRESS` (existing behavior). Set `PROPAGATE` to stop dispatch on the first error:
+Added `EventErrorPolicy` enum to control whether event dispatch continues or stops when a handler throws an exception. Errors are always logged at `WARNING` level. The default policy is `PROPAGATE_AND_LOG_ERRORS` which stops dispatch on the first error. Set `SUPPRESS_AND_LOG_ERRORS` to continue dispatching despite errors:
 
 ```java
-session.setEventErrorPolicy(EventErrorPolicy.PROPAGATE);
+session.setEventErrorPolicy(EventErrorPolicy.SUPPRESS_AND_LOG_ERRORS);
 ```
 
-The `EventErrorHandler` is always invoked regardless of the policy. When no error handler is set, exceptions are silently consumed (no logging).
+The `EventErrorHandler` is always invoked regardless of the policy.
 
 #### Type-Safe Event Handlers
 Promoted type-safe `on(Class<T>, Consumer<T>)` event handlers as the primary API. Handlers now receive strongly-typed events instead of raw `AbstractSessionEvent`.

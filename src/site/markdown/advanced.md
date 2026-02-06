@@ -453,11 +453,14 @@ session.send(new MessageOptions().setPrompt("Hello"))
 ### Event Handler Exceptions
 
 If an event handler registered via `session.on()` throws an exception, the SDK
-catches it and continues dispatching to remaining handlers by default. This
-means one faulty handler will never block others from receiving events:
+catches it and logs it at `WARNING` level. By default, dispatch **stops** after
+the first handler error (`PROPAGATE_AND_LOG_ERRORS` policy). You can opt in to
+continue dispatching despite errors using `SUPPRESS_AND_LOG_ERRORS`:
 
 ```java
-// This handler throws, but the second handler still runs
+// With SUPPRESS_AND_LOG_ERRORS, second handler still runs
+session.setEventErrorPolicy(EventErrorPolicy.SUPPRESS_AND_LOG_ERRORS);
+
 session.on(AssistantMessageEvent.class, msg -> {
     throw new RuntimeException("bug in handler 1");
 });
@@ -468,14 +471,14 @@ session.on(AssistantMessageEvent.class, msg -> {
 });
 ```
 
-When no `EventErrorHandler` is set, exceptions are **silently consumed** — the
-SDK does not log by default. Applications should set an error handler if they
-want visibility into handler failures (see below).
+Errors are **always logged** at `WARNING` level regardless of the policy or
+whether a custom error handler is set.
 
 ### Custom Event Error Handler
 
-Set a custom `EventErrorHandler` to integrate with your own logging, metrics,
-or error-reporting systems:
+Set a custom `EventErrorHandler` for additional handling beyond the default
+logging — such as metrics, alerts, or integration with external
+error-reporting systems:
 
 ```java
 session.setEventErrorHandler((event, exception) -> {
@@ -490,7 +493,7 @@ exception that was thrown. If the error handler itself throws, that exception
 is caught and logged at `SEVERE`, and dispatch is stopped to prevent cascading
 failures.
 
-Pass `null` to restore the default silent behavior:
+Pass `null` to use only the default logging behavior:
 
 ```java
 session.setEventErrorHandler(null);
@@ -498,40 +501,40 @@ session.setEventErrorHandler(null);
 
 ### Event Error Policy
 
-By default, the SDK suppresses errors and continues dispatching to remaining
-handlers (`EventErrorPolicy.SUPPRESS`). You can opt in to **propagate** errors
-so that the first handler error stops dispatch:
+By default, the SDK propagates errors and stops dispatch on the first handler
+error (`EventErrorPolicy.PROPAGATE_AND_LOG_ERRORS`). You can opt in to
+**suppress** errors so that all handlers execute despite errors:
 
 ```java
-session.setEventErrorPolicy(EventErrorPolicy.PROPAGATE);
+session.setEventErrorPolicy(EventErrorPolicy.SUPPRESS_AND_LOG_ERRORS);
 ```
 
 The `EventErrorHandler` (if set) is always invoked regardless of the policy —
 the policy only controls whether remaining handlers execute after the error
-handler returns.
+handler returns. Errors are always logged at `WARNING` level.
 
 | Policy | Behavior |
 |---|---|
-| `SUPPRESS` (default) | Suppress the error; all remaining handlers execute |
-| `PROPAGATE` | Propagate the error effect; dispatch halts after the first error |
+| `PROPAGATE_AND_LOG_ERRORS` (default) | Log the error; dispatch halts after the first error |
+| `SUPPRESS_AND_LOG_ERRORS` | Log the error; all remaining handlers execute |
 
 You can combine both for full control:
 
 ```java
-// Log errors and propagate (stop dispatch on first failure)
-session.setEventErrorPolicy(EventErrorPolicy.PROPAGATE);
+// Log errors via custom handler and suppress (continue dispatching)
+session.setEventErrorPolicy(EventErrorPolicy.SUPPRESS_AND_LOG_ERRORS);
 session.setEventErrorHandler((event, ex) ->
-    logger.error("Handler failed, stopping: {}", ex.getMessage(), ex));
+    logger.error("Handler failed, continuing: {}", ex.getMessage(), ex));
 ```
 
 Or switch policies dynamically:
 
 ```java
-// Start lenient (suppress errors)
-session.setEventErrorPolicy(EventErrorPolicy.SUPPRESS);
+// Start strict (propagate errors, stop dispatch)
+session.setEventErrorPolicy(EventErrorPolicy.PROPAGATE_AND_LOG_ERRORS);
 
-// Later, switch to strict mode (propagate errors)
-session.setEventErrorPolicy(EventErrorPolicy.PROPAGATE);
+// Later, switch to lenient mode (suppress errors, continue)
+session.setEventErrorPolicy(EventErrorPolicy.SUPPRESS_AND_LOG_ERRORS);
 ```
 
 See [EventErrorPolicy](apidocs/com/github/copilot/sdk/EventErrorPolicy.html) and [EventErrorHandler](apidocs/com/github/copilot/sdk/EventErrorHandler.html) Javadoc for details.
