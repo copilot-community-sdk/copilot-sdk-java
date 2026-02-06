@@ -34,7 +34,7 @@ System.out.println(result.getData().getContent());
 Run a tool as a subprocess (stdin/stdout communication).
 
 ```java
-Map<String, Object> server = new HashMap<>();
+var server = new HashMap<String, Object>();
 server.put("type", "local");
 server.put("command", "node");
 server.put("args", List.of("./mcp-server.js"));
