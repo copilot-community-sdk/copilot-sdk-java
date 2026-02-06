@@ -2,6 +2,15 @@
 
 A Java SDK for programmatic control of GitHub Copilot CLI. This is a community-driven port of the official .NET SDK, targeting Java 17+.
 
+## About These Instructions
+
+These instructions guide GitHub Copilot when assisting with this repository. They cover:
+
+- **Tech Stack**: Java 17+, Maven, Jackson for JSON, JUnit for testing
+- **Purpose**: Provide a Java SDK for programmatic control of GitHub Copilot CLI
+- **Architecture**: JSON-RPC client communicating with Copilot CLI over stdio
+- **Key Goals**: Maintain parity with upstream .NET SDK while following Java idioms
+
 ## Build & Test Commands
 
 ```bash
@@ -170,3 +179,73 @@ Test method names are converted to lowercase snake_case for snapshot filenames t
 - Update `src/site/site.xml` when adding new documentation pages
 - Javadoc required for public APIs except `json` and `events` packages (self-documenting DTOs)
 - **Copilot CLI Version**: When updating the required Copilot CLI version in `README.md`, also update it in `src/site/markdown/index.md` to keep them in sync
+
+## Boundaries and Restrictions
+
+### What NOT to Modify
+
+- **DO NOT** edit `.github/agents/` directory - these contain instructions for other agents
+- **DO NOT** modify `target/` directory - this contains build artifacts
+- **DO NOT** edit `pom.xml` dependencies without careful consideration - this SDK has minimal dependencies by design
+- **DO NOT** change the Jackson version without testing against all serialization patterns
+- **DO NOT** modify test snapshots in `target/copilot-sdk/test/snapshots/` - these come from upstream
+- **DO NOT** alter the Eclipse formatter configuration in `pom.xml` without team consensus
+- **DO NOT** remove or skip Checkstyle or Spotless checks
+
+### Security Guidelines
+
+- **NEVER** commit secrets, API keys, tokens, or credentials to the repository
+- **NEVER** commit `.env` files or any files containing sensitive configuration
+- **NEVER** log sensitive data in code (API keys, tokens, user data)
+- Always use `try-with-resources` for streams and readers to prevent resource leaks
+- Always use `StandardCharsets.UTF_8` when creating InputStreamReader/OutputStreamWriter
+- Review any new dependencies for known security vulnerabilities before adding them
+- When handling user input in tools or handlers, consider injection risks
+
+## Dependency Management
+
+This SDK is designed to be **lightweight with minimal dependencies**:
+
+- Core dependencies: Jackson (JSON), JUnit (tests only)
+- Before adding new dependencies:
+  1. Consider if the functionality can be implemented without a new dependency
+  2. Check if Jackson already provides the needed functionality
+  3. Ensure the dependency is actively maintained and widely used
+  4. Verify compatibility with Java 17+
+  5. Check for security vulnerabilities
+  6. Get team approval for non-trivial additions
+
+## Commit and PR Guidelines
+
+### Commit Messages
+
+- Use clear, descriptive commit messages
+- Start with a verb in present tense (e.g., "Add", "Fix", "Update", "Refactor")
+- Keep the first line under 72 characters
+- Add details in the body if needed
+- Examples:
+  - `Add support for streaming responses`
+  - `Fix resource leak in JsonRpcClient`
+  - `Update documentation for tool handlers`
+  - `Refactor event handling to use sealed classes`
+
+### Pull Requests
+
+- Keep PRs focused and minimal - one feature/fix per PR
+- Ensure all tests pass before requesting review
+- Run `mvn spotless:apply` before committing
+- Include tests for new functionality
+- Update documentation if adding/changing public APIs
+- Reference related issues using `#issue-number`
+- For upstream merges, follow the `agentic-merge-upstream` skill workflow
+
+## Development Workflow
+
+1. **Setup**: Enable git hooks with `git config core.hooksPath .githooks`
+2. **Branch**: Create feature branches from `main`
+3. **Code**: Write code following the conventions above
+4. **Format**: Run `mvn spotless:apply` to format code
+5. **Test**: Run `mvn clean verify` to ensure all tests pass
+6. **Commit**: Make focused commits with clear messages
+7. **Push**: Push your branch and create a PR
+8. **Review**: Address review feedback and iterate
