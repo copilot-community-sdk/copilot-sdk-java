@@ -1031,7 +1031,8 @@ public class CopilotClient implements AutoCloseable {
         Integer detectedPort = null;
         if (!options.isUseStdio()) {
             // Wait for port announcement
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
                 Pattern portPattern = Pattern.compile("listening on port (\\d+)", Pattern.CASE_INSENSITIVE);
                 long deadline = System.currentTimeMillis() + 30000;
 
