@@ -4,6 +4,35 @@
 
 This guide covers advanced scenarios for extending and customizing your Copilot integration.
 
+## Table of Contents
+
+- [Custom Tools](#custom-tools)
+- [System Messages](#system-messages)
+  - [Adding Rules](#adding-rules)
+  - [Full Control](#full-control)
+- [File Attachments](#file-attachments)
+- [Bring Your Own Key (BYOK)](#bring-your-own-key-byok)
+- [Infinite Sessions](#infinite-sessions)
+  - [Compaction Events](#compaction-events)
+- [MCP Servers](#mcp-servers)
+- [Skills Configuration](#skills-configuration)
+  - [Loading Skills](#loading-skills)
+  - [Disabling Skills](#disabling-skills)
+- [Custom Configuration Directory](#custom-configuration-directory)
+- [User Input Handling](#user-input-handling)
+- [Permission Handling](#permission-handling)
+- [Session Hooks](#session-hooks)
+- [Manual Server Control](#manual-server-control)
+- [Session Lifecycle Events](#session-lifecycle-events)
+  - [Subscribing to All Lifecycle Events](#subscribing-to-all-lifecycle-events)
+  - [Subscribing to Specific Event Types](#subscribing-to-specific-event-types)
+- [Foreground Session Control (TUI+Server Mode)](#foreground-session-control-tuiserver-mode)
+  - [Getting the Foreground Session](#getting-the-foreground-session)
+  - [Setting the Foreground Session](#setting-the-foreground-session)
+- [Error Handling](#error-handling)
+  - [Event Handler Exceptions](#event-handler-exceptions)
+  - [Custom Event Error Handler](#custom-event-error-handler)
+
 ---
 
 ## Custom Tools
