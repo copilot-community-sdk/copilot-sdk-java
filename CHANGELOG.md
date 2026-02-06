@@ -31,9 +31,40 @@ var config = new ResumeSessionConfig()
 var session = client.resumeSession(sessionId, config).get();
 ```
 
+#### EventErrorHandler for Custom Error Handling
+Added `EventErrorHandler` interface for custom handling of exceptions thrown by event handlers. Set via `session.setEventErrorHandler()` to receive the event and exception when a handler fails.
+
+```java
+session.setEventErrorHandler((event, exception) -> {
+    logger.error("Handler failed for event: " + event.getType(), exception);
+});
+```
+
+#### Type-Safe Event Handlers
+Promoted type-safe `on(Class<T>, Consumer<T>)` event handlers as the primary API. Handlers now receive strongly-typed events instead of raw `AbstractSessionEvent`.
+
+```java
+session.on(AssistantMessageEvent.class, msg -> {
+    System.out.println(msg.getData().getContent());
+});
+```
+
+#### SpotBugs Static Analysis
+Integrated SpotBugs for static code analysis with exclusion filters for `events` and `json` packages.
+
 ### Changed
 
 - **Copilot CLI**: Minimum version updated to **0.0.405**
+- **CopilotClient**: Made `final` to prevent Finalizer attacks (security hardening)
+- **JBang Example**: Refactored `jbang-example.java` with streamlined session creation and usage metrics display
+- **Code Style**: Use `var` for local variable type inference throughout the codebase
+
+### Fixed
+
+- **SpotBugs OS_OPEN_STREAM**: Wrap `BufferedReader` in try-with-resources to prevent resource leaks
+- **SpotBugs REC_CATCH_EXCEPTION**: Narrow exception catch in `JsonRpcClient.handleMessage()`
+- **SpotBugs DM_DEFAULT_ENCODING**: Add explicit UTF-8 charset to `InputStreamReader`
+- **SpotBugs EI_EXPOSE_REP**: Add defensive copies to collection getters in events and JSON packages
 
 ## [1.0.7] - 2026-02-05
 
