@@ -1,8 +1,5 @@
 name: "Build & Test"
 
-env:
-  COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
-
 on:
   schedule:
     # Run once a day at 00:00 UTC
