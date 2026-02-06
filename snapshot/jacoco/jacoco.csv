@@ -154,6 +154,6 @@ GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient.Proces
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,ConnectionState,0,27,0,0,0,5,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,SystemMessageMode,0,28,0,0,0,7,0,3,0,3
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotSession,194,516,13,33,46,126,22,43,10,30
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,JsonRpcClient,138,524,25,45,39,143,23,33,4,17
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,JsonRpcClient,139,523,26,44,40,142,24,32,4,17
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,JsonRpcException,3,7,0,0,1,3,1,1,1,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient.Connection,0,9,0,0,0,1,0,1,0,1
