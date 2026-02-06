@@ -149,7 +149,7 @@ GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,AssistantMess
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,SessionShutdownEvent.CodeChanges,6,18,0,0,2,8,2,5,2,5
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,ToolExecutionProgressEvent,0,13,0,0,0,5,0,4,0,4
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,SdkProtocolVersion,0,24,0,0,0,7,0,4,0,4
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient,702,1663,85,157,173,374,93,111,18,65
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient,702,1663,85,157,172,371,93,111,18,65
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient.ProcessInfo,0,9,0,0,0,1,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,ConnectionState,0,27,0,0,0,5,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,SystemMessageMode,0,28,0,0,0,7,0,3,0,3

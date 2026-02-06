@@ -66,7 +66,7 @@ class JsonRpcClient implements AutoCloseable {
 <span class="fc" id="L66">    }</span>
 
     static ObjectMapper createObjectMapper() {
-<span class="fc" id="L69">        ObjectMapper mapper = new ObjectMapper();</span>
+<span class="fc" id="L69">        var mapper = new ObjectMapper();</span>
 <span class="fc" id="L70">        mapper.registerModule(new JavaTimeModule());</span>
 <span class="fc" id="L71">        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);</span>
 <span class="fc" id="L72">        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);</span>
@@ -105,10 +105,10 @@ class JsonRpcClient implements AutoCloseable {
      */
     public &lt;T&gt; CompletableFuture&lt;T&gt; invoke(String method, Object params, Class&lt;T&gt; responseType) {
 <span class="fc" id="L107">        long id = requestIdCounter.incrementAndGet();</span>
-<span class="fc" id="L108">        CompletableFuture&lt;JsonNode&gt; future = new CompletableFuture&lt;&gt;();</span>
+<span class="fc" id="L108">        var future = new CompletableFuture&lt;JsonNode&gt;();</span>
 <span class="fc" id="L109">        pendingRequests.put(id, future);</span>
 
-<span class="fc" id="L111">        JsonRpcRequest request = new JsonRpcRequest();</span>
+<span class="fc" id="L111">        var request = new JsonRpcRequest();</span>
 <span class="fc" id="L112">        request.setJsonrpc(&quot;2.0&quot;);</span>
 <span class="fc" id="L113">        request.setId(id);</span>
 <span class="fc" id="L114">        request.setMethod(method);</span>
@@ -137,7 +137,7 @@ class JsonRpcClient implements AutoCloseable {
      * Sends a JSON-RPC notification (no response expected).
      */
     public void notify(String method, Object params) throws IOException {
-<span class="nc" id="L140">        JsonRpcRequest notification = new JsonRpcRequest();</span>
+<span class="nc" id="L140">        var notification = new JsonRpcRequest();</span>
 <span class="nc" id="L141">        notification.setJsonrpc(&quot;2.0&quot;);</span>
 <span class="nc" id="L142">        notification.setMethod(method);</span>
 <span class="nc" id="L143">        notification.setParams(params);</span>
@@ -148,7 +148,7 @@ class JsonRpcClient implements AutoCloseable {
      * Sends a JSON-RPC response to a server request.
      */
     public void sendResponse(Object id, Object result) throws IOException {
-<span class="fc" id="L151">        JsonRpcResponse response = new JsonRpcResponse();</span>
+<span class="fc" id="L151">        var response = new JsonRpcResponse();</span>
 <span class="fc" id="L152">        response.setJsonrpc(&quot;2.0&quot;);</span>
 <span class="fc" id="L153">        response.setId(id);</span>
 <span class="fc" id="L154">        response.setResult(result);</span>
@@ -159,10 +159,10 @@ class JsonRpcClient implements AutoCloseable {
      * Sends a JSON-RPC error response to a server request.
      */
     public void sendErrorResponse(Object id, int code, String message) throws IOException {
-<span class="fc" id="L162">        JsonRpcResponse response = new JsonRpcResponse();</span>
+<span class="fc" id="L162">        var response = new JsonRpcResponse();</span>
 <span class="fc" id="L163">        response.setJsonrpc(&quot;2.0&quot;);</span>
 <span class="fc" id="L164">        response.setId(id);</span>
-<span class="fc" id="L165">        JsonRpcError error = new JsonRpcError();</span>
+<span class="fc" id="L165">        var error = new JsonRpcError();</span>
 <span class="fc" id="L166">        error.setCode(code);</span>
 <span class="fc" id="L167">        error.setMessage(message);</span>
 <span class="fc" id="L168">        response.setError(error);</span>
@@ -186,12 +186,12 @@ class JsonRpcClient implements AutoCloseable {
             try {
                 // We need to read bytes because Content-Length specifies bytes, not characters.
                 // Using BufferedReader would cause issues with multi-byte UTF-8 characters.
-<span class="fc" id="L189">                BufferedInputStream bis = new BufferedInputStream(inputStream);</span>
+<span class="fc" id="L189">                var bis = new BufferedInputStream(inputStream);</span>
 
 <span class="pc bpc" id="L191" title="1 of 2 branches missed.">                while (running) {</span>
                     // Read headers line by line
 <span class="fc" id="L193">                    int contentLength = -1;</span>
-<span class="fc" id="L194">                    StringBuilder headerLine = new StringBuilder();</span>
+<span class="fc" id="L194">                    var headerLine = new StringBuilder();</span>
 <span class="fc" id="L195">                    boolean lastWasCR = false;</span>
 <span class="fc" id="L196">                    boolean inHeaders = true;</span>
 
