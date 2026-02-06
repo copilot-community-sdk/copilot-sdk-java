@@ -113,8 +113,8 @@ var hooks = new SessionHooks()
     .setOnPreToolUse((input, invocation) -> {
         if (input.getToolName().equals("search_code")) {
             // Add project root to search path
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectNode modifiedArgs = mapper.createObjectNode();
+            var mapper = new ObjectMapper();
+            var modifiedArgs = mapper.createObjectNode();
             modifiedArgs.put("path", "/my/project/src");
             modifiedArgs.set("query", input.getToolArgs().get("query"));
             
@@ -283,7 +283,7 @@ var hooks = new SessionHooks()
         System.out.println("Session ended: " + input.getReason());
         
         // Clean up session resources
-        ResourceManager resources = sessionResources.remove(invocation.getSessionId());
+        var resources = sessionResources.remove(invocation.getSessionId());
         if (resources != null) {
             resources.close();
         }

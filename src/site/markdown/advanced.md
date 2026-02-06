@@ -127,7 +127,7 @@ var session = client.createSession(
 ).get();
 
 // Access the workspace where session state is persisted
-String workspace = session.getWorkspacePath();
+var workspace = session.getWorkspacePath();
 ```
 
 ### Compaction Events
@@ -247,7 +247,7 @@ var session = client.createSession(
             if (request.getChoices() != null && !request.getChoices().isEmpty()) {
                 System.out.println("Options: " + request.getChoices());
                 // Return one of the provided choices
-                String selectedChoice = request.getChoices().get(0);
+                var selectedChoice = request.getChoices().get(0);
                 return CompletableFuture.completedFuture(
                     new UserInputResponse()
                         .setAnswer(selectedChoice)
@@ -256,7 +256,7 @@ var session = client.createSession(
             }
             
             // Freeform input
-            String userAnswer = getUserInput(); // your input method
+            var userAnswer = getUserInput(); // your input method
             return CompletableFuture.completedFuture(
                 new UserInputResponse()
                     .setAnswer(userAnswer)
@@ -345,7 +345,7 @@ Subscribe to lifecycle events to be notified when sessions are created, deleted,
 ### Subscribing to All Lifecycle Events
 
 ```java
-AutoCloseable subscription = client.onLifecycle(event -> {
+var subscription = client.onLifecycle(event -> {
     System.out.println("Session " + event.getSessionId() + ": " + event.getType());
     
     if (event.getMetadata() != null) {
@@ -363,7 +363,7 @@ subscription.close();
 import com.github.copilot.sdk.json.SessionLifecycleEventTypes;
 
 // Listen only for session creation
-AutoCloseable subscription = client.onLifecycle(
+var subscription = client.onLifecycle(
     SessionLifecycleEventTypes.CREATED,
     event -> System.out.println("New session: " + event.getSessionId())
 );
@@ -385,7 +385,7 @@ When connecting to a server running in TUI+server mode (`--ui-server`), you can 
 ### Getting the Foreground Session
 
 ```java
-String sessionId = client.getForegroundSessionId().get();
+var sessionId = client.getForegroundSessionId().get();
 if (sessionId != null) {
     System.out.println("TUI is displaying session: " + sessionId);
 }

@@ -217,9 +217,9 @@ done.get();
 Retrieve all messages and events from a session using `getMessages()`:
 
 ```java
-List<AbstractSessionEvent> history = session.getMessages().get();
+var history = session.getMessages().get();
 
-for (AbstractSessionEvent event : history) {
+for (var event : history) {
     switch (event) {
         case UserMessageEvent user -> 
             System.out.println("User: " + user.getData().getContent());
@@ -287,9 +287,9 @@ try {
 Query available models before creating a session:
 
 ```java
-List<ModelInfo> models = client.listModels().get();
+var models = client.listModels().get();
 
-for (ModelInfo model : models) {
+for (var model : models) {
     System.out.printf("%s (%s)%n", model.getId(), model.getName());
 }
 ```
@@ -329,10 +329,10 @@ System.out.println("Claude: " + future2.get().getData().getContent());
 
 ```java
 // Get the last session ID
-String lastSessionId = client.getLastSessionId().get();
+var lastSessionId = client.getLastSessionId().get();
 
 // Or list all sessions
-List<SessionMetadata> sessions = client.listSessions().get();
+var sessions = client.listSessions().get();
 
 // Resume a session
 var session = client.resumeSession(lastSessionId).get();

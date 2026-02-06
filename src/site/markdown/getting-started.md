@@ -179,13 +179,13 @@ public class ToolExample {
                     "required", List.of("city")
                 ),
                 invocation -> {
-                    Map<String, Object> params = invocation.getArguments();
-                    String city = (String) params.get("city");
+                    var params = invocation.getArguments();
+                    var city = (String) params.get("city");
                     
                     // In a real app, you'd call a weather API here
                     String[] conditions = {"sunny", "cloudy", "rainy", "partly cloudy"};
                     int temp = new Random().nextInt(30) + 50;
-                    String condition = conditions[new Random().nextInt(conditions.length)];
+                    var condition = conditions[new Random().nextInt(conditions.length)];
                     
                     return CompletableFuture.completedFuture(Map.of(
                         "city", city,
@@ -258,11 +258,11 @@ public class WeatherAssistant {
                     "required", List.of("city")
                 ),
                 invocation -> {
-                    Map<String, Object> params = invocation.getArguments();
-                    String city = (String) params.get("city");
+                    var params = invocation.getArguments();
+                    var city = (String) params.get("city");
                     String[] conditions = {"sunny", "cloudy", "rainy", "partly cloudy"};
                     int temp = new Random().nextInt(30) + 50;
-                    String condition = conditions[new Random().nextInt(conditions.length)];
+                    var condition = conditions[new Random().nextInt(conditions.length)];
                     return CompletableFuture.completedFuture(Map.of(
                         "city", city,
                         "temperature", temp + "°F",
