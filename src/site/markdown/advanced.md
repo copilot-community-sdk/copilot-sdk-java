@@ -32,6 +32,7 @@ This guide covers advanced scenarios for extending and customizing your Copilot 
 - [Error Handling](#Error_Handling)
   - [Event Handler Exceptions](#Event_Handler_Exceptions)
   - [Custom Event Error Handler](#Custom_Event_Error_Handler)
+  - [Event Error Policy](#Event_Error_Policy)
 
 ---
 
@@ -451,9 +452,9 @@ session.send(new MessageOptions().setPrompt("Hello"))
 
 ### Event Handler Exceptions
 
-If an event handler throws an exception, the SDK catches it, logs it at
-`SEVERE` level, and continues dispatching to remaining handlers. This means
-one faulty handler will never block others from receiving events:
+If an event handler registered via `session.on()` throws an exception, the SDK
+catches it and continues dispatching to remaining handlers by default. This
+means one faulty handler will never block others from receiving events:
 
 ```java
 // This handler throws, but the second handler still runs
@@ -467,17 +468,14 @@ session.on(AssistantMessageEvent.class, msg -> {
 });
 ```
 
-> **Note:** This exception isolation behavior is consistent with the Node.js,
-> Go, and Python Copilot SDKs, which all catch handler errors per-handler. The
-> .NET SDK is an exception — handler errors propagate there and can prevent
-> subsequent handlers from running.
+When no `EventErrorHandler` is set, exceptions are **silently consumed** — the
+SDK does not log by default. Applications should set an error handler if they
+want visibility into handler failures (see below).
 
 ### Custom Event Error Handler
 
-By default, handler exceptions are logged at `SEVERE` level using
-`java.util.logging`. You can replace this with a custom
-`EventErrorHandler` to integrate with your own logging, metrics, or
-error-reporting systems:
+Set a custom `EventErrorHandler` to integrate with your own logging, metrics,
+or error-reporting systems:
 
 ```java
 session.setEventErrorHandler((event, exception) -> {
@@ -489,10 +487,51 @@ session.setEventErrorHandler((event, exception) -> {
 
 The error handler receives both the event that was being dispatched and the
 exception that was thrown. If the error handler itself throws, that exception
-is silently caught and logged to prevent cascading failures.
+is caught and logged at `SEVERE`, and dispatch is stopped to prevent cascading
+failures.
 
-Pass `null` to restore the default logging behavior:
+Pass `null` to restore the default silent behavior:
 
 ```java
 session.setEventErrorHandler(null);
 ```
+
+### Event Error Policy
+
+By default, the SDK continues dispatching to remaining handlers after an error
+(`EventErrorPolicy.CONTINUE`). You can opt in to **short-circuit** behavior so
+that the first handler error stops dispatch:
+
+```java
+session.setEventErrorPolicy(EventErrorPolicy.STOP);
+```
+
+The `EventErrorHandler` (if set) is always invoked regardless of the policy —
+the policy only controls whether remaining handlers execute after the error
+handler returns.
+
+| Policy | Behavior |
+|---|---|
+| `CONTINUE` (default) | All remaining handlers execute despite errors |
+| `STOP` | Dispatch halts after the first handler error |
+
+You can combine both for full control:
+
+```java
+// Log errors and stop dispatch on first failure
+session.setEventErrorPolicy(EventErrorPolicy.STOP);
+session.setEventErrorHandler((event, ex) ->
+    logger.error("Handler failed, stopping: {}", ex.getMessage(), ex));
+```
+
+Or switch policies dynamically:
+
+```java
+// Start lenient
+session.setEventErrorPolicy(EventErrorPolicy.CONTINUE);
+
+// Later, switch to strict mode
+session.setEventErrorPolicy(EventErrorPolicy.STOP);
+```
+
+See [EventErrorPolicy](apidocs/com/github/copilot/sdk/EventErrorPolicy.html) and [EventErrorHandler](apidocs/com/github/copilot/sdk/EventErrorHandler.html) Javadoc for details.
