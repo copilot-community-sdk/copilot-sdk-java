@@ -111,12 +111,12 @@ jobs:
             echo "is_release=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Download JaCoCo exec from Build & Test
+      - name: Download test results from Build & Test
         if: steps.tags.outputs.is_release == 'false' && inputs.rebuild_all_versions != true && github.event_name == 'workflow_run'
         uses: actions/download-artifact@v4
         with:
-          name: jacoco-exec
-          path: /tmp/jacoco-exec
+          name: test-results-for-site
+          path: /tmp/test-results
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
@@ -127,14 +127,13 @@ jobs:
           # Compile sources (needed for javadoc and other reports)
           ./mvnw clean compile -DskipTests -Dcheckstyle.skip=true
           
-          # Restore JaCoCo exec if available from Build & Test
-          if [ -f "/tmp/jacoco-exec/sdk-tests.exec" ]; then
-            mkdir -p target/jacoco-test-results
-            cp /tmp/jacoco-exec/sdk-tests.exec target/jacoco-test-results/
-            echo "JaCoCo exec restored — coverage report will be included"
+          # Restore test results from Build & Test (for JaCoCo + Surefire reports)
+          if [ -d "/tmp/test-results/target" ]; then
+            cp -r /tmp/test-results/target/* target/
+            echo "Test results restored — JaCoCo and Surefire reports will be included"
           fi
           
-          # Generate site (JaCoCo report plugin picks up the exec file)
+          # Generate site (report plugins pick up the restored data)
           ./mvnw site -DskipTests -Dcheckstyle.skip=true
           
           rm -rf "site/snapshot"

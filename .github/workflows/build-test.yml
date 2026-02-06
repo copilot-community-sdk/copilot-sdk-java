@@ -71,12 +71,14 @@ jobs:
           COPILOT_CLI_PATH: ${{ steps.setup-copilot.outputs.path }}
         run: mvn verify
 
-      - name: Upload JaCoCo exec for site generation
+      - name: Upload test results for site generation
         if: success() && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
-          name: jacoco-exec
-          path: target/jacoco-test-results/sdk-tests.exec
+          name: test-results-for-site
+          path: |
+            target/jacoco-test-results/sdk-tests.exec
+            target/surefire-reports/
           retention-days: 1
 
       - name: Generate Test Report Summary
