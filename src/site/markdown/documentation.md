@@ -344,6 +344,40 @@ var sessions = client.listSessions().get();
 var session = client.resumeSession(lastSessionId).get();
 ```
 
+### Resume Options
+
+When resuming a session, you can optionally reconfigure many settings. This is useful when you need to change the model, update tool configurations, or modify behavior.
+
+| Option | Description |
+|--------|-------------|
+| `model` | Change the model for the resumed session |
+| `systemMessage` | Override or extend the system prompt |
+| `availableTools` | Restrict which tools are available |
+| `excludedTools` | Disable specific tools |
+| `provider` | Re-provide BYOK credentials (required for BYOK sessions) |
+| `reasoningEffort` | Adjust reasoning effort level |
+| `streaming` | Enable/disable streaming responses |
+| `workingDirectory` | Change the working directory |
+| `configDir` | Override configuration directory |
+| `mcpServers` | Configure MCP servers |
+| `customAgents` | Configure custom agents |
+| `skillDirectories` | Directories to load skills from |
+| `disabledSkills` | Skills to disable |
+| `infiniteSessions` | Configure infinite session behavior |
+
+**Example: Changing Model on Resume**
+
+```java
+// Resume with a different model
+var config = new ResumeSessionConfig()
+    .setModel("claude-sonnet-4")    // Switch to a different model
+    .setReasoningEffort("high");    // Increase reasoning effort
+
+var session = client.resumeSession("user-123-task-456", config).get();
+```
+
+See [ResumeSessionConfig](apidocs/com/github/copilot/sdk/json/ResumeSessionConfig.html) Javadoc for complete options.
+
 ### Clean Up Sessions
 
 ```java

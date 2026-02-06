@@ -5,6 +5,36 @@ All notable changes to the Copilot SDK for Java will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+#### ResumeSessionConfig Parity with SessionConfig
+Added missing options to `ResumeSessionConfig` for parity with `SessionConfig` when resuming sessions. You can now change the model, system message, tool filters, and other settings when resuming:
+
+- `model` - Change the AI model when resuming
+- `systemMessage` - Override or extend the system prompt
+- `availableTools` - Restrict which tools are available
+- `excludedTools` - Disable specific tools
+- `configDir` - Override configuration directory
+- `infiniteSessions` - Configure infinite session behavior
+
+**Example:**
+```java
+var config = new ResumeSessionConfig()
+    .setModel("claude-sonnet-4")
+    .setReasoningEffort("high")
+    .setSystemMessage(new SystemMessageConfig()
+        .setMode(SystemMessageMode.APPEND)
+        .setContent("Focus on security."));
+
+var session = client.resumeSession(sessionId, config).get();
+```
+
+### Changed
+
+- **Copilot CLI**: Minimum version updated to **0.0.405**
+
 ## [1.0.7] - 2026-02-05
 
 ### Added
