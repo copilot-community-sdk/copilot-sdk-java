@@ -129,9 +129,16 @@ jobs:
           ./mvnw clean compile -DskipTests -Dcheckstyle.skip=true
           
           # Restore test results from Build & Test (for JaCoCo + Surefire reports)
-          if [ -d "/tmp/test-results/target" ]; then
-            cp -r /tmp/test-results/target/* target/
-            echo "Test results restored — JaCoCo and Surefire reports will be included"
+          # upload-artifact strips the common ancestor (target/), so files are at root
+          if [ -d "/tmp/test-results/surefire-reports" ]; then
+            mkdir -p target/surefire-reports
+            cp -r /tmp/test-results/surefire-reports/* target/surefire-reports/
+            echo "Surefire reports restored"
+          fi
+          if [ -f "/tmp/test-results/jacoco-test-results/sdk-tests.exec" ]; then
+            mkdir -p target/jacoco-test-results
+            cp /tmp/test-results/jacoco-test-results/sdk-tests.exec target/jacoco-test-results/
+            echo "JaCoCo exec restored"
           fi
           
           # Generate site (report plugins pick up the restored data)
