@@ -498,12 +498,12 @@ session.setEventErrorHandler(null);
 
 ### Event Error Policy
 
-By default, the SDK continues dispatching to remaining handlers after an error
-(`EventErrorPolicy.CONTINUE`). You can opt in to **short-circuit** behavior so
-that the first handler error stops dispatch:
+By default, the SDK suppresses errors and continues dispatching to remaining
+handlers (`EventErrorPolicy.SUPPRESS`). You can opt in to **propagate** errors
+so that the first handler error stops dispatch:
 
 ```java
-session.setEventErrorPolicy(EventErrorPolicy.STOP);
+session.setEventErrorPolicy(EventErrorPolicy.PROPAGATE);
 ```
 
 The `EventErrorHandler` (if set) is always invoked regardless of the policy —
@@ -512,14 +512,14 @@ handler returns.
 
 | Policy | Behavior |
 |---|---|
-| `CONTINUE` (default) | All remaining handlers execute despite errors |
-| `STOP` | Dispatch halts after the first handler error |
+| `SUPPRESS` (default) | Suppress the error; all remaining handlers execute |
+| `PROPAGATE` | Propagate the error effect; dispatch halts after the first error |
 
 You can combine both for full control:
 
 ```java
-// Log errors and stop dispatch on first failure
-session.setEventErrorPolicy(EventErrorPolicy.STOP);
+// Log errors and propagate (stop dispatch on first failure)
+session.setEventErrorPolicy(EventErrorPolicy.PROPAGATE);
 session.setEventErrorHandler((event, ex) ->
     logger.error("Handler failed, stopping: {}", ex.getMessage(), ex));
 ```
@@ -527,11 +527,11 @@ session.setEventErrorHandler((event, ex) ->
 Or switch policies dynamically:
 
 ```java
-// Start lenient
-session.setEventErrorPolicy(EventErrorPolicy.CONTINUE);
+// Start lenient (suppress errors)
+session.setEventErrorPolicy(EventErrorPolicy.SUPPRESS);
 
-// Later, switch to strict mode
-session.setEventErrorPolicy(EventErrorPolicy.STOP);
+// Later, switch to strict mode (propagate errors)
+session.setEventErrorPolicy(EventErrorPolicy.PROPAGATE);
 ```
 
 See [EventErrorPolicy](apidocs/com/github/copilot/sdk/EventErrorPolicy.html) and [EventErrorHandler](apidocs/com/github/copilot/sdk/EventErrorHandler.html) Javadoc for details.
