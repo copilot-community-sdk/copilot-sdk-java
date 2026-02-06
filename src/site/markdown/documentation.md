@@ -59,7 +59,9 @@ For more control, subscribe to events and use `send()`:
 
 > **Exception isolation:** If a handler throws an exception, the SDK logs the
 > error and continues dispatching to remaining handlers. One misbehaving handler
-> will never prevent others from executing.
+> will never prevent others from executing. You can customize error handling with
+> `session.setEventErrorHandler()` — see the
+> [Advanced Usage](advanced.html#Custom_Event_Error_Handler) guide.
 
 ```java
 var done = new CompletableFuture<Void>();

@@ -442,3 +442,28 @@ session.on(AssistantMessageEvent.class, msg -> {
 > Go, and Python Copilot SDKs, which all catch handler errors per-handler. The
 > .NET SDK is an exception — handler errors propagate there and can prevent
 > subsequent handlers from running.
+
+### Custom Event Error Handler
+
+By default, handler exceptions are logged at `SEVERE` level using
+`java.util.logging`. You can replace this with a custom
+`EventErrorHandler` to integrate with your own logging, metrics, or
+error-reporting systems:
+
+```java
+session.setEventErrorHandler((event, exception) -> {
+    metrics.increment("handler.errors");
+    logger.error("Handler failed on {}: {}",
+        event.getType(), exception.getMessage());
+});
+```
+
+The error handler receives both the event that was being dispatched and the
+exception that was thrown. If the error handler itself throws, that exception
+is silently caught and logged to prevent cascading failures.
+
+Pass `null` to restore the default logging behavior:
+
+```java
+session.setEventErrorHandler(null);
+```
