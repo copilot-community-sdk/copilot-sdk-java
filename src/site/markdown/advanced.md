@@ -419,3 +419,26 @@ session.send(new MessageOptions().setPrompt("Hello"))
         return null;
     });
 ```
+
+### Event Handler Exceptions
+
+If an event handler throws an exception, the SDK catches it, logs it at
+`SEVERE` level, and continues dispatching to remaining handlers. This means
+one faulty handler will never block others from receiving events:
+
+```java
+// This handler throws, but the second handler still runs
+session.on(AssistantMessageEvent.class, msg -> {
+    throw new RuntimeException("bug in handler 1");
+});
+
+session.on(AssistantMessageEvent.class, msg -> {
+    // This handler executes normally despite the exception above
+    System.out.println(msg.getData().getContent());
+});
+```
+
+> **Note:** This exception isolation behavior is consistent with the Node.js,
+> Go, and Python Copilot SDKs, which all catch handler errors per-handler. The
+> .NET SDK is an exception — handler errors propagate there and can prevent
+> subsequent handlers from running.
