@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="nc" id="L31">public class MessageOptions {</span>
+<span class="fc" id="L31">public class MessageOptions {</span>
 
     private String prompt;
     private List&lt;Attachment&gt; attachments;
@@ -40,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the prompt text
      */
     public String getPrompt() {
-<span class="nc" id="L43">        return prompt;</span>
+<span class="fc" id="L43">        return prompt;</span>
     }
 
     /**
@@ -51,8 +51,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return this options instance for method chaining
      */
     public MessageOptions setPrompt(String prompt) {
-<span class="nc" id="L54">        this.prompt = prompt;</span>
-<span class="nc" id="L55">        return this;</span>
+<span class="fc" id="L54">        this.prompt = prompt;</span>
+<span class="fc" id="L55">        return this;</span>
     }
 
     /**
@@ -61,7 +61,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the list of attachments
      */
     public List&lt;Attachment&gt; getAttachments() {
-<span class="nc bnc" id="L64" title="All 2 branches missed.">        return attachments == null ? null : Collections.unmodifiableList(attachments);</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        return attachments == null ? null : Collections.unmodifiableList(attachments);</span>
     }
 
     /**
@@ -104,7 +104,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the delivery mode
      */
     public String getMode() {
-<span class="nc" id="L107">        return mode;</span>
+<span class="fc" id="L107">        return mode;</span>
     }
 
 }

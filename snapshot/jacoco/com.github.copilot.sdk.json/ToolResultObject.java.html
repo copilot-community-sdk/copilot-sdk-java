@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="nc" id="L37">public final class ToolResultObject {</span>
+<span class="fc" id="L37">public final class ToolResultObject {</span>
 
     @JsonProperty(&quot;textResultForLlm&quot;)
     private String textResultForLlm;
@@ -42,7 +42,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
     @JsonProperty(&quot;binaryResultsForLlm&quot;)
     private List&lt;ToolBinaryResult&gt; binaryResultsForLlm;
 
-<span class="nc" id="L45">    @JsonProperty(&quot;resultType&quot;)</span>
+<span class="fc" id="L45">    @JsonProperty(&quot;resultType&quot;)</span>
     private String resultType = &quot;success&quot;;
 
     @JsonProperty(&quot;error&quot;)
@@ -60,7 +60,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the text result
      */
     public String getTextResultForLlm() {
-<span class="nc" id="L63">        return textResultForLlm;</span>
+<span class="fc" id="L63">        return textResultForLlm;</span>
     }
 
     /**
@@ -71,8 +71,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return this result for method chaining
      */
     public ToolResultObject setTextResultForLlm(String textResultForLlm) {
-<span class="nc" id="L74">        this.textResultForLlm = textResultForLlm;</span>
-<span class="nc" id="L75">        return this;</span>
+<span class="fc" id="L74">        this.textResultForLlm = textResultForLlm;</span>
+<span class="fc" id="L75">        return this;</span>
     }
 
     /**
@@ -81,7 +81,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the list of binary results
      */
     public List&lt;ToolBinaryResult&gt; getBinaryResultsForLlm() {
-<span class="nc bnc" id="L84" title="All 2 branches missed.">        return binaryResultsForLlm == null ? null : Collections.unmodifiableList(binaryResultsForLlm);</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        return binaryResultsForLlm == null ? null : Collections.unmodifiableList(binaryResultsForLlm);</span>
     }
 
     /**
@@ -102,7 +102,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the result type (&quot;success&quot; or &quot;error&quot;)
      */
     public String getResultType() {
-<span class="nc" id="L105">        return resultType;</span>
+<span class="fc" id="L105">        return resultType;</span>
     }
 
     /**
@@ -113,8 +113,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return this result for method chaining
      */
     public ToolResultObject setResultType(String resultType) {
-<span class="nc" id="L116">        this.resultType = resultType;</span>
-<span class="nc" id="L117">        return this;</span>
+<span class="fc" id="L116">        this.resultType = resultType;</span>
+<span class="fc" id="L117">        return this;</span>
     }
 
     /**
@@ -123,7 +123,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the error message, or {@code null} if successful
      */
     public String getError() {
-<span class="nc" id="L126">        return error;</span>
+<span class="fc" id="L126">        return error;</span>
     }
 
     /**
@@ -134,8 +134,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return this result for method chaining
      */
     public ToolResultObject setError(String error) {
-<span class="nc" id="L137">        this.error = error;</span>
-<span class="nc" id="L138">        return this;</span>
+<span class="fc" id="L137">        this.error = error;</span>
+<span class="fc" id="L138">        return this;</span>
     }
 
     /**
@@ -144,7 +144,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the session log text
      */
     public String getSessionLog() {
-<span class="nc" id="L147">        return sessionLog;</span>
+<span class="fc" id="L147">        return sessionLog;</span>
     }
 
     /**
@@ -165,7 +165,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the telemetry map
      */
     public Map&lt;String, Object&gt; getToolTelemetry() {
-<span class="nc bnc" id="L168" title="All 2 branches missed.">        return toolTelemetry == null ? null : Collections.unmodifiableMap(toolTelemetry);</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        return toolTelemetry == null ? null : Collections.unmodifiableMap(toolTelemetry);</span>
     }
 
     public ToolResultObject setToolTelemetry(Map&lt;String, Object&gt; toolTelemetry) {

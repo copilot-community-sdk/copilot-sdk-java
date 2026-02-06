@@ -16,14 +16,14 @@ import java.util.List;
  * @since 1.0.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="nc" id="L19">public final class UserMessageEvent extends AbstractSessionEvent {</span>
+<span class="fc" id="L19">public final class UserMessageEvent extends AbstractSessionEvent {</span>
 
     @JsonProperty(&quot;data&quot;)
     private UserMessageData data;
 
     @Override
     public String getType() {
-<span class="nc" id="L26">        return &quot;user.message&quot;;</span>
+<span class="fc" id="L26">        return &quot;user.message&quot;;</span>
     }
 
     public UserMessageData getData() {
@@ -31,11 +31,11 @@ import java.util.List;
     }
 
     public void setData(UserMessageData data) {
-<span class="nc" id="L34">        this.data = data;</span>
-<span class="nc" id="L35">    }</span>
+<span class="fc" id="L34">        this.data = data;</span>
+<span class="fc" id="L35">    }</span>
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="nc" id="L38">    public static class UserMessageData {</span>
+<span class="fc" id="L38">    public static class UserMessageData {</span>
 
         @JsonProperty(&quot;content&quot;)
         private String content;
@@ -54,24 +54,24 @@ import java.util.List;
         }
 
         public void setContent(String content) {
-<span class="nc" id="L57">            this.content = content;</span>
-<span class="nc" id="L58">        }</span>
+<span class="fc" id="L57">            this.content = content;</span>
+<span class="fc" id="L58">        }</span>
 
         public String getTransformedContent() {
 <span class="nc" id="L61">            return transformedContent;</span>
         }
 
         public void setTransformedContent(String transformedContent) {
-<span class="nc" id="L65">            this.transformedContent = transformedContent;</span>
-<span class="nc" id="L66">        }</span>
+<span class="fc" id="L65">            this.transformedContent = transformedContent;</span>
+<span class="fc" id="L66">        }</span>
 
         public List&lt;Attachment&gt; getAttachments() {
 <span class="nc bnc" id="L69" title="All 2 branches missed.">            return attachments == null ? null : Collections.unmodifiableList(attachments);</span>
         }
 
         public void setAttachments(List&lt;Attachment&gt; attachments) {
-<span class="nc" id="L73">            this.attachments = attachments;</span>
-<span class="nc" id="L74">        }</span>
+<span class="fc" id="L73">            this.attachments = attachments;</span>
+<span class="fc" id="L74">        }</span>
 
         public String getSource() {
 <span class="nc" id="L77">            return source;</span>

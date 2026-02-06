@@ -16,26 +16,26 @@ import java.util.Map;
  * @since 1.0.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="nc" id="L19">public final class ToolExecutionCompleteEvent extends AbstractSessionEvent {</span>
+<span class="fc" id="L19">public final class ToolExecutionCompleteEvent extends AbstractSessionEvent {</span>
 
     @JsonProperty(&quot;data&quot;)
     private ToolExecutionCompleteData data;
 
     @Override
     public String getType() {
-<span class="nc" id="L26">        return &quot;tool.execution_complete&quot;;</span>
+<span class="fc" id="L26">        return &quot;tool.execution_complete&quot;;</span>
     }
 
     public ToolExecutionCompleteData getData() {
-<span class="nc" id="L30">        return data;</span>
+<span class="fc" id="L30">        return data;</span>
     }
 
     public void setData(ToolExecutionCompleteData data) {
-<span class="nc" id="L34">        this.data = data;</span>
-<span class="nc" id="L35">    }</span>
+<span class="fc" id="L34">        this.data = data;</span>
+<span class="fc" id="L35">    }</span>
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="nc" id="L38">    public static class ToolExecutionCompleteData {</span>
+<span class="fc" id="L38">    public static class ToolExecutionCompleteData {</span>
 
         @JsonProperty(&quot;toolCallId&quot;)
         private String toolCallId;
@@ -63,16 +63,16 @@ import java.util.Map;
         }
 
         public void setToolCallId(String toolCallId) {
-<span class="nc" id="L66">            this.toolCallId = toolCallId;</span>
-<span class="nc" id="L67">        }</span>
+<span class="fc" id="L66">            this.toolCallId = toolCallId;</span>
+<span class="fc" id="L67">        }</span>
 
         public boolean isSuccess() {
-<span class="nc" id="L70">            return success;</span>
+<span class="fc" id="L70">            return success;</span>
         }
 
         public void setSuccess(boolean success) {
-<span class="nc" id="L74">            this.success = success;</span>
-<span class="nc" id="L75">        }</span>
+<span class="fc" id="L74">            this.success = success;</span>
+<span class="fc" id="L75">        }</span>
 
         public Boolean getIsUserRequested() {
 <span class="nc" id="L78">            return isUserRequested;</span>
@@ -87,24 +87,24 @@ import java.util.Map;
         }
 
         public void setResult(Result result) {
-<span class="nc" id="L90">            this.result = result;</span>
-<span class="nc" id="L91">        }</span>
+<span class="fc" id="L90">            this.result = result;</span>
+<span class="fc" id="L91">        }</span>
 
         public Error getError() {
 <span class="nc" id="L94">            return error;</span>
         }
 
         public void setError(Error error) {
-<span class="nc" id="L98">            this.error = error;</span>
-<span class="nc" id="L99">        }</span>
+<span class="fc" id="L98">            this.error = error;</span>
+<span class="fc" id="L99">        }</span>
 
         public Map&lt;String, Object&gt; getToolTelemetry() {
 <span class="nc bnc" id="L102" title="All 2 branches missed.">            return toolTelemetry == null ? null : Collections.unmodifiableMap(toolTelemetry);</span>
         }
 
         public void setToolTelemetry(Map&lt;String, Object&gt; toolTelemetry) {
-<span class="nc" id="L106">            this.toolTelemetry = toolTelemetry;</span>
-<span class="nc" id="L107">        }</span>
+<span class="fc" id="L106">            this.toolTelemetry = toolTelemetry;</span>
+<span class="fc" id="L107">        }</span>
 
         public String getParentToolCallId() {
 <span class="nc" id="L110">            return parentToolCallId;</span>
@@ -115,7 +115,7 @@ import java.util.Map;
 <span class="nc" id="L115">        }</span>
 
         @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="nc" id="L118">        public static class Result {</span>
+<span class="fc" id="L118">        public static class Result {</span>
 
             @JsonProperty(&quot;content&quot;)
             private String content;
@@ -128,20 +128,20 @@ import java.util.Map;
             }
 
             public void setContent(String content) {
-<span class="nc" id="L131">                this.content = content;</span>
-<span class="nc" id="L132">            }</span>
+<span class="fc" id="L131">                this.content = content;</span>
+<span class="fc" id="L132">            }</span>
 
             public String getDetailedContent() {
 <span class="nc" id="L135">                return detailedContent;</span>
             }
 
             public void setDetailedContent(String detailedContent) {
-<span class="nc" id="L139">                this.detailedContent = detailedContent;</span>
-<span class="nc" id="L140">            }</span>
+<span class="fc" id="L139">                this.detailedContent = detailedContent;</span>
+<span class="fc" id="L140">            }</span>
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="nc" id="L144">        public static class Error {</span>
+<span class="fc" id="L144">        public static class Error {</span>
 
             @JsonProperty(&quot;message&quot;)
             private String message;
@@ -154,16 +154,16 @@ import java.util.Map;
             }
 
             public void setMessage(String message) {
-<span class="nc" id="L157">                this.message = message;</span>
-<span class="nc" id="L158">            }</span>
+<span class="fc" id="L157">                this.message = message;</span>
+<span class="fc" id="L158">            }</span>
 
             public String getCode() {
 <span class="nc" id="L161">                return code;</span>
             }
 
             public void setCode(String code) {
-<span class="nc" id="L165">                this.code = code;</span>
-<span class="nc" id="L166">            }</span>
+<span class="fc" id="L165">                this.code = code;</span>
+<span class="fc" id="L166">            }</span>
         }
     }
 }

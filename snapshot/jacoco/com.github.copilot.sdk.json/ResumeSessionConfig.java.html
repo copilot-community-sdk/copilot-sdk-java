@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="nc" id="L33">public class ResumeSessionConfig {</span>
+<span class="fc" id="L33">public class ResumeSessionConfig {</span>
 
     private List&lt;ToolDefinition&gt; tools;
     private ProviderConfig provider;
@@ -52,7 +52,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the list of tool definitions
      */
     public List&lt;ToolDefinition&gt; getTools() {
-<span class="nc bnc" id="L55" title="All 2 branches missed.">        return tools == null ? null : Collections.unmodifiableList(tools);</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        return tools == null ? null : Collections.unmodifiableList(tools);</span>
     }
 
     /**
@@ -74,7 +74,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the provider configuration
      */
     public ProviderConfig getProvider() {
-<span class="nc" id="L77">        return provider;</span>
+<span class="fc" id="L77">        return provider;</span>
     }
 
     /**
@@ -96,7 +96,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the reasoning effort level (&quot;low&quot;, &quot;medium&quot;, &quot;high&quot;, or &quot;xhigh&quot;)
      */
     public String getReasoningEffort() {
-<span class="nc" id="L99">        return reasoningEffort;</span>
+<span class="fc" id="L99">        return reasoningEffort;</span>
     }
 
     /**
@@ -119,7 +119,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the permission handler
      */
     public PermissionHandler getOnPermissionRequest() {
-<span class="nc" id="L122">        return onPermissionRequest;</span>
+<span class="fc" id="L122">        return onPermissionRequest;</span>
     }
 
     /**
@@ -131,8 +131,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @see PermissionHandler
      */
     public ResumeSessionConfig setOnPermissionRequest(PermissionHandler onPermissionRequest) {
-<span class="nc" id="L134">        this.onPermissionRequest = onPermissionRequest;</span>
-<span class="nc" id="L135">        return this;</span>
+<span class="fc" id="L134">        this.onPermissionRequest = onPermissionRequest;</span>
+<span class="fc" id="L135">        return this;</span>
     }
 
     /**
@@ -141,7 +141,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the user input handler
      */
     public UserInputHandler getOnUserInputRequest() {
-<span class="nc" id="L144">        return onUserInputRequest;</span>
+<span class="fc" id="L144">        return onUserInputRequest;</span>
     }
 
     /**
@@ -163,7 +163,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the session hooks
      */
     public SessionHooks getHooks() {
-<span class="nc" id="L166">        return hooks;</span>
+<span class="fc" id="L166">        return hooks;</span>
     }
 
     /**
@@ -185,7 +185,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the working directory path
      */
     public String getWorkingDirectory() {
-<span class="nc" id="L188">        return workingDirectory;</span>
+<span class="fc" id="L188">        return workingDirectory;</span>
     }
 
     /**
@@ -206,7 +206,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return {@code true} if the session.resume event is suppressed
      */
     public boolean isDisableResume() {
-<span class="nc" id="L209">        return disableResume;</span>
+<span class="fc" id="L209">        return disableResume;</span>
     }
 
     /**
@@ -229,7 +229,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return {@code true} if streaming is enabled
      */
     public boolean isStreaming() {
-<span class="nc" id="L232">        return streaming;</span>
+<span class="fc" id="L232">        return streaming;</span>
     }
 
     /**
@@ -250,7 +250,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the MCP servers map
      */
     public Map&lt;String, Object&gt; getMcpServers() {
-<span class="nc bnc" id="L253" title="All 2 branches missed.">        return mcpServers == null ? null : Collections.unmodifiableMap(mcpServers);</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        return mcpServers == null ? null : Collections.unmodifiableMap(mcpServers);</span>
     }
 
     /**
@@ -261,8 +261,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return this config for method chaining
      */
     public ResumeSessionConfig setMcpServers(Map&lt;String, Object&gt; mcpServers) {
-<span class="nc" id="L264">        this.mcpServers = mcpServers;</span>
-<span class="nc" id="L265">        return this;</span>
+<span class="fc" id="L264">        this.mcpServers = mcpServers;</span>
+<span class="fc" id="L265">        return this;</span>
     }
 
     /**
@@ -271,7 +271,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the list of custom agent configurations
      */
     public List&lt;CustomAgentConfig&gt; getCustomAgents() {
-<span class="nc bnc" id="L274" title="All 2 branches missed.">        return customAgents == null ? null : Collections.unmodifiableList(customAgents);</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">        return customAgents == null ? null : Collections.unmodifiableList(customAgents);</span>
     }
 
     /**
@@ -283,8 +283,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @see CustomAgentConfig
      */
     public ResumeSessionConfig setCustomAgents(List&lt;CustomAgentConfig&gt; customAgents) {
-<span class="nc" id="L286">        this.customAgents = customAgents;</span>
-<span class="nc" id="L287">        return this;</span>
+<span class="fc" id="L286">        this.customAgents = customAgents;</span>
+<span class="fc" id="L287">        return this;</span>
     }
 
     /**
@@ -293,7 +293,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the list of skill directory paths
      */
     public List&lt;String&gt; getSkillDirectories() {
-<span class="nc bnc" id="L296" title="All 2 branches missed.">        return skillDirectories == null ? null : Collections.unmodifiableList(skillDirectories);</span>
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">        return skillDirectories == null ? null : Collections.unmodifiableList(skillDirectories);</span>
     }
 
     /**
@@ -314,7 +314,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the list of disabled skill names
      */
     public List&lt;String&gt; getDisabledSkills() {
-<span class="nc bnc" id="L317" title="All 2 branches missed.">        return disabledSkills == null ? null : Collections.unmodifiableList(disabledSkills);</span>
+<span class="pc bpc" id="L317" title="1 of 2 branches missed.">        return disabledSkills == null ? null : Collections.unmodifiableList(disabledSkills);</span>
     }
 
     /**

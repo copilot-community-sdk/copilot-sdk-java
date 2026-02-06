@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="nc" id="L35">public class CustomAgentConfig {</span>
+<span class="fc" id="L35">public class CustomAgentConfig {</span>
 
     @JsonProperty(&quot;name&quot;)
     private String name;
@@ -61,7 +61,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the agent name used for {@code @mentions}
      */
     public String getName() {
-<span class="nc" id="L64">        return name;</span>
+<span class="fc" id="L64">        return name;</span>
     }
 
     /**
@@ -75,8 +75,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return this config for method chaining
      */
     public CustomAgentConfig setName(String name) {
-<span class="nc" id="L78">        this.name = name;</span>
-<span class="nc" id="L79">        return this;</span>
+<span class="fc" id="L78">        this.name = name;</span>
+<span class="fc" id="L79">        return this;</span>
     }
 
     /**
@@ -85,7 +85,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the display name shown to users
      */
     public String getDisplayName() {
-<span class="nc" id="L88">        return displayName;</span>
+<span class="fc" id="L88">        return displayName;</span>
     }
 
     /**
@@ -96,8 +96,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return this config for method chaining
      */
     public CustomAgentConfig setDisplayName(String displayName) {
-<span class="nc" id="L99">        this.displayName = displayName;</span>
-<span class="nc" id="L100">        return this;</span>
+<span class="fc" id="L99">        this.displayName = displayName;</span>
+<span class="fc" id="L100">        return this;</span>
     }
 
     /**
@@ -106,7 +106,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the description of what this agent does
      */
     public String getDescription() {
-<span class="nc" id="L109">        return description;</span>
+<span class="fc" id="L109">        return description;</span>
     }
 
     /**
@@ -119,8 +119,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return this config for method chaining
      */
     public CustomAgentConfig setDescription(String description) {
-<span class="nc" id="L122">        this.description = description;</span>
-<span class="nc" id="L123">        return this;</span>
+<span class="fc" id="L122">        this.description = description;</span>
+<span class="fc" id="L123">        return this;</span>
     }
 
     /**
@@ -129,7 +129,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the list of tool identifiers
      */
     public List&lt;String&gt; getTools() {
-<span class="nc bnc" id="L132" title="All 2 branches missed.">        return tools == null ? null : Collections.unmodifiableList(tools);</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        return tools == null ? null : Collections.unmodifiableList(tools);</span>
     }
 
     /**
@@ -143,8 +143,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return this config for method chaining
      */
     public CustomAgentConfig setTools(List&lt;String&gt; tools) {
-<span class="nc" id="L146">        this.tools = tools;</span>
-<span class="nc" id="L147">        return this;</span>
+<span class="fc" id="L146">        this.tools = tools;</span>
+<span class="fc" id="L147">        return this;</span>
     }
 
     /**
@@ -153,7 +153,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the agent's system prompt
      */
     public String getPrompt() {
-<span class="nc" id="L156">        return prompt;</span>
+<span class="fc" id="L156">        return prompt;</span>
     }
 
     /**
@@ -166,8 +166,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return this config for method chaining
      */
     public CustomAgentConfig setPrompt(String prompt) {
-<span class="nc" id="L169">        this.prompt = prompt;</span>
-<span class="nc" id="L170">        return this;</span>
+<span class="fc" id="L169">        this.prompt = prompt;</span>
+<span class="fc" id="L170">        return this;</span>
     }
 
     /**
@@ -176,7 +176,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the MCP servers map
      */
     public Map&lt;String, Object&gt; getMcpServers() {
-<span class="nc bnc" id="L179" title="All 2 branches missed.">        return mcpServers == null ? null : Collections.unmodifiableMap(mcpServers);</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        return mcpServers == null ? null : Collections.unmodifiableMap(mcpServers);</span>
     }
 
     /**
@@ -187,8 +187,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return this config for method chaining
      */
     public CustomAgentConfig setMcpServers(Map&lt;String, Object&gt; mcpServers) {
-<span class="nc" id="L190">        this.mcpServers = mcpServers;</span>
-<span class="nc" id="L191">        return this;</span>
+<span class="fc" id="L190">        this.mcpServers = mcpServers;</span>
+<span class="fc" id="L191">        return this;</span>
     }
 
     /**
@@ -197,7 +197,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the infer flag, or {@code null} if not set
      */
     public Boolean getInfer() {
-<span class="nc" id="L200">        return infer;</span>
+<span class="fc" id="L200">        return infer;</span>
     }
 
     /**
@@ -208,8 +208,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return this config for method chaining
      */
     public CustomAgentConfig setInfer(Boolean infer) {
-<span class="nc" id="L211">        this.infer = infer;</span>
-<span class="nc" id="L212">        return this;</span>
+<span class="fc" id="L211">        this.infer = infer;</span>
+<span class="fc" id="L212">        return this;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
