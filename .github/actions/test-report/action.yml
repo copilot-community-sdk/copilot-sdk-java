@@ -19,7 +19,7 @@ runs:
     - name: Generate Test Summary
       shell: bash
       run: |
-        echo "## 🧪 Java SDK Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "## 🧪 Copilot Java SDK :: Test Results" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 
         REPORT_DIR=$(dirname "${{ inputs.report-path }}")
