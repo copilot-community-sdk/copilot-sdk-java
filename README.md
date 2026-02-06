@@ -59,13 +59,10 @@ public class Example {
             ).get();
 
             var done = new CompletableFuture<Void>();
-            session.on(evt -> {
-                if (evt instanceof AssistantMessageEvent msg) {
-                    System.out.println(msg.getData().getContent());
-                } else if (evt instanceof SessionIdleEvent) {
-                    done.complete(null);
-                }
+            session.on(AssistantMessageEvent.class, msg -> {
+                System.out.println(msg.getData().getContent());
             });
+            session.on(SessionIdleEvent.class, idle -> done.complete(null));
 
             session.send(new MessageOptions().setPrompt("What is 2+2?")).get();
             done.get();

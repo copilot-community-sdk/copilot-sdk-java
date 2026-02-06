@@ -127,13 +127,12 @@ public class StreamingExample {
             var done = new CompletableFuture<Void>();
 
             // Listen for response chunks
-            session.on(event -> {
-                if (event instanceof AssistantMessageDeltaEvent delta) {
-                    System.out.print(delta.getData().getDeltaContent());
-                } else if (event instanceof SessionIdleEvent) {
-                    System.out.println(); // New line when done
-                    done.complete(null);
-                }
+            session.on(AssistantMessageDeltaEvent.class, delta -> {
+                System.out.print(delta.getData().getDeltaContent());
+            });
+            session.on(SessionIdleEvent.class, idle -> {
+                System.out.println(); // New line when done
+                done.complete(null);
             });
 
             session.send(
@@ -204,13 +203,12 @@ public class ToolExample {
 
             var done = new CompletableFuture<Void>();
 
-            session.on(event -> {
-                if (event instanceof AssistantMessageDeltaEvent delta) {
-                    System.out.print(delta.getData().getDeltaContent());
-                } else if (event instanceof SessionIdleEvent) {
-                    System.out.println();
-                    done.complete(null);
-                }
+            session.on(AssistantMessageDeltaEvent.class, delta -> {
+                System.out.print(delta.getData().getDeltaContent());
+            });
+            session.on(SessionIdleEvent.class, idle -> {
+                System.out.println();
+                done.complete(null);
             });
 
             session.send(
@@ -284,14 +282,13 @@ public class WeatherAssistant {
             var done = new AtomicReference<CompletableFuture<Void>>();
 
             // Register listener once, outside the loop
-            session.on(event -> {
-                if (event instanceof AssistantMessageDeltaEvent delta) {
-                    System.out.print(delta.getData().getDeltaContent());
-                } else if (event instanceof SessionIdleEvent) {
-                    System.out.println();
-                    var f = done.get();
-                    if (f != null) f.complete(null);
-                }
+            session.on(AssistantMessageDeltaEvent.class, delta -> {
+                System.out.print(delta.getData().getDeltaContent());
+            });
+            session.on(SessionIdleEvent.class, idle -> {
+                System.out.println();
+                var f = done.get();
+                if (f != null) f.complete(null);
             });
 
             while (true) {

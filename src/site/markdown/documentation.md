@@ -194,14 +194,14 @@ var session = client.createSession(
 
 var done = new CompletableFuture<Void>();
 
-session.on(event -> {
-    if (event instanceof AssistantMessageDeltaEvent delta) {
-        // Print each chunk as it arrives
-        System.out.print(delta.getData().getDeltaContent());
-    } else if (event instanceof SessionIdleEvent) {
-        System.out.println(); // Newline at end
-        done.complete(null);
-    }
+session.on(AssistantMessageDeltaEvent.class, delta -> {
+    // Print each chunk as it arrives
+    System.out.print(delta.getData().getDeltaContent());
+});
+
+session.on(SessionIdleEvent.class, idle -> {
+    System.out.println(); // Newline at end
+    done.complete(null);
 });
 
 session.send("Write a haiku about Java").get();

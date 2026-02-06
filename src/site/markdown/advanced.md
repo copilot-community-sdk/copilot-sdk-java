@@ -135,14 +135,13 @@ var workspace = session.getWorkspacePath();
 When compaction occurs, the session emits events that you can listen for:
 
 ```java
-session.on(event -> {
-    if (event instanceof SessionCompactionStartEvent start) {
-        System.out.println("Compaction started");
-    } else if (event instanceof SessionCompactionCompleteEvent complete) {
-        var data = complete.getData();
-        System.out.println("Compaction completed - success: " + data.isSuccess() 
-            + ", tokens removed: " + data.getTokensRemoved());
-    }
+session.on(SessionCompactionStartEvent.class, start -> {
+    System.out.println("Compaction started");
+});
+session.on(SessionCompactionCompleteEvent.class, complete -> {
+    var data = complete.getData();
+    System.out.println("Compaction completed - success: " + data.isSuccess() 
+        + ", tokens removed: " + data.getTokensRemoved());
 });
 ```
 
