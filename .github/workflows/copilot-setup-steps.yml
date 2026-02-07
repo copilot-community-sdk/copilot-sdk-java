@@ -9,6 +9,9 @@ on:
     paths:
       - .github/workflows/copilot-setup-steps.yml
 
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
@@ -21,6 +24,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
 
       - name: Set up JDK 17
         uses: actions/setup-java@v5
@@ -35,9 +42,18 @@ jobs:
       - name: Download dependencies
         run: mvn dependency:go-offline -B
 
-      - name: Configure gh CLI authentication
+      # Install gh-aw extension for advanced GitHub CLI features
+      - name: Install gh-aw extension
         run: |
-          echo "GH_TOKEN=${{ github.token }}" >> "$GITHUB_ENV"
-          gh auth status
-        env:
-          GH_TOKEN: ${{ github.token }}
+          curl -fsSL https://raw.githubusercontent.com/githubnext/gh-aw/refs/heads/main/install-gh-aw.sh | bash
+
+      # Verify installations
+      - name: Verify tool installations
+        run: |
+          echo "=== Verifying installations ==="
+          node --version
+          npm --version
+          java -version
+          gh --version
+          gh aw version
+          echo "✅ All tools installed successfully"
