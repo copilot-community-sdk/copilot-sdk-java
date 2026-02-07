@@ -9,10 +9,6 @@ on:
     paths:
       - .github/workflows/copilot-setup-steps.yml
 
-env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
