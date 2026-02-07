@@ -128,7 +128,6 @@ jobs:
             "title": "Upstream sync: ${COMMIT_COUNT} new commits (${DATE})",
             "body": $(echo "$BODY" | jq -Rs .),
             "labels": ["upstream-sync"],
-            "assignees": ["copilot-swe-agent[bot]"],
             "agent_assignment": {
               "target_repo": "${{ github.repository }}",
               "base_branch": "main",
