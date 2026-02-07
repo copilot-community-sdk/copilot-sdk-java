@@ -108,22 +108,14 @@ jobs:
           # Read custom instructions from external file
           CUSTOM_INSTRUCTIONS=$(cat .github/prompts/coding-agent-merge-instructions.md)
 
-          # Build JSON payload with jq to ensure proper escaping
+          # Create the issue (without assignee to avoid permission issues)
           jq -n \
             --arg title "Upstream sync: ${COMMIT_COUNT} new commits (${DATE})" \
             --arg body "$BODY" \
-            --arg repo "$REPO" \
-            --arg instructions "$CUSTOM_INSTRUCTIONS" \
             '{
               title: $title,
               body: $body,
-              labels: ["upstream-sync"],
-              agent_assignment: {
-                target_repo: $repo,
-                base_branch: "main",
-                custom_instructions: $instructions,
-                model: "claude-opus-4.6"
-              }
+              labels: ["upstream-sync"]
             }' | gh api \
               --method POST \
               -H "Accept: application/vnd.github+json" \
@@ -135,13 +127,17 @@ jobs:
           ISSUE_NUMBER=$(cat /tmp/issue_number.txt)
           echo "Created issue #${ISSUE_NUMBER}"
 
-          # Assign Copilot to the issue (separate API call)
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "/repos/${REPO}/issues/${ISSUE_NUMBER}/assignees" \
-            -f 'assignees[]=copilot-swe-agent[bot]'
+          # Trigger Copilot by @mentioning it with custom instructions
+          jq -n \
+            --arg instructions "$CUSTOM_INSTRUCTIONS" \
+            '{
+              body: ("@copilot\n\n" + $instructions)
+            }' | gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/repos/${REPO}/issues/${ISSUE_NUMBER}/comments" \
+              --input -
 
           echo "✅ Issue #${ISSUE_NUMBER} created and assigned to Copilot coding agent."
 
