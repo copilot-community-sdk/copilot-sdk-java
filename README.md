@@ -123,3 +123,9 @@ The tests require the official [copilot-sdk](https://github.com/github/copilot-s
 ## License
 
 MIT — see [LICENSE](LICENSE) for details.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=copilot-community-sdk/copilot-sdk-java&type=Date)](https://www.star-history.com/#copilot-community-sdk/copilot-sdk-java&Date)
+
+⭐ Drop a star if you find this useful!

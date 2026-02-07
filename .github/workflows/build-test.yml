@@ -6,7 +6,27 @@ on:
     - cron: '0 0 * * *'
   push:
     branches: [main]
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.github/prompts/**'
+      - '.github/skills/**'
+      - '.github/scripts/**'
+      - '.github/templates/**'
+      - '.github/dependabot.yml'
+      - '.github/release.yml'
+      - '.github/workflows/publish-maven.yml'
   pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.github/prompts/**'
+      - '.github/skills/**'
+      - '.github/scripts/**'
+      - '.github/templates/**'
+      - '.github/dependabot.yml'
+      - '.github/release.yml'
+      - '.github/workflows/publish-maven.yml'
   workflow_dispatch:
   merge_group:
 
