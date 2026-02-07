@@ -1,0 +1,145 @@
+name: "Weekly Upstream Sync"
+
+on:
+  schedule:
+    # Every Monday at 10:00 UTC (5:00 AM EST / 6:00 AM EDT)
+    - cron: '0 10 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+
+  check-and-sync:
+    name: "Check upstream & trigger Copilot merge"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Check for upstream changes
+        id: check
+        run: |
+          LAST_MERGE=$(cat .lastmerge)
+          echo "Last merged commit: $LAST_MERGE"
+
+          git clone --quiet https://github.com/github/copilot-sdk.git /tmp/upstream
+          cd /tmp/upstream
+
+          UPSTREAM_HEAD=$(git rev-parse HEAD)
+          echo "Upstream HEAD: $UPSTREAM_HEAD"
+
+          if [ "$LAST_MERGE" = "$UPSTREAM_HEAD" ]; then
+            echo "No new upstream changes since last merge."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            COMMIT_COUNT=$(git rev-list --count "$LAST_MERGE".."$UPSTREAM_HEAD")
+            echo "Found $COMMIT_COUNT new upstream commits."
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            echo "commit_count=$COMMIT_COUNT" >> "$GITHUB_OUTPUT"
+            echo "upstream_head=$UPSTREAM_HEAD" >> "$GITHUB_OUTPUT"
+            echo "last_merge=$LAST_MERGE" >> "$GITHUB_OUTPUT"
+
+            # Generate a short summary of changes
+            SUMMARY=$(git log --oneline "$LAST_MERGE".."$UPSTREAM_HEAD" | head -20)
+            {
+              echo "summary<<EOF"
+              echo "$SUMMARY"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Close previous upstream-sync issues
+        if: steps.check.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find all open issues with the upstream-sync label
+          OPEN_ISSUES=$(gh issue list \
+            --repo "${{ github.repository }}" \
+            --label "upstream-sync" \
+            --state open \
+            --json number \
+            --jq '.[].number')
+
+          for ISSUE_NUM in $OPEN_ISSUES; do
+            echo "Closing superseded issue #${ISSUE_NUM}"
+            gh issue comment "$ISSUE_NUM" \
+              --repo "${{ github.repository }}" \
+              --body "Superseded by a newer upstream sync issue. Closing this one."
+            gh issue close "$ISSUE_NUM" \
+              --repo "${{ github.repository }}" \
+              --reason "not planned"
+          done
+
+      - name: Create issue and assign to Copilot
+        if: steps.check.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMIT_COUNT="${{ steps.check.outputs.commit_count }}"
+          LAST_MERGE="${{ steps.check.outputs.last_merge }}"
+          UPSTREAM_HEAD="${{ steps.check.outputs.upstream_head }}"
+          SUMMARY="${{ steps.check.outputs.summary }}"
+          DATE=$(date -u +"%Y-%m-%d")
+
+          BODY=$(cat <<'ISSUE_BODY'
+          ## Automated Upstream Sync
+
+          There are **COMMIT_COUNT_PLACEHOLDER** new commits in the [official Copilot SDK](https://github.com/github/copilot-sdk) since the last merge.
+
+          - **Last merged commit:** [`LAST_MERGE_PLACEHOLDER`](https://github.com/github/copilot-sdk/commit/LAST_MERGE_PLACEHOLDER)
+          - **Upstream HEAD:** [`UPSTREAM_HEAD_PLACEHOLDER`](https://github.com/github/copilot-sdk/commit/UPSTREAM_HEAD_PLACEHOLDER)
+
+          ### Recent upstream commits
+
+          ```
+          SUMMARY_PLACEHOLDER
+          ```
+
+          ### Instructions
+
+          Follow the [agentic-merge-upstream](.github/prompts/agentic-merge-upstream.prompt.md) prompt to port these changes to the Java SDK.
+
+          **Key steps:**
+          1. Run `.github/scripts/merge-upstream-start.sh` to initialize
+          2. Run `.github/scripts/merge-upstream-diff.sh --full` to analyze changes
+          3. Port relevant changes from the .NET SDK to Java, following existing patterns
+          4. Run `.github/scripts/format-and-test.sh` to validate
+          5. Run `.github/scripts/merge-upstream-finish.sh` to finalize
+
+          Update documentation (README.md, CHANGELOG.md, src/site/markdown/) for any user-facing changes.
+          ISSUE_BODY
+          )
+
+          # Replace placeholders
+          BODY="${BODY//COMMIT_COUNT_PLACEHOLDER/$COMMIT_COUNT}"
+          BODY="${BODY//LAST_MERGE_PLACEHOLDER/$LAST_MERGE}"
+          BODY="${BODY//UPSTREAM_HEAD_PLACEHOLDER/$UPSTREAM_HEAD}"
+          BODY="${BODY//SUMMARY_PLACEHOLDER/$SUMMARY}"
+
+          # Create issue and assign to Copilot coding agent
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/issues \
+            --input - <<EOF
+          {
+            "title": "Upstream sync: ${COMMIT_COUNT} new commits (${DATE})",
+            "body": $(echo "$BODY" | jq -Rs .),
+            "labels": ["upstream-sync"],
+            "assignees": ["copilot-swe-agent[bot]"],
+            "agent_assignment": {
+              "target_repo": "${{ github.repository }}",
+              "base_branch": "main",
+              "custom_instructions": "Follow the agentic-merge-upstream prompt at .github/prompts/agentic-merge-upstream.prompt.md to port upstream changes to the Java SDK. Use the utility scripts in .github/scripts/ for initialization, diffing, formatting, and testing. Commit changes incrementally. Update .lastmerge when done."
+            }
+          }
+          EOF
+
+          echo "✅ Issue created and assigned to Copilot coding agent."

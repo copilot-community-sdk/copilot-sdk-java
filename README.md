@@ -104,6 +104,16 @@ public class CopilotSDK {
 
 Contributions are welcome! Please see the [Contributing Guide](CONTRIBUTING.md) for details.
 
+### Agentic Upstream Merge and Sync
+
+This SDK tracks the official [Copilot SDK](https://github.com/github/copilot-sdk) (.NET reference implementation) and ports changes to Java. The upstream merge process is automated with AI assistance:
+
+**Weekly automated sync** — A [scheduled GitHub Actions workflow](.github/workflows/weekly-upstream-sync.yml) runs every Monday at 5 AM ET. It checks for new upstream commits since the last merge (tracked in [`.lastmerge`](.lastmerge)), and if changes are found, creates an issue labeled `upstream-sync` and assigns it to the GitHub Copilot coding agent. Any previously open `upstream-sync` issues are automatically closed.
+
+**Reusable prompt** — The merge workflow is defined in [`agentic-merge-upstream.prompt.md`](.github/prompts/agentic-merge-upstream.prompt.md). It can be triggered manually from:
+- **VS Code Copilot Chat** — type `/agentic-merge-upstream`
+- **GitHub Copilot CLI** — use `copilot` CLI with the same skill reference
+
 ### Development Setup
 
 ```bash

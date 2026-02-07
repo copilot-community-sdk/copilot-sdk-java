@@ -16,6 +16,7 @@ on:
       - '.github/dependabot.yml'
       - '.github/release.yml'
       - '.github/workflows/publish-maven.yml'
+      - '.github/workflows/weekly-upstream-sync.yml'
   pull_request:
     paths-ignore:
       - 'README.md'
@@ -27,6 +28,7 @@ on:
       - '.github/dependabot.yml'
       - '.github/release.yml'
       - '.github/workflows/publish-maven.yml'
+      - '.github/workflows/weekly-upstream-sync.yml'
   workflow_dispatch:
   merge_group:
 
