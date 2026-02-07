@@ -118,7 +118,6 @@ jobs:
               title: $title,
               body: $body,
               labels: ["upstream-sync"],
-              assignees: ["copilot-swe-agent[bot]"],
               agent_assignment: {
                 target_repo: $repo,
                 base_branch: "main",
@@ -130,9 +129,21 @@ jobs:
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
               "/repos/${REPO}/issues" \
-              --input -
+              --input - \
+              --jq '.number' > /tmp/issue_number.txt
 
-          echo "✅ Issue created and assigned to Copilot coding agent."
+          ISSUE_NUMBER=$(cat /tmp/issue_number.txt)
+          echo "Created issue #${ISSUE_NUMBER}"
+
+          # Assign Copilot to the issue (separate API call)
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${REPO}/issues/${ISSUE_NUMBER}/assignees" \
+            -f 'assignees[]=copilot-swe-agent[bot]'
+
+          echo "✅ Issue #${ISSUE_NUMBER} created and assigned to Copilot coding agent."
 
       - name: Summary
         if: always()
