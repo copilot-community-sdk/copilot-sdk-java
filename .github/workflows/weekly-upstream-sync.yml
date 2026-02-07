@@ -140,7 +140,8 @@ jobs:
             "agent_assignment": {
               "target_repo": "${{ github.repository }}",
               "base_branch": "main",
-              "custom_instructions": $(echo "$CUSTOM_INSTRUCTIONS" | jq -Rs .)
+              "custom_instructions": $(echo "$CUSTOM_INSTRUCTIONS" | jq -Rs .),
+              "model": "claude-opus-4.6"
             }
           }
           EOF
