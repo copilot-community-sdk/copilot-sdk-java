@@ -354,20 +354,52 @@ git commit -m "Update .lastmerge to $NEW_COMMIT"
 
 ## Step 12: Push Branch and Create Pull Request
 
-Push the branch to remote so the changes can be reviewed via Pull Request:
+Push the branch to remote and create a Pull Request automatically:
 
 ```bash
 # Push the branch to remote
 git push -u origin "$BRANCH_NAME"
-
-echo "Branch '$BRANCH_NAME' pushed to remote."
-echo "Create a Pull Request to review and merge the changes."
 ```
 
-**Important:** After pushing, provide the user with:
-1. The branch name that was pushed
-2. A summary of the changes that were ported
-3. Instructions to create a Pull Request comparing the branch against `main`
+**After pushing, create the Pull Request using the GitHub MCP tool (`mcp_github_create_pull_request`).**
+
+Use `owner: copilot-community-sdk`, `repo: copilot-sdk-java`, `head: $BRANCH_NAME`, `base: main`.
+
+The PR body should include:
+1. **Title**: `Merge upstream SDK changes (YYYY-MM-DD)`
+2. **Body** with:
+   - Summary of upstream commits analyzed (with count and commit range)
+   - Table of changes ported (commit hash + description)
+   - List of changes intentionally not ported (with reasons)
+   - Verification status (test count, build status)
+
+### PR Body Template
+
+```markdown
+## Upstream Merge
+
+Ports changes from the official Copilot SDK ([github/copilot-sdk](https://github.com/github/copilot-sdk)) since last merge (`<OLD_COMMIT>`→`<NEW_COMMIT>`).
+
+### Upstream commits analyzed (N commits)
+
+- Brief description of each upstream change and whether it was ported or not
+
+### Changes ported
+
+| Commit | Description |
+|---|---|
+| `<hash>` | Description of change |
+
+### Not ported (intentionally)
+
+- **Feature name** — Reason why it wasn't ported
+
+### Verification
+
+- All **N tests pass** (`mvn clean test`)
+- Package builds successfully (`mvn clean package -DskipTests`)
+- Code formatted with Spotless
+```
 
 ## Step 13: Final Review
 
@@ -378,6 +410,7 @@ Before finishing:
 3. Ensure no unintended changes were made
 4. Verify code follows project conventions
 5. Confirm the branch was pushed to remote
+6. Confirm the Pull Request was created and provide the PR URL to the user
 
 ---
 
@@ -404,7 +437,8 @@ Before finishing:
 - [ ] `src/site/site.xml` updated if new documentation pages were added
 - [ ] `.lastmerge` file updated with new commit hash
 - [ ] Branch pushed to remote
-- [ ] User informed about Pull Request creation
+- [ ] **Pull Request created** via GitHub MCP tool (`mcp_github_create_pull_request`)
+- [ ] PR URL provided to user
 
 ---
 
