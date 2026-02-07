@@ -98,6 +98,9 @@ public final class CopilotSession implements AutoCloseable {
     private volatile EventErrorHandler eventErrorHandler;
 <span class="fc" id="L99">    private volatile EventErrorPolicy eventErrorPolicy = EventErrorPolicy.PROPAGATE_AND_LOG_ERRORS;</span>
 
+    /** Tracks whether this session instance has been terminated via close(). */
+<span class="fc" id="L102">    private volatile boolean isTerminated = false;</span>
+
     /**
      * Creates a new session with the given ID and RPC client.
      * &lt;p&gt;
@@ -110,8 +113,8 @@ public final class CopilotSession implements AutoCloseable {
      *            the JSON-RPC client for communication
      */
     CopilotSession(String sessionId, JsonRpcClient rpc) {
-<span class="nc" id="L113">        this(sessionId, rpc, null);</span>
-<span class="nc" id="L114">    }</span>
+<span class="nc" id="L116">        this(sessionId, rpc, null);</span>
+<span class="nc" id="L117">    }</span>
 
     /**
      * Creates a new session with the given ID, RPC client, and workspace path.
@@ -126,11 +129,11 @@ public final class CopilotSession implements AutoCloseable {
      * @param workspacePath
      *            the workspace path if infinite sessions are enabled
      */
-<span class="fc" id="L129">    CopilotSession(String sessionId, JsonRpcClient rpc, String workspacePath) {</span>
-<span class="fc" id="L130">        this.sessionId = sessionId;</span>
-<span class="fc" id="L131">        this.rpc = rpc;</span>
-<span class="fc" id="L132">        this.workspacePath = workspacePath;</span>
-<span class="fc" id="L133">    }</span>
+<span class="fc" id="L132">    CopilotSession(String sessionId, JsonRpcClient rpc, String workspacePath) {</span>
+<span class="fc" id="L133">        this.sessionId = sessionId;</span>
+<span class="fc" id="L134">        this.rpc = rpc;</span>
+<span class="fc" id="L135">        this.workspacePath = workspacePath;</span>
+<span class="fc" id="L136">    }</span>
 
     /**
      * Gets the unique identifier for this session.
@@ -138,7 +141,7 @@ public final class CopilotSession implements AutoCloseable {
      * @return the session ID
      */
     public String getSessionId() {
-<span class="fc" id="L141">        return sessionId;</span>
+<span class="fc" id="L144">        return sessionId;</span>
     }
 
     /**
@@ -151,7 +154,7 @@ public final class CopilotSession implements AutoCloseable {
      * @return the workspace path, or {@code null} if infinite sessions are disabled
      */
     public String getWorkspacePath() {
-<span class="nc" id="L154">        return workspacePath;</span>
+<span class="fc" id="L157">        return workspacePath;</span>
     }
 
     /**
@@ -186,13 +189,16 @@ public final class CopilotSession implements AutoCloseable {
      * @param handler
      *            the error handler, or {@code null} to use only the default logging
      *            behavior
+     * @throws IllegalStateException
+     *             if this session has been terminated
      * @see EventErrorHandler
      * @see #setEventErrorPolicy(EventErrorPolicy)
      * @since 1.0.8
      */
     public void setEventErrorHandler(EventErrorHandler handler) {
-<span class="fc" id="L194">        this.eventErrorHandler = handler;</span>
-<span class="fc" id="L195">    }</span>
+<span class="fc" id="L199">        ensureNotTerminated();</span>
+<span class="fc" id="L200">        this.eventErrorHandler = handler;</span>
+<span class="fc" id="L201">    }</span>
 
     /**
      * Sets the error propagation policy for event dispatch.
@@ -224,16 +230,19 @@ public final class CopilotSession implements AutoCloseable {
      * @param policy
      *            the error policy (default is
      *            {@link EventErrorPolicy#PROPAGATE_AND_LOG_ERRORS})
+     * @throws IllegalStateException
+     *             if this session has been terminated
      * @see EventErrorPolicy
      * @see #setEventErrorHandler(EventErrorHandler)
      * @since 1.0.8
      */
     public void setEventErrorPolicy(EventErrorPolicy policy) {
-<span class="pc bpc" id="L232" title="1 of 2 branches missed.">        if (policy == null) {</span>
-<span class="nc" id="L233">            throw new NullPointerException(&quot;policy must not be null&quot;);</span>
+<span class="fc" id="L240">        ensureNotTerminated();</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        if (policy == null) {</span>
+<span class="nc" id="L242">            throw new NullPointerException(&quot;policy must not be null&quot;);</span>
         }
-<span class="fc" id="L235">        this.eventErrorPolicy = policy;</span>
-<span class="fc" id="L236">    }</span>
+<span class="fc" id="L244">        this.eventErrorPolicy = policy;</span>
+<span class="fc" id="L245">    }</span>
 
     /**
      * Sends a simple text message to the Copilot session.
@@ -244,10 +253,13 @@ public final class CopilotSession implements AutoCloseable {
      * @param prompt
      *            the message text to send
      * @return a future that resolves with the message ID assigned by the server
+     * @throws IllegalStateException
+     *             if this session has been terminated
      * @see #send(MessageOptions)
      */
     public CompletableFuture&lt;String&gt; send(String prompt) {
-<span class="nc" id="L250">        return send(new MessageOptions().setPrompt(prompt));</span>
+<span class="nc" id="L261">        ensureNotTerminated();</span>
+<span class="nc" id="L262">        return send(new MessageOptions().setPrompt(prompt));</span>
     }
 
     /**
@@ -260,10 +272,13 @@ public final class CopilotSession implements AutoCloseable {
      *            the message text to send
      * @return a future that resolves with the final assistant message event, or
      *         {@code null} if no assistant message was received
+     * @throws IllegalStateException
+     *             if this session has been terminated
      * @see #sendAndWait(MessageOptions)
      */
     public CompletableFuture&lt;AssistantMessageEvent&gt; sendAndWait(String prompt) {
-<span class="nc" id="L266">        return sendAndWait(new MessageOptions().setPrompt(prompt));</span>
+<span class="nc" id="L280">        ensureNotTerminated();</span>
+<span class="nc" id="L281">        return sendAndWait(new MessageOptions().setPrompt(prompt));</span>
     }
 
     /**
@@ -275,18 +290,21 @@ public final class CopilotSession implements AutoCloseable {
      * @param options
      *            the message options containing the prompt and attachments
      * @return a future that resolves with the message ID assigned by the server
+     * @throws IllegalStateException
+     *             if this session has been terminated
      * @see #sendAndWait(MessageOptions)
      * @see #send(String)
      */
     public CompletableFuture&lt;String&gt; send(MessageOptions options) {
-<span class="fc" id="L282">        var request = new SendMessageRequest();</span>
-<span class="fc" id="L283">        request.setSessionId(sessionId);</span>
-<span class="fc" id="L284">        request.setPrompt(options.getPrompt());</span>
-<span class="fc" id="L285">        request.setAttachments(options.getAttachments());</span>
-<span class="fc" id="L286">        request.setMode(options.getMode());</span>
+<span class="fc" id="L299">        ensureNotTerminated();</span>
+<span class="fc" id="L300">        var request = new SendMessageRequest();</span>
+<span class="fc" id="L301">        request.setSessionId(sessionId);</span>
+<span class="fc" id="L302">        request.setPrompt(options.getPrompt());</span>
+<span class="fc" id="L303">        request.setAttachments(options.getAttachments());</span>
+<span class="fc" id="L304">        request.setMode(options.getMode());</span>
 
-<span class="fc" id="L288">        return rpc.invoke(&quot;session.send&quot;, request, SendMessageResponse.class)</span>
-<span class="fc" id="L289">                .thenApply(SendMessageResponse::getMessageId);</span>
+<span class="fc" id="L306">        return rpc.invoke(&quot;session.send&quot;, request, SendMessageResponse.class)</span>
+<span class="fc" id="L307">                .thenApply(SendMessageResponse::getMessageId);</span>
     }
 
     /**
@@ -304,57 +322,60 @@ public final class CopilotSession implements AutoCloseable {
      *         {@code null} if no assistant message was received. The future
      *         completes exceptionally with a TimeoutException if the timeout
      *         expires.
+     * @throws IllegalStateException
+     *             if this session has been terminated
      * @see #sendAndWait(MessageOptions)
      * @see #send(MessageOptions)
      */
     public CompletableFuture&lt;AssistantMessageEvent&gt; sendAndWait(MessageOptions options, long timeoutMs) {
-<span class="fc" id="L311">        var future = new CompletableFuture&lt;AssistantMessageEvent&gt;();</span>
-<span class="fc" id="L312">        var lastAssistantMessage = new AtomicReference&lt;AssistantMessageEvent&gt;();</span>
+<span class="fc" id="L331">        ensureNotTerminated();</span>
+<span class="fc" id="L332">        var future = new CompletableFuture&lt;AssistantMessageEvent&gt;();</span>
+<span class="fc" id="L333">        var lastAssistantMessage = new AtomicReference&lt;AssistantMessageEvent&gt;();</span>
 
-<span class="fc" id="L314">        Consumer&lt;AbstractSessionEvent&gt; handler = evt -&gt; {</span>
-<span class="fc bfc" id="L315" title="All 2 branches covered.">            if (evt instanceof AssistantMessageEvent msg) {</span>
-<span class="fc" id="L316">                lastAssistantMessage.set(msg);</span>
-<span class="fc bfc" id="L317" title="All 2 branches covered.">            } else if (evt instanceof SessionIdleEvent) {</span>
-<span class="fc" id="L318">                future.complete(lastAssistantMessage.get());</span>
-<span class="pc bpc" id="L319" title="1 of 2 branches missed.">            } else if (evt instanceof SessionErrorEvent errorEvent) {</span>
-<span class="nc bnc" id="L320" title="All 2 branches missed.">                String message = errorEvent.getData() != null ? errorEvent.getData().getMessage() : &quot;session error&quot;;</span>
-<span class="nc" id="L321">                future.completeExceptionally(new RuntimeException(&quot;Session error: &quot; + message));</span>
+<span class="fc" id="L335">        Consumer&lt;AbstractSessionEvent&gt; handler = evt -&gt; {</span>
+<span class="fc bfc" id="L336" title="All 2 branches covered.">            if (evt instanceof AssistantMessageEvent msg) {</span>
+<span class="fc" id="L337">                lastAssistantMessage.set(msg);</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">            } else if (evt instanceof SessionIdleEvent) {</span>
+<span class="fc" id="L339">                future.complete(lastAssistantMessage.get());</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">            } else if (evt instanceof SessionErrorEvent errorEvent) {</span>
+<span class="nc bnc" id="L341" title="All 2 branches missed.">                String message = errorEvent.getData() != null ? errorEvent.getData().getMessage() : &quot;session error&quot;;</span>
+<span class="nc" id="L342">                future.completeExceptionally(new RuntimeException(&quot;Session error: &quot; + message));</span>
             }
-<span class="fc" id="L323">        };</span>
+<span class="fc" id="L344">        };</span>
 
-<span class="fc" id="L325">        Closeable subscription = on(handler);</span>
+<span class="fc" id="L346">        Closeable subscription = on(handler);</span>
 
-<span class="fc" id="L327">        send(options).exceptionally(ex -&gt; {</span>
+<span class="fc" id="L348">        send(options).exceptionally(ex -&gt; {</span>
             try {
-<span class="nc" id="L329">                subscription.close();</span>
-<span class="nc" id="L330">            } catch (Exception e) {</span>
-<span class="nc" id="L331">                LOG.log(Level.SEVERE, &quot;Error closing subscription&quot;, e);</span>
-<span class="nc" id="L332">            }</span>
-<span class="nc" id="L333">            future.completeExceptionally(ex);</span>
-<span class="nc" id="L334">            return null;</span>
+<span class="nc" id="L350">                subscription.close();</span>
+<span class="nc" id="L351">            } catch (Exception e) {</span>
+<span class="nc" id="L352">                LOG.log(Level.SEVERE, &quot;Error closing subscription&quot;, e);</span>
+<span class="nc" id="L353">            }</span>
+<span class="nc" id="L354">            future.completeExceptionally(ex);</span>
+<span class="nc" id="L355">            return null;</span>
         });
 
         // Set up timeout with daemon thread so it doesn't prevent JVM exit
-<span class="fc" id="L338">        var scheduler = Executors.newSingleThreadScheduledExecutor(r -&gt; {</span>
-<span class="fc" id="L339">            var t = new Thread(r, &quot;sendAndWait-timeout&quot;);</span>
-<span class="fc" id="L340">            t.setDaemon(true);</span>
-<span class="fc" id="L341">            return t;</span>
+<span class="fc" id="L359">        var scheduler = Executors.newSingleThreadScheduledExecutor(r -&gt; {</span>
+<span class="fc" id="L360">            var t = new Thread(r, &quot;sendAndWait-timeout&quot;);</span>
+<span class="fc" id="L361">            t.setDaemon(true);</span>
+<span class="fc" id="L362">            return t;</span>
         });
-<span class="fc" id="L343">        scheduler.schedule(() -&gt; {</span>
-<span class="fc bfc" id="L344" title="All 2 branches covered.">            if (!future.isDone()) {</span>
-<span class="fc" id="L345">                future.completeExceptionally(new TimeoutException(&quot;sendAndWait timed out after &quot; + timeoutMs + &quot;ms&quot;));</span>
+<span class="fc" id="L364">        scheduler.schedule(() -&gt; {</span>
+<span class="fc bfc" id="L365" title="All 2 branches covered.">            if (!future.isDone()) {</span>
+<span class="fc" id="L366">                future.completeExceptionally(new TimeoutException(&quot;sendAndWait timed out after &quot; + timeoutMs + &quot;ms&quot;));</span>
             }
-<span class="fc" id="L347">            scheduler.shutdown();</span>
-<span class="fc" id="L348">        }, timeoutMs, TimeUnit.MILLISECONDS);</span>
+<span class="fc" id="L368">            scheduler.shutdown();</span>
+<span class="fc" id="L369">        }, timeoutMs, TimeUnit.MILLISECONDS);</span>
 
-<span class="fc" id="L350">        return future.whenComplete((result, ex) -&gt; {</span>
+<span class="fc" id="L371">        return future.whenComplete((result, ex) -&gt; {</span>
             try {
-<span class="fc" id="L352">                subscription.close();</span>
-<span class="nc" id="L353">            } catch (IOException e) {</span>
-<span class="nc" id="L354">                LOG.log(Level.SEVERE, &quot;Error closing subscription&quot;, e);</span>
-<span class="fc" id="L355">            }</span>
-<span class="fc" id="L356">            scheduler.shutdown();</span>
-<span class="fc" id="L357">        });</span>
+<span class="fc" id="L373">                subscription.close();</span>
+<span class="nc" id="L374">            } catch (IOException e) {</span>
+<span class="nc" id="L375">                LOG.log(Level.SEVERE, &quot;Error closing subscription&quot;, e);</span>
+<span class="fc" id="L376">            }</span>
+<span class="fc" id="L377">            scheduler.shutdown();</span>
+<span class="fc" id="L378">        });</span>
     }
 
     /**
@@ -365,10 +386,13 @@ public final class CopilotSession implements AutoCloseable {
      *            the message options containing the prompt and attachments
      * @return a future that resolves with the final assistant message event, or
      *         {@code null} if no assistant message was received
+     * @throws IllegalStateException
+     *             if this session has been terminated
      * @see #sendAndWait(MessageOptions, long)
      */
     public CompletableFuture&lt;AssistantMessageEvent&gt; sendAndWait(MessageOptions options) {
-<span class="fc" id="L371">        return sendAndWait(options, 60000);</span>
+<span class="fc" id="L394">        ensureNotTerminated();</span>
+<span class="fc" id="L395">        return sendAndWait(options, 60000);</span>
     }
 
     /**
@@ -397,13 +421,16 @@ public final class CopilotSession implements AutoCloseable {
      * @param handler
      *            a callback to be invoked when a session event occurs
      * @return a Closeable that, when closed, unsubscribes the handler
+     * @throws IllegalStateException
+     *             if this session has been terminated
      * @see #on(Class, Consumer)
      * @see AbstractSessionEvent
      * @see #setEventErrorPolicy(EventErrorPolicy)
      */
     public Closeable on(Consumer&lt;AbstractSessionEvent&gt; handler) {
-<span class="fc" id="L405">        eventHandlers.add(handler);</span>
-<span class="fc" id="L406">        return () -&gt; eventHandlers.remove(handler);</span>
+<span class="fc" id="L431">        ensureNotTerminated();</span>
+<span class="fc" id="L432">        eventHandlers.add(handler);</span>
+<span class="fc" id="L433">        return () -&gt; eventHandlers.remove(handler);</span>
     }
 
     /**
@@ -447,17 +474,20 @@ public final class CopilotSession implements AutoCloseable {
      * @param handler
      *            a callback invoked when events of this type occur
      * @return a Closeable that unsubscribes the handler when closed
+     * @throws IllegalStateException
+     *             if this session has been terminated
      * @see #on(Consumer)
      * @see AbstractSessionEvent
      */
     public &lt;T extends AbstractSessionEvent&gt; Closeable on(Class&lt;T&gt; eventType, Consumer&lt;T&gt; handler) {
-<span class="fc" id="L454">        Consumer&lt;AbstractSessionEvent&gt; wrapper = event -&gt; {</span>
-<span class="fc bfc" id="L455" title="All 2 branches covered.">            if (eventType.isInstance(event)) {</span>
-<span class="fc" id="L456">                handler.accept(eventType.cast(event));</span>
+<span class="fc" id="L483">        ensureNotTerminated();</span>
+<span class="fc" id="L484">        Consumer&lt;AbstractSessionEvent&gt; wrapper = event -&gt; {</span>
+<span class="fc bfc" id="L485" title="All 2 branches covered.">            if (eventType.isInstance(event)) {</span>
+<span class="fc" id="L486">                handler.accept(eventType.cast(event));</span>
             }
-<span class="fc" id="L458">        };</span>
-<span class="fc" id="L459">        eventHandlers.add(wrapper);</span>
-<span class="fc" id="L460">        return () -&gt; eventHandlers.remove(wrapper);</span>
+<span class="fc" id="L488">        };</span>
+<span class="fc" id="L489">        eventHandlers.add(wrapper);</span>
+<span class="fc" id="L490">        return () -&gt; eventHandlers.remove(wrapper);</span>
     }
 
     /**
@@ -484,26 +514,26 @@ public final class CopilotSession implements AutoCloseable {
      * @see #setEventErrorPolicy(EventErrorPolicy)
      */
     void dispatchEvent(AbstractSessionEvent event) {
-<span class="fc bfc" id="L487" title="All 2 branches covered.">        for (Consumer&lt;AbstractSessionEvent&gt; handler : eventHandlers) {</span>
+<span class="fc bfc" id="L517" title="All 2 branches covered.">        for (Consumer&lt;AbstractSessionEvent&gt; handler : eventHandlers) {</span>
             try {
-<span class="fc" id="L489">                handler.accept(event);</span>
-<span class="fc" id="L490">            } catch (Exception e) {</span>
-<span class="fc" id="L491">                LOG.log(Level.WARNING, &quot;Error in event handler&quot;, e);</span>
-<span class="fc" id="L492">                EventErrorHandler errorHandler = this.eventErrorHandler;</span>
-<span class="fc bfc" id="L493" title="All 2 branches covered.">                if (errorHandler != null) {</span>
+<span class="fc" id="L519">                handler.accept(event);</span>
+<span class="fc" id="L520">            } catch (Exception e) {</span>
+<span class="fc" id="L521">                LOG.log(Level.WARNING, &quot;Error in event handler&quot;, e);</span>
+<span class="fc" id="L522">                EventErrorHandler errorHandler = this.eventErrorHandler;</span>
+<span class="fc bfc" id="L523" title="All 2 branches covered.">                if (errorHandler != null) {</span>
                     try {
-<span class="fc" id="L495">                        errorHandler.handleError(event, e);</span>
-<span class="fc" id="L496">                    } catch (Exception errorHandlerException) {</span>
-<span class="fc" id="L497">                        LOG.log(Level.SEVERE, &quot;Error in event error handler&quot;, errorHandlerException);</span>
-<span class="fc" id="L498">                        break; // error handler itself failed — stop regardless of policy</span>
-<span class="fc" id="L499">                    }</span>
+<span class="fc" id="L525">                        errorHandler.handleError(event, e);</span>
+<span class="fc" id="L526">                    } catch (Exception errorHandlerException) {</span>
+<span class="fc" id="L527">                        LOG.log(Level.SEVERE, &quot;Error in event error handler&quot;, errorHandlerException);</span>
+<span class="fc" id="L528">                        break; // error handler itself failed — stop regardless of policy</span>
+<span class="fc" id="L529">                    }</span>
                 }
-<span class="fc bfc" id="L501" title="All 2 branches covered.">                if (eventErrorPolicy == EventErrorPolicy.PROPAGATE_AND_LOG_ERRORS) {</span>
-<span class="fc" id="L502">                    break;</span>
+<span class="fc bfc" id="L531" title="All 2 branches covered.">                if (eventErrorPolicy == EventErrorPolicy.PROPAGATE_AND_LOG_ERRORS) {</span>
+<span class="fc" id="L532">                    break;</span>
                 }
-<span class="fc" id="L504">            }</span>
-<span class="fc" id="L505">        }</span>
-<span class="fc" id="L506">    }</span>
+<span class="fc" id="L534">            }</span>
+<span class="fc" id="L535">        }</span>
+<span class="fc" id="L536">    }</span>
 
     /**
      * Registers custom tool handlers for this session.
@@ -514,13 +544,13 @@ public final class CopilotSession implements AutoCloseable {
      *            the list of tool definitions with handlers
      */
     void registerTools(List&lt;ToolDefinition&gt; tools) {
-<span class="fc" id="L517">        toolHandlers.clear();</span>
-<span class="pc bpc" id="L518" title="1 of 2 branches missed.">        if (tools != null) {</span>
-<span class="fc bfc" id="L519" title="All 2 branches covered.">            for (ToolDefinition tool : tools) {</span>
-<span class="fc" id="L520">                toolHandlers.put(tool.getName(), tool);</span>
-<span class="fc" id="L521">            }</span>
+<span class="fc" id="L547">        toolHandlers.clear();</span>
+<span class="pc bpc" id="L548" title="1 of 2 branches missed.">        if (tools != null) {</span>
+<span class="fc bfc" id="L549" title="All 2 branches covered.">            for (ToolDefinition tool : tools) {</span>
+<span class="fc" id="L550">                toolHandlers.put(tool.getName(), tool);</span>
+<span class="fc" id="L551">            }</span>
         }
-<span class="fc" id="L523">    }</span>
+<span class="fc" id="L553">    }</span>
 
     /**
      * Retrieves a registered tool by name.
@@ -530,7 +560,7 @@ public final class CopilotSession implements AutoCloseable {
      * @return the tool definition, or {@code null} if not found
      */
     ToolDefinition getTool(String name) {
-<span class="fc" id="L533">        return toolHandlers.get(name);</span>
+<span class="fc" id="L563">        return toolHandlers.get(name);</span>
     }
 
     /**
@@ -543,8 +573,8 @@ public final class CopilotSession implements AutoCloseable {
      *            the permission handler
      */
     void registerPermissionHandler(PermissionHandler handler) {
-<span class="fc" id="L546">        permissionHandler.set(handler);</span>
-<span class="fc" id="L547">    }</span>
+<span class="fc" id="L576">        permissionHandler.set(handler);</span>
+<span class="fc" id="L577">    }</span>
 
     /**
      * Handles a permission request from the Copilot CLI.
@@ -556,28 +586,28 @@ public final class CopilotSession implements AutoCloseable {
      * @return a future that resolves with the permission result
      */
     CompletableFuture&lt;PermissionRequestResult&gt; handlePermissionRequest(JsonNode permissionRequestData) {
-<span class="fc" id="L559">        PermissionHandler handler = permissionHandler.get();</span>
-<span class="pc bpc" id="L560" title="1 of 2 branches missed.">        if (handler == null) {</span>
-<span class="nc" id="L561">            PermissionRequestResult result = new PermissionRequestResult();</span>
-<span class="nc" id="L562">            result.setKind(&quot;denied-no-approval-rule-and-could-not-request-from-user&quot;);</span>
-<span class="nc" id="L563">            return CompletableFuture.completedFuture(result);</span>
+<span class="fc" id="L589">        PermissionHandler handler = permissionHandler.get();</span>
+<span class="pc bpc" id="L590" title="1 of 2 branches missed.">        if (handler == null) {</span>
+<span class="nc" id="L591">            PermissionRequestResult result = new PermissionRequestResult();</span>
+<span class="nc" id="L592">            result.setKind(&quot;denied-no-approval-rule-and-could-not-request-from-user&quot;);</span>
+<span class="nc" id="L593">            return CompletableFuture.completedFuture(result);</span>
         }
 
         try {
-<span class="fc" id="L567">            PermissionRequest request = MAPPER.treeToValue(permissionRequestData, PermissionRequest.class);</span>
-<span class="fc" id="L568">            var invocation = new PermissionInvocation();</span>
-<span class="fc" id="L569">            invocation.setSessionId(sessionId);</span>
-<span class="fc" id="L570">            return handler.handle(request, invocation).exceptionally(ex -&gt; {</span>
-<span class="nc" id="L571">                LOG.log(Level.SEVERE, &quot;Permission handler threw an exception&quot;, ex);</span>
-<span class="nc" id="L572">                PermissionRequestResult result = new PermissionRequestResult();</span>
-<span class="nc" id="L573">                result.setKind(&quot;denied-no-approval-rule-and-could-not-request-from-user&quot;);</span>
-<span class="nc" id="L574">                return result;</span>
+<span class="fc" id="L597">            PermissionRequest request = MAPPER.treeToValue(permissionRequestData, PermissionRequest.class);</span>
+<span class="fc" id="L598">            var invocation = new PermissionInvocation();</span>
+<span class="fc" id="L599">            invocation.setSessionId(sessionId);</span>
+<span class="fc" id="L600">            return handler.handle(request, invocation).exceptionally(ex -&gt; {</span>
+<span class="nc" id="L601">                LOG.log(Level.SEVERE, &quot;Permission handler threw an exception&quot;, ex);</span>
+<span class="nc" id="L602">                PermissionRequestResult result = new PermissionRequestResult();</span>
+<span class="nc" id="L603">                result.setKind(&quot;denied-no-approval-rule-and-could-not-request-from-user&quot;);</span>
+<span class="nc" id="L604">                return result;</span>
             });
-<span class="fc" id="L576">        } catch (Exception e) {</span>
-<span class="fc" id="L577">            LOG.log(Level.SEVERE, &quot;Failed to process permission request&quot;, e);</span>
-<span class="fc" id="L578">            PermissionRequestResult result = new PermissionRequestResult();</span>
-<span class="fc" id="L579">            result.setKind(&quot;denied-no-approval-rule-and-could-not-request-from-user&quot;);</span>
-<span class="fc" id="L580">            return CompletableFuture.completedFuture(result);</span>
+<span class="fc" id="L606">        } catch (Exception e) {</span>
+<span class="fc" id="L607">            LOG.log(Level.SEVERE, &quot;Failed to process permission request&quot;, e);</span>
+<span class="fc" id="L608">            PermissionRequestResult result = new PermissionRequestResult();</span>
+<span class="fc" id="L609">            result.setKind(&quot;denied-no-approval-rule-and-could-not-request-from-user&quot;);</span>
+<span class="fc" id="L610">            return CompletableFuture.completedFuture(result);</span>
         }
     }
 
@@ -591,8 +621,8 @@ public final class CopilotSession implements AutoCloseable {
      *            the user input handler
      */
     void registerUserInputHandler(UserInputHandler handler) {
-<span class="fc" id="L594">        userInputHandler.set(handler);</span>
-<span class="fc" id="L595">    }</span>
+<span class="fc" id="L624">        userInputHandler.set(handler);</span>
+<span class="fc" id="L625">    }</span>
 
     /**
      * Handles a user input request from the Copilot CLI.
@@ -604,20 +634,20 @@ public final class CopilotSession implements AutoCloseable {
      * @return a future that resolves with the user input response
      */
     CompletableFuture&lt;UserInputResponse&gt; handleUserInputRequest(UserInputRequest request) {
-<span class="fc" id="L607">        UserInputHandler handler = userInputHandler.get();</span>
-<span class="pc bpc" id="L608" title="1 of 2 branches missed.">        if (handler == null) {</span>
-<span class="nc" id="L609">            return CompletableFuture.failedFuture(new IllegalStateException(&quot;No user input handler registered&quot;));</span>
+<span class="fc" id="L637">        UserInputHandler handler = userInputHandler.get();</span>
+<span class="pc bpc" id="L638" title="1 of 2 branches missed.">        if (handler == null) {</span>
+<span class="nc" id="L639">            return CompletableFuture.failedFuture(new IllegalStateException(&quot;No user input handler registered&quot;));</span>
         }
 
         try {
-<span class="fc" id="L613">            var invocation = new UserInputInvocation().setSessionId(sessionId);</span>
-<span class="fc" id="L614">            return handler.handle(request, invocation).exceptionally(ex -&gt; {</span>
-<span class="nc" id="L615">                LOG.log(Level.SEVERE, &quot;User input handler threw an exception&quot;, ex);</span>
-<span class="nc" id="L616">                throw new RuntimeException(&quot;User input handler error&quot;, ex);</span>
+<span class="fc" id="L643">            var invocation = new UserInputInvocation().setSessionId(sessionId);</span>
+<span class="fc" id="L644">            return handler.handle(request, invocation).exceptionally(ex -&gt; {</span>
+<span class="nc" id="L645">                LOG.log(Level.SEVERE, &quot;User input handler threw an exception&quot;, ex);</span>
+<span class="nc" id="L646">                throw new RuntimeException(&quot;User input handler error&quot;, ex);</span>
             });
-<span class="nc" id="L618">        } catch (Exception e) {</span>
-<span class="nc" id="L619">            LOG.log(Level.SEVERE, &quot;Failed to process user input request&quot;, e);</span>
-<span class="nc" id="L620">            return CompletableFuture.failedFuture(e);</span>
+<span class="nc" id="L648">        } catch (Exception e) {</span>
+<span class="nc" id="L649">            LOG.log(Level.SEVERE, &quot;Failed to process user input request&quot;, e);</span>
+<span class="nc" id="L650">            return CompletableFuture.failedFuture(e);</span>
         }
     }
 
@@ -630,8 +660,8 @@ public final class CopilotSession implements AutoCloseable {
      *            the hooks configuration
      */
     void registerHooks(SessionHooks hooks) {
-<span class="fc" id="L633">        hooksHandler.set(hooks);</span>
-<span class="fc" id="L634">    }</span>
+<span class="fc" id="L663">        hooksHandler.set(hooks);</span>
+<span class="fc" id="L664">    }</span>
 
     /**
      * Handles a hook invocation from the Copilot CLI.
@@ -645,60 +675,60 @@ public final class CopilotSession implements AutoCloseable {
      * @return a future that resolves with the hook output
      */
     CompletableFuture&lt;Object&gt; handleHooksInvoke(String hookType, JsonNode input) {
-<span class="fc" id="L648">        SessionHooks hooks = hooksHandler.get();</span>
-<span class="pc bpc" id="L649" title="1 of 2 branches missed.">        if (hooks == null) {</span>
-<span class="nc" id="L650">            return CompletableFuture.completedFuture(null);</span>
+<span class="fc" id="L678">        SessionHooks hooks = hooksHandler.get();</span>
+<span class="pc bpc" id="L679" title="1 of 2 branches missed.">        if (hooks == null) {</span>
+<span class="nc" id="L680">            return CompletableFuture.completedFuture(null);</span>
         }
 
-<span class="fc" id="L653">        var invocation = new HookInvocation().setSessionId(sessionId);</span>
+<span class="fc" id="L683">        var invocation = new HookInvocation().setSessionId(sessionId);</span>
 
         try {
-<span class="pc bpc" id="L656" title="1 of 6 branches missed.">            switch (hookType) {</span>
+<span class="pc bpc" id="L686" title="1 of 6 branches missed.">            switch (hookType) {</span>
                 case &quot;preToolUse&quot; :
-<span class="fc bfc" id="L658" title="All 2 branches covered.">                    if (hooks.getOnPreToolUse() != null) {</span>
-<span class="fc" id="L659">                        PreToolUseHookInput preInput = MAPPER.treeToValue(input, PreToolUseHookInput.class);</span>
-<span class="fc" id="L660">                        return hooks.getOnPreToolUse().handle(preInput, invocation)</span>
-<span class="fc" id="L661">                                .thenApply(output -&gt; (Object) output);</span>
+<span class="fc bfc" id="L688" title="All 2 branches covered.">                    if (hooks.getOnPreToolUse() != null) {</span>
+<span class="fc" id="L689">                        PreToolUseHookInput preInput = MAPPER.treeToValue(input, PreToolUseHookInput.class);</span>
+<span class="fc" id="L690">                        return hooks.getOnPreToolUse().handle(preInput, invocation)</span>
+<span class="fc" id="L691">                                .thenApply(output -&gt; (Object) output);</span>
                     }
                     break;
                 case &quot;postToolUse&quot; :
-<span class="fc bfc" id="L665" title="All 2 branches covered.">                    if (hooks.getOnPostToolUse() != null) {</span>
-<span class="fc" id="L666">                        PostToolUseHookInput postInput = MAPPER.treeToValue(input, PostToolUseHookInput.class);</span>
-<span class="fc" id="L667">                        return hooks.getOnPostToolUse().handle(postInput, invocation)</span>
-<span class="fc" id="L668">                                .thenApply(output -&gt; (Object) output);</span>
+<span class="fc bfc" id="L695" title="All 2 branches covered.">                    if (hooks.getOnPostToolUse() != null) {</span>
+<span class="fc" id="L696">                        PostToolUseHookInput postInput = MAPPER.treeToValue(input, PostToolUseHookInput.class);</span>
+<span class="fc" id="L697">                        return hooks.getOnPostToolUse().handle(postInput, invocation)</span>
+<span class="fc" id="L698">                                .thenApply(output -&gt; (Object) output);</span>
                     }
                     break;
                 case &quot;userPromptSubmitted&quot; :
-<span class="pc bpc" id="L672" title="1 of 2 branches missed.">                    if (hooks.getOnUserPromptSubmitted() != null) {</span>
-<span class="nc" id="L673">                        UserPromptSubmittedHookInput promptInput = MAPPER.treeToValue(input,</span>
+<span class="pc bpc" id="L702" title="1 of 2 branches missed.">                    if (hooks.getOnUserPromptSubmitted() != null) {</span>
+<span class="nc" id="L703">                        UserPromptSubmittedHookInput promptInput = MAPPER.treeToValue(input,</span>
                                 UserPromptSubmittedHookInput.class);
-<span class="nc" id="L675">                        return hooks.getOnUserPromptSubmitted().handle(promptInput, invocation)</span>
-<span class="nc" id="L676">                                .thenApply(output -&gt; (Object) output);</span>
+<span class="nc" id="L705">                        return hooks.getOnUserPromptSubmitted().handle(promptInput, invocation)</span>
+<span class="nc" id="L706">                                .thenApply(output -&gt; (Object) output);</span>
                     }
                     break;
                 case &quot;sessionStart&quot; :
-<span class="pc bpc" id="L680" title="1 of 2 branches missed.">                    if (hooks.getOnSessionStart() != null) {</span>
-<span class="nc" id="L681">                        SessionStartHookInput startInput = MAPPER.treeToValue(input, SessionStartHookInput.class);</span>
-<span class="nc" id="L682">                        return hooks.getOnSessionStart().handle(startInput, invocation)</span>
-<span class="nc" id="L683">                                .thenApply(output -&gt; (Object) output);</span>
+<span class="pc bpc" id="L710" title="1 of 2 branches missed.">                    if (hooks.getOnSessionStart() != null) {</span>
+<span class="nc" id="L711">                        SessionStartHookInput startInput = MAPPER.treeToValue(input, SessionStartHookInput.class);</span>
+<span class="nc" id="L712">                        return hooks.getOnSessionStart().handle(startInput, invocation)</span>
+<span class="nc" id="L713">                                .thenApply(output -&gt; (Object) output);</span>
                     }
                     break;
                 case &quot;sessionEnd&quot; :
-<span class="pc bpc" id="L687" title="1 of 2 branches missed.">                    if (hooks.getOnSessionEnd() != null) {</span>
-<span class="nc" id="L688">                        SessionEndHookInput endInput = MAPPER.treeToValue(input, SessionEndHookInput.class);</span>
-<span class="nc" id="L689">                        return hooks.getOnSessionEnd().handle(endInput, invocation)</span>
-<span class="nc" id="L690">                                .thenApply(output -&gt; (Object) output);</span>
+<span class="pc bpc" id="L717" title="1 of 2 branches missed.">                    if (hooks.getOnSessionEnd() != null) {</span>
+<span class="nc" id="L718">                        SessionEndHookInput endInput = MAPPER.treeToValue(input, SessionEndHookInput.class);</span>
+<span class="nc" id="L719">                        return hooks.getOnSessionEnd().handle(endInput, invocation)</span>
+<span class="nc" id="L720">                                .thenApply(output -&gt; (Object) output);</span>
                     }
                     break;
                 default :
-<span class="nc" id="L694">                    LOG.fine(&quot;Unhandled hook type: &quot; + hookType);</span>
+<span class="nc" id="L724">                    LOG.fine(&quot;Unhandled hook type: &quot; + hookType);</span>
             }
-<span class="nc" id="L696">        } catch (Exception e) {</span>
-<span class="nc" id="L697">            LOG.log(Level.SEVERE, &quot;Failed to process hook invocation&quot;, e);</span>
-<span class="nc" id="L698">            return CompletableFuture.failedFuture(e);</span>
-<span class="fc" id="L699">        }</span>
+<span class="nc" id="L726">        } catch (Exception e) {</span>
+<span class="nc" id="L727">            LOG.log(Level.SEVERE, &quot;Failed to process hook invocation&quot;, e);</span>
+<span class="nc" id="L728">            return CompletableFuture.failedFuture(e);</span>
+<span class="fc" id="L729">        }</span>
 
-<span class="fc" id="L701">        return CompletableFuture.completedFuture(null);</span>
+<span class="fc" id="L731">        return CompletableFuture.completedFuture(null);</span>
     }
 
     /**
@@ -708,25 +738,28 @@ public final class CopilotSession implements AutoCloseable {
      * assistant responses, tool invocations, and other session events.
      *
      * @return a future that resolves with a list of all session events
+     * @throws IllegalStateException
+     *             if this session has been terminated
      * @see AbstractSessionEvent
      */
     public CompletableFuture&lt;List&lt;AbstractSessionEvent&gt;&gt; getMessages() {
-<span class="fc" id="L714">        return rpc.invoke(&quot;session.getMessages&quot;, Map.of(&quot;sessionId&quot;, sessionId), GetMessagesResponse.class)</span>
-<span class="fc" id="L715">                .thenApply(response -&gt; {</span>
-<span class="fc" id="L716">                    var events = new ArrayList&lt;AbstractSessionEvent&gt;();</span>
-<span class="pc bpc" id="L717" title="1 of 2 branches missed.">                    if (response.getEvents() != null) {</span>
-<span class="fc bfc" id="L718" title="All 2 branches covered.">                        for (JsonNode eventNode : response.getEvents()) {</span>
+<span class="fc" id="L746">        ensureNotTerminated();</span>
+<span class="fc" id="L747">        return rpc.invoke(&quot;session.getMessages&quot;, Map.of(&quot;sessionId&quot;, sessionId), GetMessagesResponse.class)</span>
+<span class="fc" id="L748">                .thenApply(response -&gt; {</span>
+<span class="fc" id="L749">                    var events = new ArrayList&lt;AbstractSessionEvent&gt;();</span>
+<span class="pc bpc" id="L750" title="1 of 2 branches missed.">                    if (response.getEvents() != null) {</span>
+<span class="fc bfc" id="L751" title="All 2 branches covered.">                        for (JsonNode eventNode : response.getEvents()) {</span>
                             try {
-<span class="fc" id="L720">                                AbstractSessionEvent event = SessionEventParser.parse(eventNode.toString());</span>
-<span class="pc bpc" id="L721" title="1 of 2 branches missed.">                                if (event != null) {</span>
-<span class="fc" id="L722">                                    events.add(event);</span>
+<span class="fc" id="L753">                                AbstractSessionEvent event = SessionEventParser.parse(eventNode.toString());</span>
+<span class="pc bpc" id="L754" title="1 of 2 branches missed.">                                if (event != null) {</span>
+<span class="fc" id="L755">                                    events.add(event);</span>
                                 }
-<span class="nc" id="L724">                            } catch (Exception e) {</span>
-<span class="nc" id="L725">                                LOG.log(Level.WARNING, &quot;Failed to parse event&quot;, e);</span>
-<span class="fc" id="L726">                            }</span>
-<span class="fc" id="L727">                        }</span>
+<span class="nc" id="L757">                            } catch (Exception e) {</span>
+<span class="nc" id="L758">                                LOG.log(Level.WARNING, &quot;Failed to parse event&quot;, e);</span>
+<span class="fc" id="L759">                            }</span>
+<span class="fc" id="L760">                        }</span>
                     }
-<span class="fc" id="L729">                    return events;</span>
+<span class="fc" id="L762">                    return events;</span>
                 });
     }
 
@@ -737,32 +770,54 @@ public final class CopilotSession implements AutoCloseable {
      * continuing to generate a response.
      *
      * @return a future that completes when the abort is acknowledged
+     * @throws IllegalStateException
+     *             if this session has been terminated
      */
     public CompletableFuture&lt;Void&gt; abort() {
-<span class="fc" id="L742">        return rpc.invoke(&quot;session.abort&quot;, Map.of(&quot;sessionId&quot;, sessionId), Void.class);</span>
+<span class="fc" id="L777">        ensureNotTerminated();</span>
+<span class="fc" id="L778">        return rpc.invoke(&quot;session.abort&quot;, Map.of(&quot;sessionId&quot;, sessionId), Void.class);</span>
     }
+
+    /**
+     * Verifies that this session has not yet been terminated.
+     *
+     * @throws IllegalStateException
+     *             if close() has already been invoked
+     */
+    private void ensureNotTerminated() {
+<span class="fc bfc" id="L788" title="All 2 branches covered.">        if (isTerminated) {</span>
+<span class="fc" id="L789">            throw new IllegalStateException(&quot;Session is closed&quot;);</span>
+        }
+<span class="fc" id="L791">    }</span>
 
     /**
      * Disposes the session and releases all associated resources.
      * &lt;p&gt;
      * This destroys the session on the server, clears all event handlers, and
      * releases tool and permission handlers. After calling this method, the session
-     * cannot be used again.
+     * cannot be used again. Subsequent calls to this method have no effect.
      */
     @Override
     public void close() {
-        try {
-<span class="fc" id="L755">            rpc.invoke(&quot;session.destroy&quot;, Map.of(&quot;sessionId&quot;, sessionId), Void.class).get(5, TimeUnit.SECONDS);</span>
-<span class="nc" id="L756">        } catch (Exception e) {</span>
-<span class="nc" id="L757">            LOG.log(Level.FINE, &quot;Error destroying session&quot;, e);</span>
-<span class="fc" id="L758">        }</span>
+<span class="fc" id="L802">        synchronized (this) {</span>
+<span class="fc bfc" id="L803" title="All 2 branches covered.">            if (isTerminated) {</span>
+<span class="fc" id="L804">                return; // Already terminated - no-op</span>
+            }
+<span class="fc" id="L806">            isTerminated = true;</span>
+<span class="fc" id="L807">        }</span>
 
-<span class="fc" id="L760">        eventHandlers.clear();</span>
-<span class="fc" id="L761">        toolHandlers.clear();</span>
-<span class="fc" id="L762">        permissionHandler.set(null);</span>
-<span class="fc" id="L763">        userInputHandler.set(null);</span>
-<span class="fc" id="L764">        hooksHandler.set(null);</span>
-<span class="fc" id="L765">    }</span>
+        try {
+<span class="fc" id="L810">            rpc.invoke(&quot;session.destroy&quot;, Map.of(&quot;sessionId&quot;, sessionId), Void.class).get(5, TimeUnit.SECONDS);</span>
+<span class="nc" id="L811">        } catch (Exception e) {</span>
+<span class="nc" id="L812">            LOG.log(Level.FINE, &quot;Error destroying session&quot;, e);</span>
+<span class="fc" id="L813">        }</span>
+
+<span class="fc" id="L815">        eventHandlers.clear();</span>
+<span class="fc" id="L816">        toolHandlers.clear();</span>
+<span class="fc" id="L817">        permissionHandler.set(null);</span>
+<span class="fc" id="L818">        userInputHandler.set(null);</span>
+<span class="fc" id="L819">        hooksHandler.set(null);</span>
+<span class="fc" id="L820">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
