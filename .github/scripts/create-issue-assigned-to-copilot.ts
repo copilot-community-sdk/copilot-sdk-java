@@ -4,9 +4,13 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_REPO_OWNER = process.env.GITHUB_REPO_OWNER;
 const GITHUB_REPO_NAME = process.env.GITHUB_REPO_NAME;
 
+// Known Copilot Coding Agent bot identity
+const COPILOT_BOT_LOGIN = 'Copilot';
+const COPILOT_BOT_NODE_ID = 'BOT_kgDOC9w8XQ';
+
 /**
- * Creates a GitHub issue from the provided description and assigns it to @copilot-swe-agent if available.
- * Uses GraphQL for efficient repo/actor queries and issue creation with assignment.
+ * Creates a GitHub issue and assigns it to the Copilot Coding Agent (@Copilot).
+ * Uses GraphQL to create the issue with the bot's known node ID as assignee.
  * Returns the issue URL on success, null on failure.
  */
 export async function createIssueWithCopilot(description: string): Promise<string | null> {
@@ -21,23 +25,12 @@ export async function createIssueWithCopilot(description: string): Promise<strin
   const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
   try {
-    // Fetch repo ID and check for @copilot-swe-agent
-    const repoInfoQuery = `
+    // Fetch repo node ID
+    const repoInfo: any = await octokit.graphql(`
       query($owner: String!, $name: String!) {
-        repository(owner: $owner, name: $name) {
-          id
-          suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
-            nodes {
-              login
-              ... on User { id }
-              ... on Bot { id }
-            }
-          }
-        }
+        repository(owner: $owner, name: $name) { id }
       }
-    `;
-
-    const repoInfo: any = await octokit.graphql(repoInfoQuery, {
+    `, {
       owner: GITHUB_REPO_OWNER,
       name: GITHUB_REPO_NAME,
     });
@@ -47,26 +40,10 @@ export async function createIssueWithCopilot(description: string): Promise<strin
       return null;
     }
 
-    const copilotBot = repoInfo.repository.suggestedActors.nodes.find(
-      (node: any) => node.login === 'copilot-swe-agent'
-    );
-
     const title = description.split('\n')[0].slice(0, 100);
 
-    if (!copilotBot) {
-      // Fallback: Create issue without assignment via REST
-      const issue = await octokit.issues.create({
-        owner: GITHUB_REPO_OWNER,
-        repo: GITHUB_REPO_NAME,
-        title,
-        body: description,
-      });
-
-      return issue.data.html_url;
-    }
-
-    // Create issue with assignment via GraphQL
-    const createIssueMutation = `
+    // Create issue with Copilot bot assigned via known node ID
+    const response: any = await octokit.graphql(`
       mutation($repoId: ID!, $title: String!, $body: String!, $assigneeIds: [ID!]) {
         createIssue(input: { repositoryId: $repoId, title: $title, body: $body, assigneeIds: $assigneeIds }) {
           issue {
@@ -77,13 +54,11 @@ export async function createIssueWithCopilot(description: string): Promise<strin
           }
         }
       }
-    `;
-
-    const response: any = await octokit.graphql(createIssueMutation, {
+    `, {
       repoId,
       title,
       body: description,
-      assigneeIds: [copilotBot.id],
+      assigneeIds: [COPILOT_BOT_NODE_ID],
     });
 
     const issue = response?.createIssue?.issue;
@@ -91,6 +66,7 @@ export async function createIssueWithCopilot(description: string): Promise<strin
       return null;
     }
 
+    console.log(`Assigned to: ${issue.assignees.nodes.map((a: any) => a.login).join(', ')}`);
     return issue.url;
   } catch (error) {
     console.error('Error creating issue:', error);
