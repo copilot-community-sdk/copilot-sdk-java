@@ -6,7 +6,6 @@ on:
       title:
         description: 'Issue title'
         required: false
-        default: 'Investigation needed from Copilot Coding Agent'
         type: string
   push:
     branches: [main]
@@ -24,10 +23,11 @@ jobs:
         uses: actions/github-script@v8
         with:
           script: |
+            const title = '${{ inputs.title || 'Investigation needed from Copilot Coding Agent' }}';
             const issue = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: '${{ inputs.title }}',
+              title,
               assignees: ['copilot-swe-agent']
             });
             core.notice(`Created issue #${issue.data.number}: ${issue.data.html_url}`);
@@ -54,5 +54,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPO_OWNER: ${{ github.repository_owner }}
           GITHUB_REPO_NAME: ${{ github.event.repository.name }}
-        run: npx tsx create-issue-assigned-to-copilot.ts "${{ inputs.title }}"
+        run: npx tsx create-issue-assigned-to-copilot.ts "${{ inputs.title || 'Investigation needed from Copilot Coding Agent' }}"
         working-directory: .github/scripts
