@@ -12,6 +12,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/copilot-issue.yml'
+      - '.github/scripts/create-issue-assigned-to-copilot.ts'
 
 jobs:
   create-issue:
