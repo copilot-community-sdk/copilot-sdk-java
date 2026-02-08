@@ -22,6 +22,6 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: '${{ inputs.title }}',
-              assignees: ['copilot-swe-bot']
+              assignees: ['copilot-swe-agent']
             });
             core.notice(`Created issue #${issue.data.number}: ${issue.data.html_url}`);
