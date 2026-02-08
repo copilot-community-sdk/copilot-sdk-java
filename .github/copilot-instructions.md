@@ -249,3 +249,23 @@ This SDK is designed to be **lightweight with minimal dependencies**:
 6. **Commit**: Make focused commits with clear messages
 7. **Push**: Push your branch and create a PR
 8. **Review**: Address review feedback and iterate
+
+## Release Process
+
+The release process is automated via the `publish-maven.yml` GitHub Actions workflow. Key steps:
+
+1. **CHANGELOG Update**: The script `.github/scripts/update-changelog.sh` automatically:
+   - Converts the `## [Unreleased]` section to `## [version] - date`
+   - Creates a new empty `## [Unreleased]` section at the top
+   - Updates version comparison links at the bottom of CHANGELOG.md
+
+2. **Documentation Updates**: README.md and jbang-example.java are updated with the new version
+
+3. **Maven Release**: Uses `maven-release-plugin` to:
+   - Update pom.xml version
+   - Create a git tag
+   - Deploy to Maven Central
+
+4. **Rollback**: If the release fails, the documentation commit is automatically reverted
+
+The workflow is triggered manually via workflow_dispatch with optional version parameters.
