@@ -129,6 +129,8 @@ session.send(new MessageOptions()
 
 Use your own OpenAI or Azure OpenAI API key instead of GitHub Copilot.
 
+### API Key Authentication
+
 ```java
 var session = client.createSession(
     new SessionConfig()
@@ -138,6 +140,38 @@ var session = client.createSession(
             .setApiKey("sk-..."))
 ).get();
 ```
+
+### Bearer Token Authentication
+
+Some providers require bearer token authentication instead of API keys:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setProvider(new ProviderConfig()
+            .setType("openai")
+            .setBaseUrl("https://my-custom-endpoint.example.com/v1")
+            .setBearerToken(System.getenv("MY_BEARER_TOKEN")))
+).get();
+```
+
+> **Note:** The `bearerToken` option accepts a **static token string** only. The SDK does not refresh this token automatically. If your token expires, requests will fail and you'll need to create a new session with a fresh token.
+
+### Limitations
+
+When using BYOK, be aware of these limitations:
+
+#### Identity Limitations
+
+BYOK authentication uses **static credentials only**. The following identity providers are NOT supported:
+
+- ❌ **Microsoft Entra ID (Azure AD)** - No support for Entra managed identities or service principals
+- ❌ **Third-party identity providers** - No OIDC, SAML, or other federated identity
+- ❌ **Managed identities** - Azure Managed Identity is not supported
+
+You must use an API key or static bearer token that you manage yourself.
+
+**Why not Entra ID?** While Entra ID does issue bearer tokens, these tokens are short-lived (typically 1 hour) and require automatic refresh via the Azure Identity SDK. The `bearerToken` option only accepts a static string—there is no callback mechanism for the SDK to request fresh tokens. For long-running workloads requiring Entra authentication, you would need to implement your own token refresh logic and create new sessions with updated tokens.
 
 ---
 
