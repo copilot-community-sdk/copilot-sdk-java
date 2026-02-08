@@ -110,7 +110,7 @@
           <ul class="breadcrumb">
         <li id="publishDate">Last Published: 2026-02-08<span class="divider">|</span>
 </li>
-          <li id="projectVersion">Version: 1.0.8-SNAPSHOT<span class="divider">|</span></li>
+          <li id="projectVersion">Version: 1.0.9-SNAPSHOT<span class="divider">|</span></li>
       <li><a href="index.html">Home</a><span class="divider">/</span></li>
     <li class="active">Advanced Usage</li>
           </ul>
@@ -281,7 +281,8 @@ var session = client.createSession(
 ).get();
 </code></pre><hr /></section><section><a id="Bring_Your_Own_Key_.28BYOK.29"></a>
 <h2>Bring Your Own Key (BYOK)</h2>
-<p>Use your own OpenAI or Azure OpenAI API key instead of GitHub Copilot.</p>
+<p>Use your own OpenAI or Azure OpenAI API key instead of GitHub Copilot.</p><section><a id="API_Key_Authentication"></a>
+<h3>API Key Authentication</h3>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
     new SessionConfig()
@@ -290,7 +291,34 @@ var session = client.createSession(
             .setBaseUrl(&quot;https://api.openai.com/v1&quot;)
             .setApiKey(&quot;sk-...&quot;))
 ).get();
-</code></pre><hr /></section><section><a id="Infinite_Sessions"></a>
+</code></pre></section><section><a id="Bearer_Token_Authentication"></a>
+<h3>Bearer Token Authentication</h3>
+<p>Some providers require bearer token authentication instead of API keys:</p>
+
+<pre class="prettyprint"><code class="language-java">var session = client.createSession(
+    new SessionConfig()
+        .setProvider(new ProviderConfig()
+            .setType(&quot;openai&quot;)
+            .setBaseUrl(&quot;https://my-custom-endpoint.example.com/v1&quot;)
+            .setBearerToken(System.getenv(&quot;MY_BEARER_TOKEN&quot;)))
+).get();
+</code></pre>
+<blockquote>
+
+<p><strong>Note:</strong> The <code>bearerToken</code> option accepts a <strong>static token string</strong> only. The SDK does not refresh this token automatically. If your token expires, requests will fail and you'll need to create a new session with a fresh token.</p>
+</blockquote></section><section><a id="Limitations"></a>
+<h3>Limitations</h3>
+<p>When using BYOK, be aware of these limitations:</p><section><a id="Identity_Limitations"></a>
+<h4>Identity Limitations</h4>
+<p>BYOK authentication uses <strong>static credentials only</strong>. The following identity providers are NOT supported:</p>
+<ul>
+
+<li>&#x274c; <strong>Microsoft Entra ID (Azure AD)</strong> - No support for Entra managed identities or service principals</li>
+<li>&#x274c; <strong>Third-party identity providers</strong> - No OIDC, SAML, or other federated identity</li>
+<li>&#x274c; <strong>Managed identities</strong> - Azure Managed Identity is not supported</li>
+</ul>
+<p>You must use an API key or static bearer token that you manage yourself.</p>
+<p><strong>Why not Entra ID?</strong> While Entra ID does issue bearer tokens, these tokens are short-lived (typically 1 hour) and require automatic refresh via the Azure Identity SDK. The <code>bearerToken</code> option only accepts a static string&#x2014;there is no callback mechanism for the SDK to request fresh tokens. For long-running workloads requiring Entra authentication, you would need to implement your own token refresh logic and create new sessions with updated tokens.</p><hr /></section></section></section><section><a id="Infinite_Sessions"></a>
 <h2>Infinite Sessions</h2>
 <p>Run long conversations without hitting context limits.</p>
 <p>When enabled (default), the session automatically compacts older messages as the context window fills up.</p>

@@ -159,14 +159,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * Sets a bearer token for authentication.
      * &lt;p&gt;
      * This is an alternative to API key authentication.
+     * &lt;p&gt;
+     * &lt;strong&gt;Note:&lt;/strong&gt; The bearer token is a &lt;strong&gt;static token
+     * string&lt;/strong&gt;. The SDK does not refresh this token automatically. If your
+     * token expires, requests will fail and you'll need to create a new session
+     * with a fresh token.
      *
      * @param bearerToken
      *            the bearer token
      * @return this config for method chaining
      */
     public ProviderConfig setBearerToken(String bearerToken) {
-<span class="nc" id="L168">        this.bearerToken = bearerToken;</span>
-<span class="nc" id="L169">        return this;</span>
+<span class="nc" id="L173">        this.bearerToken = bearerToken;</span>
+<span class="nc" id="L174">        return this;</span>
     }
 
     /**
@@ -175,7 +180,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @return the Azure options
      */
     public AzureOptions getAzure() {
-<span class="nc" id="L178">        return azure;</span>
+<span class="nc" id="L183">        return azure;</span>
     }
 
     /**
@@ -187,8 +192,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      * @see AzureOptions
      */
     public ProviderConfig setAzure(AzureOptions azure) {
-<span class="nc" id="L190">        this.azure = azure;</span>
-<span class="nc" id="L191">        return this;</span>
+<span class="nc" id="L195">        this.azure = azure;</span>
+<span class="nc" id="L196">        return this;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
