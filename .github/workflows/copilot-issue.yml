@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Create issue and assign to Copilot
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
         run: |
           TITLE="${{ inputs.title || 'Investigation needed from Copilot Coding Agent' }}"
           gh api \
@@ -62,7 +62,7 @@ jobs:
 
       - name: Create issue via GraphQL
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
           GITHUB_REPO_OWNER: ${{ github.repository_owner }}
           GITHUB_REPO_NAME: ${{ github.event.repository.name }}
         run: npx tsx create-issue-assigned-to-copilot.ts "${{ inputs.title || 'Investigation needed from Copilot Coding Agent' }}"
