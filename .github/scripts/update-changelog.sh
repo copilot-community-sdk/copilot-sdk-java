@@ -12,7 +12,7 @@ if [ -z "$1" ]; then
 fi
 
 VERSION="$1"
-CHANGELOG_FILE="CHANGELOG.md"
+CHANGELOG_FILE="${CHANGELOG_FILE:-CHANGELOG.md}"
 RELEASE_DATE=$(date +%Y-%m-%d)
 
 echo "Updating CHANGELOG.md for version ${VERSION} (${RELEASE_DATE})"
@@ -39,11 +39,20 @@ BEGIN {
     content_found = 0
     links_section = 0
     first_version_link = ""
+    repo_url = ""
 }
 
 # Track if we are in the links section at the bottom
 /^\[/ {
     links_section = 1
+}
+
+# Capture the repository URL from the first version link
+links_section && repo_url == "" && /^\[[0-9]+\.[0-9]+\.[0-9]+\]:/ {
+    match($0, /(https:\/\/github\.com\/[^\/]+\/[^\/]+)\//, arr)
+    if (arr[1] != "") {
+        repo_url = arr[1]
+    }
 }
 
 # Replace [Unreleased] with the version and date
@@ -60,21 +69,21 @@ BEGIN {
 # Capture the first version link to get the previous version
 links_section && first_version_link == "" && /^\[[0-9]+\.[0-9]+\.[0-9]+\]:/ {
     match($0, /\[([0-9]+\.[0-9]+\.[0-9]+)\]:/, arr)
-    if (arr[1] != "") {
+    if (arr[1] != "" && repo_url != "") {
         first_version_link = arr[1]
         # Insert Unreleased and new version links before first version link
-        print "[Unreleased]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v" version "...HEAD"
-        print "[" version "]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v" arr[1] "...v" version
+        print "[Unreleased]: " repo_url "/compare/v" version "...HEAD"
+        print "[" version "]: " repo_url "/compare/v" arr[1] "...v" version
     }
 }
 
 # Update existing [Unreleased] link if present
 links_section && /^\[Unreleased\]:/ {
-    # Get the previous version from the existing link
-    match($0, /v([0-9]+\.[0-9]+\.[0-9]+)\.\.\.HEAD/, arr)
-    if (arr[1] != "") {
-        print "[Unreleased]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v" version "...HEAD"
-        print "[" version "]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v" arr[1] "...v" version
+    # Get the previous version and repo URL from the existing link
+    match($0, /(https:\/\/github\.com\/[^\/]+\/[^\/]+)\/compare\/v([0-9]+\.[0-9]+\.[0-9]+)\.\.\.HEAD/, arr)
+    if (arr[1] != "" && arr[2] != "") {
+        print "[Unreleased]: " arr[1] "/compare/v" version "...HEAD"
+        print "[" version "]: " arr[1] "/compare/v" arr[2] "...v" version
         next
     }
 }
