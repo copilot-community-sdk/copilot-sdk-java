@@ -17,6 +17,7 @@ on:
       - '.github/release.yml'
       - '.github/workflows/publish-maven.yml'
       - '.github/workflows/weekly-upstream-sync.yml'
+      - '.github/workflows/copilot-issue.yml'
   pull_request:
     paths-ignore:
       - 'README.md'
