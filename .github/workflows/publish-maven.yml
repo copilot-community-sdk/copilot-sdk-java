@@ -97,6 +97,9 @@ jobs:
               run: |
                   VERSION="${{ steps.versions.outputs.release_version }}"
                   
+                  # Update CHANGELOG.md with release version
+                  ./.github/scripts/update-changelog.sh "${VERSION}"
+                  
                   # Update version in README.md
                   sed -i "s|<version>[0-9]*\.[0-9]*\.[0-9]*</version>|<version>${VERSION}</version>|g" README.md
                   sed -i "s|copilot-sdk:[0-9]*\.[0-9]*\.[0-9]*|copilot-sdk:${VERSION}|g" README.md
@@ -105,7 +108,7 @@ jobs:
                   sed -i "s|copilot-sdk:[0-9]*\.[0-9]*\.[0-9]*|copilot-sdk:${VERSION}|g" jbang-example.java
                   
                   # Commit the documentation changes before release:prepare (requires clean working directory)
-                  git add README.md jbang-example.java
+                  git add CHANGELOG.md README.md jbang-example.java
                   git commit -m "docs: update version references to ${VERSION}"
                   
                   # Save the commit SHA for potential rollback
