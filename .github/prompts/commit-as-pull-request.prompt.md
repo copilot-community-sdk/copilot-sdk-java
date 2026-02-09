@@ -8,25 +8,28 @@ You are an automated assistant that takes the current uncommitted changes in the
 - There must be uncommitted changes (staged or unstaged) in the working tree.
 - The GitHub MCP tools must be available for creating and merging pull requests.
 
+## Helper Scripts
+
+The following scripts in `.github/scripts/ci/` automate the git operations for this workflow:
+
+| Script | Purpose |
+|--------|---------|
+| `parse-repo-info.sh` | Extracts `REPO_OWNER` and `REPO_NAME` from the git remote URL |
+| `commit-and-push.sh` | Verifies changes, runs formatter, creates branch, commits, and pushes |
+| `sync-after-merge.sh` | Syncs local `main` and deletes the feature branch |
+
 ## Workflow
 
 Execute the following steps **in order**. Stop immediately if any step fails.
 
-### Step 1: Verify there are changes to commit
-
-Run `git status --porcelain` to confirm there are uncommitted changes. If the output is empty, inform the user there is nothing to commit and stop.
-
-### Step 2: Determine the repository owner and name
-
-Read the repository remote URL to extract the GitHub `owner` and `repo`:
+### Step 1: Determine the repository owner and name
 
 ```bash
-git remote get-url origin
+eval "$(.github/scripts/ci/parse-repo-info.sh)"
+# Sets: REPO_OWNER, REPO_NAME
 ```
 
-Parse the owner and repo from the URL (handles both HTTPS and SSH formats).
-
-### Step 3: Auto-detect branch name and commit message
+### Step 2: Auto-detect branch name and commit message
 
 Analyze the changed files using `git diff` (and `git diff --cached` for staged changes) to understand what was modified. Generate:
 
@@ -37,69 +40,47 @@ Analyze the changed files using `git diff` (and `git diff --cached` for staged c
 
 If the user has provided an explicit branch name or commit message, use those instead.
 
-### Step 4: Run code formatter
+### Step 3: Commit and push
 
-If the project has a formatter configured, run it before committing:
-
-```bash
-mvn spotless:apply
-```
-
-Only run this if a `pom.xml` exists with Spotless configured. Skip for non-Maven projects.
-
-### Step 5: Create branch, stage, and commit
+Runs the formatter (if applicable), creates the branch, stages all changes, commits, and pushes:
 
 ```bash
-git checkout -b <branch-name>
-git add -A
-git commit -m "<commit-message>"
+.github/scripts/ci/commit-and-push.sh "<branch-name>" "<commit-message>"
+# Outputs: BRANCH_NAME (may differ if suffix was appended)
 ```
 
-### Step 6: Push the branch
+Pass `--skip-format` as a third argument to skip `mvn spotless:apply` (e.g., when only non-Java files changed).
 
-```bash
-git push -u origin <branch-name>
-```
-
-If the push reports "Everything up-to-date", verify with `git log --oneline -1` that the commit exists, then retry with `git push -u origin <branch-name> 2>&1`.
-
-### Step 7: Create a pull request
+### Step 4: Create a pull request
 
 Use the GitHub MCP `create_pull_request` tool with:
 
-- **owner** and **repo**: from Step 2
+- **owner** and **repo**: from Step 1
 - **title**: the first line of the commit message
-- **head**: the branch name
+- **head**: the branch name from Step 3
 - **base**: `main` (or the repository's default branch)
 - **body**: A well-structured PR description including:
   - **Summary**: What the change does and why
   - **Changes**: Bullet list of files/areas modified
   - **Testing**: How the changes were verified
 
-### Step 8: Merge the pull request
+### Step 5: Merge the pull request
 
 Use the GitHub MCP `merge_pull_request` tool with:
 
 - **merge_method**: `squash`
 - **commit_title**: `<PR title> (#<PR number>)`
 
-### Step 9: Sync local main
+### Step 6: Sync and clean up
 
 ```bash
-git checkout main
-git pull
-```
-
-### Step 10: Clean up the local branch (optional)
-
-```bash
-git branch -d <branch-name>
+.github/scripts/ci/sync-after-merge.sh "<branch-name>"
 ```
 
 ## Error Handling
 
-- If the branch name already exists, append a numeric suffix (e.g., `fix/my-change-2`).
-- If the push fails due to authentication, inform the user and stop.
+- Branch name collisions are handled automatically by `commit-and-push.sh` (appends a numeric suffix).
+- If the push fails due to authentication, the script exits with code 2 — inform the user and stop.
 - If the PR creation fails, provide the error and stop.
 - If the merge fails (e.g., merge conflicts, required checks), inform the user and leave the PR open.
 
