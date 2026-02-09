@@ -44,8 +44,8 @@ class JsonRpcExceptionTest {
 
     @Test
     void testIsRuntimeException() {
-        JsonRpcException exception = new JsonRpcException(-32700, "Parse error");
-        assertTrue(exception instanceof RuntimeException);
+        // Verify that JsonRpcException remains a RuntimeException in the type hierarchy.
+        assertEquals(RuntimeException.class, JsonRpcException.class.getSuperclass());
     }
 
     @Test
