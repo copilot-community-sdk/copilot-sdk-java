@@ -132,9 +132,10 @@ This SDK tracks the official [Copilot SDK](https://github.com/github/copilot-sdk
 The repository includes an [Agentic Workflow](https://github.com/github/gh-aw) that automatically identifies untested code and creates comprehensive tests to increase coverage. The workflow is triggered manually:
 
 **To run the workflow:**
-1. Go to the [Actions tab](../../actions/workflows/increase-test-coverage.lock.yml)
-2. Click "Run workflow"
-3. Optionally specify:
+1. Navigate to the repository on GitHub
+2. Go to **Actions** → **Increase Test Coverage** workflow
+3. Click "Run workflow"
+4. Optionally specify:
    - `target_package` — Focus on a specific package (e.g., `com.github.copilot.sdk.json`)
    - `min_coverage_threshold` — Target coverage percentage (default: 80%)
 

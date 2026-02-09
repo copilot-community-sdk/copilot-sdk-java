@@ -155,7 +155,7 @@ mvn jacoco:report
 - **Test Framework**: JUnit 5
 - **Coverage Tool**: JaCoCo
 - **Code Formatter**: Spotless (Eclipse style, 4-space indent)
-- **Current Coverage**: ~66% (aim for {{ inputs.min_coverage_threshold }}%+)
+- **Current Coverage**: ~66% (aim for {{ inputs.min_coverage_threshold }}%+ overall)
 
 ## Key Packages to Focus On
 
