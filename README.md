@@ -83,6 +83,18 @@ public class CopilotSDK {
 }
 ```
 
+## Try it with JBang
+
+You can run the SDK without setting up a full Java project, by using [JBang](https://www.jbang.dev/).
+
+See the full source of [`jbang-example.java`](jbang-example.java) for a complete example with more features like session idle handling and usage info events.
+
+Or run it directly from the repository:
+
+```bash
+jbang https://github.com/copilot-community-sdk/copilot-sdk-java/blob/latest/jbang-example.java
+```
+
 ## Documentation
 
 📚 **[Full Documentation](https://copilot-community-sdk.github.io/copilot-sdk-java/)** — Complete API reference, advanced usage examples, and guides.

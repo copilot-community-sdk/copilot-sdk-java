@@ -196,6 +196,14 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+            - name: Move 'latest' tag to new release
+              run: |
+                  VERSION="${{ needs.publish-maven.outputs.version }}"
+                  git tag -f latest "v${VERSION}"
+                  git push origin latest --force
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     deploy-site:
         name: Deploy Documentation
         needs: [publish-maven, github-release]
