@@ -127,29 +127,15 @@ jobs:
 
           Follow the [agentic-merge-upstream](.github/prompts/agentic-merge-upstream.prompt.md) prompt to port these changes to the Java SDK."
 
-          # Build the issue JSON payload
-          ISSUE_PAYLOAD=$(jq -n \
-            --arg title "Upstream sync: ${COMMIT_COUNT} new commits (${DATE})" \
-            --arg body "$BODY" \
-            '{
-              title: $title,
-              body: $body,
-              labels: ["upstream-sync"],
-              assignees: ["copilot-swe-agent"]
-            }')
+          # Create the issue and assign to Copilot coding agent
+          gh issue create \
+            --repo "$REPO" \
+            --title "Upstream sync: ${COMMIT_COUNT} new commits (${DATE})" \
+            --body "$BODY" \
+            --label "upstream-sync" \
+            --assignee "copilot-swe-agent"
 
-          # Create the issue
-          ISSUE_NUMBER=$(echo "$ISSUE_PAYLOAD" | \
-            gh api \
-              --method POST \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              "/repos/${REPO}/issues" \
-              --input - \
-              --jq '.number')
-
-          echo "Created issue #${ISSUE_NUMBER}"
-          echo "✅ Issue #${ISSUE_NUMBER} created and assigned to Copilot coding agent."
+          echo "✅ Issue created and assigned to Copilot coding agent."
 
       - name: Summary
         if: always()
