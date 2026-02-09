@@ -8,7 +8,7 @@
 #   3. Clones the upstream copilot-sdk repo into a temp dir
 #   4. Reads .lastmerge and prints a short summary of new commits
 #
-# Usage:  ./.github/scripts/merge-upstream-start.sh
+# Usage:  ./.github/scripts/upstream-sync/merge-upstream-start.sh
 # Output: Exports UPSTREAM_DIR and LAST_MERGE_COMMIT to a
 #         .merge-env file so other scripts can source it.
 # ──────────────────────────────────────────────────────────────
@@ -83,6 +83,6 @@ EOF
 echo "▸ Env file written to $ENV_FILE (sourced by other merge scripts)."
 echo ""
 echo "✅  Ready. Next steps:"
-echo "  1. Run ./.github/scripts/merge-upstream-diff.sh to see the full diff analysis."
+echo "  1. Run ./.github/scripts/upstream-sync/merge-upstream-diff.sh to see the full diff analysis."
 echo "  2. Port changes to the Java SDK."
-echo "  3. Run ./.github/scripts/merge-upstream-finish.sh when done."
+echo "  3. Run ./.github/scripts/upstream-sync/merge-upstream-finish.sh when done."

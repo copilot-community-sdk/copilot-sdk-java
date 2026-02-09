@@ -11,7 +11,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/copilot-issue.yml'
-      - '.github/scripts/create-issue-assigned-to-copilot.ts'
+      - '.github/scripts/ci/create-issue-assigned-to-copilot.ts'
 
 jobs:
   create-issue:
@@ -58,7 +58,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install @octokit/rest tsx
-        working-directory: .github/scripts
+        working-directory: .github/scripts/ci
 
       - name: Create issue via GraphQL
         env:
@@ -66,4 +66,4 @@ jobs:
           GITHUB_REPO_OWNER: ${{ github.repository_owner }}
           GITHUB_REPO_NAME: ${{ github.event.repository.name }}
         run: npx tsx create-issue-assigned-to-copilot.ts "${{ inputs.title || 'Investigation needed from Copilot Coding Agent' }}"
-        working-directory: .github/scripts
+        working-directory: .github/scripts/ci

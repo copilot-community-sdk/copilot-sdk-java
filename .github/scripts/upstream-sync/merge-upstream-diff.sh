@@ -10,7 +10,7 @@
 #   • Documentation
 #   • Protocol / config files
 #
-# Usage:  ./.github/scripts/merge-upstream-diff.sh [--full]
+# Usage:  ./.github/scripts/upstream-sync/merge-upstream-diff.sh [--full]
 #         --full   Show actual diffs, not just stats
 #
 # Requires: .merge-env written by merge-upstream-start.sh
@@ -21,7 +21,7 @@ ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 ENV_FILE="$ROOT_DIR/.merge-env"
 
 if [[ ! -f "$ENV_FILE" ]]; then
-    echo "❌ $ENV_FILE not found. Run ./.github/scripts/merge-upstream-start.sh first."
+    echo "❌ $ENV_FILE not found. Run ./.github/scripts/upstream-sync/merge-upstream-start.sh first."
     exit 1
 fi
 

@@ -8,8 +8,8 @@
 #   3. Commits the .lastmerge update
 #   4. Pushes the branch to origin
 #
-# Usage:  ./.github/scripts/merge-upstream-finish.sh
-#         ./.github/scripts/merge-upstream-finish.sh --skip-tests
+# Usage:  ./.github/scripts/upstream-sync/merge-upstream-finish.sh
+#         ./.github/scripts/upstream-sync/merge-upstream-finish.sh --skip-tests
 #
 # Requires: .merge-env written by merge-upstream-start.sh
 # ──────────────────────────────────────────────────────────────
@@ -19,7 +19,7 @@ ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 ENV_FILE="$ROOT_DIR/.merge-env"
 
 if [[ ! -f "$ENV_FILE" ]]; then
-    echo "❌ $ENV_FILE not found. Run ./.github/scripts/merge-upstream-start.sh first."
+    echo "❌ $ENV_FILE not found. Run ./.github/scripts/upstream-sync/merge-upstream-start.sh first."
     exit 1
 fi
 
@@ -40,7 +40,7 @@ if $SKIP_TESTS; then
     mvn clean package -DskipTests
 else
     echo "▸ Running format + test + build…"
-    "$ROOT_DIR/.github/scripts/format-and-test.sh"
+    "$ROOT_DIR/.github/scripts/build/format-and-test.sh"
 fi
 
 # ── 2. Update .lastmerge ─────────────────────────────────────

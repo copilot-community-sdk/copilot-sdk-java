@@ -19,22 +19,22 @@ The `.github/scripts/` directory contains helper scripts that automate the repea
 
 | Script | Purpose |
 |---|---|
-| `.github/scripts/merge-upstream-start.sh` | Creates branch, updates CLI, clones upstream, reads `.lastmerge`, prints commit summary |
-| `.github/scripts/merge-upstream-diff.sh` | Detailed diff analysis grouped by area (`.NET src`, tests, snapshots, docs, etc.) |
-| `.github/scripts/merge-upstream-finish.sh` | Runs format + test + build, updates `.lastmerge`, commits, pushes branch |
-| `.github/scripts/format-and-test.sh` | Standalone `spotless:apply` + `mvn clean verify` (useful during porting too) |
+| `.github/scripts/upstream-sync/merge-upstream-start.sh` | Creates branch, updates CLI, clones upstream, reads `.lastmerge`, prints commit summary |
+| `.github/scripts/upstream-sync/merge-upstream-diff.sh` | Detailed diff analysis grouped by area (`.NET src`, tests, snapshots, docs, etc.) |
+| `.github/scripts/upstream-sync/merge-upstream-finish.sh` | Runs format + test + build, updates `.lastmerge`, commits, pushes branch |
+| `.github/scripts/build/format-and-test.sh` | Standalone `spotless:apply` + `mvn clean verify` (useful during porting too) |
 
 All scripts write/read a `.merge-env` file (git-ignored) to share state (branch name, upstream dir, last-merge commit).
 
 ## Workflow Overview
 
-1. Run `./.github/scripts/merge-upstream-start.sh` (creates branch, clones upstream, shows summary)
-2. Run `./.github/scripts/merge-upstream-diff.sh` (analyze changes)
+1. Run `./.github/scripts/upstream-sync/merge-upstream-start.sh` (creates branch, clones upstream, shows summary)
+2. Run `./.github/scripts/upstream-sync/merge-upstream-diff.sh` (analyze changes)
 3. Update README with minimum CLI version requirement
 4. Port changes to Java SDK (commit as you go)
-5. Run `./.github/scripts/format-and-test.sh` frequently while porting
+5. Run `./.github/scripts/build/format-and-test.sh` frequently while porting
 6. Update documentation
-7. Run `./.github/scripts/merge-upstream-finish.sh` (final test + push)
+7. Run `./.github/scripts/upstream-sync/merge-upstream-finish.sh` (final test + push)
 8. Finalize Pull Request (see note below about coding agent vs. manual workflow)
 
 ---
@@ -44,7 +44,7 @@ All scripts write/read a `.merge-env` file (git-ignored) to share state (branch 
 Run the start script to create a branch, update the CLI, clone the upstream repo, and see a summary of new commits:
 
 ```bash
-./.github/scripts/merge-upstream-start.sh
+./.github/scripts/upstream-sync/merge-upstream-start.sh
 ```
 
 This writes a `.merge-env` file used by the other scripts. It outputs:
@@ -56,8 +56,8 @@ This writes a `.merge-env` file used by the other scripts. It outputs:
 Then run the diff script for a detailed breakdown by area:
 
 ```bash
-./.github/scripts/merge-upstream-diff.sh          # stat only
-./.github/scripts/merge-upstream-diff.sh --full   # full diffs
+./.github/scripts/upstream-sync/merge-upstream-diff.sh          # stat only
+./.github/scripts/upstream-sync/merge-upstream-diff.sh --full   # full diffs
 ```
 
 The diff script groups changes into: .NET source, .NET tests, test snapshots, documentation, protocol/config, Go/Node.js/Python SDKs, and other files.
@@ -220,15 +220,15 @@ Commit tests separately or together with their corresponding implementation chan
 After applying changes, use the convenience script:
 
 ```bash
-./.github/scripts/format-and-test.sh          # format + full verify
-./.github/scripts/format-and-test.sh --debug  # with debug logging
+./.github/scripts/build/format-and-test.sh          # format + full verify
+./.github/scripts/build/format-and-test.sh --debug  # with debug logging
 ```
 
 Or for quicker iteration during porting:
 
 ```bash
-./.github/scripts/format-and-test.sh --format-only   # just spotless
-./.github/scripts/format-and-test.sh --test-only     # skip formatting
+./.github/scripts/build/format-and-test.sh --format-only   # just spotless
+./.github/scripts/build/format-and-test.sh --test-only     # skip formatting
 ```
 
 ### If Tests Fail
@@ -321,8 +321,8 @@ Ensure consistency across all documentation files:
 Run the finish script which updates `.lastmerge`, runs a final build, and pushes the branch:
 
 ```bash
-./.github/scripts/merge-upstream-finish.sh            # full format + test + push
-./.github/scripts/merge-upstream-finish.sh --skip-tests  # if tests already passed
+./.github/scripts/upstream-sync/merge-upstream-finish.sh            # full format + test + push
+./.github/scripts/upstream-sync/merge-upstream-finish.sh --skip-tests  # if tests already passed
 ```
 
 ### PR Handling: Coding Agent vs. Manual Workflow

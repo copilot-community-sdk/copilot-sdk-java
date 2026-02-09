@@ -254,7 +254,7 @@ This SDK is designed to be **lightweight with minimal dependencies**:
 
 The release process is automated via the `publish-maven.yml` GitHub Actions workflow. Key steps:
 
-1. **CHANGELOG Update**: The script `.github/scripts/update-changelog.sh` automatically:
+1. **CHANGELOG Update**: The script `.github/scripts/release/update-changelog.sh` automatically:
    - Converts the `## [Unreleased]` section to `## [version] - date`
    - Creates a new empty `## [Unreleased]` section at the top
    - Updates version comparison links at the bottom of CHANGELOG.md

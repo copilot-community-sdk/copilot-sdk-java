@@ -4,7 +4,7 @@
 Follow the agentic-merge-upstream prompt at .github/prompts/agentic-merge-upstream.prompt.md
 to port upstream changes to the Java SDK.
 
-Use the utility scripts in .github/scripts/ for initialization, diffing, formatting, and testing.
+Use the utility scripts in .github/scripts/ subfolders for initialization, diffing, formatting, and testing.
 Commit changes incrementally. Update .lastmerge when done.
 
 IMPORTANT: A pull request has already been created automatically for you — do NOT create a new

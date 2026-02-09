@@ -6,10 +6,10 @@
 #   1. spotless:apply  (auto-format code)
 #   2. mvn clean verify (compile + test + checkstyle + spotbugs)
 #
-# Usage:  ./.github/scripts/format-and-test.sh
-#         ./.github/scripts/format-and-test.sh --format-only
-#         ./.github/scripts/format-and-test.sh --test-only
-#         ./.github/scripts/format-and-test.sh --debug   (uses -Pdebug)
+# Usage:  ./.github/scripts/build/format-and-test.sh
+#         ./.github/scripts/build/format-and-test.sh --format-only
+#         ./.github/scripts/build/format-and-test.sh --test-only
+#         ./.github/scripts/build/format-and-test.sh --debug   (uses -Pdebug)
 # ──────────────────────────────────────────────────────────────
 set -euo pipefail
 
