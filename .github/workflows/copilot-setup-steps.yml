@@ -18,9 +18,36 @@ jobs:
       contents: read
 
     steps:
+      # Clone the repository
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+
+      # Install GitHub CLI and gh-aw extension for Copilot Agent interaction
       - name: Install gh-aw extension
         uses: github/gh-aw/actions/setup-cli@v0.42.17
         with:
           version: v0.42.17
+
+      # Setup Node.js
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      # Set up JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # Verify installations
+      - name: Verify tool installations
+        run: |
+          echo "=== Verifying installations ==="
+          node --version
+          npm --version
+          java -version
+          gh --version
+          gh aw version
+          echo "✅ All tools installed successfully"
