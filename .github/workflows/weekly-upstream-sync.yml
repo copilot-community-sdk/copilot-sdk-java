@@ -11,6 +11,11 @@ permissions:
   issues: write
   pull-requests: write
 
+env: 
+  # Used for `gh` CLI operations to create/close/comment issues. Must be a PAT with repo permissions because the default
+  GH_AW_AGENT_TOKEN: ${{ secrets.GH_AW_AGENT_TOKEN }}
+  GH_TOKEN: ${{ secrets.GH_AW_AGENT_TOKEN }}
+
 jobs:
 
   check-and-sync:
@@ -55,8 +60,6 @@ jobs:
 
       - name: Close previous upstream-sync issues
         if: steps.check.outputs.has_changes == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.COPILOT_ISSUE_PR_AGENTIC_WORKFLOW }}
         run: |
           # Find all open issues with the upstream-sync label
           OPEN_ISSUES=$(gh issue list \
@@ -78,8 +81,6 @@ jobs:
 
       - name: Close stale upstream-sync issues (no changes)
         if: steps.check.outputs.has_changes == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.COPILOT_ISSUE_PR_AGENTIC_WORKFLOW }}
         run: |
           OPEN_ISSUES=$(gh issue list \
             --repo "${{ github.repository }}" \
@@ -101,8 +102,6 @@ jobs:
       - name: Create issue and assign to Copilot
         id: create-issue
         if: steps.check.outputs.has_changes == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.COPILOT_ISSUE_PR_AGENTIC_WORKFLOW }}
         run: |
           COMMIT_COUNT="${{ steps.check.outputs.commit_count }}"
           LAST_MERGE="${{ steps.check.outputs.last_merge }}"
