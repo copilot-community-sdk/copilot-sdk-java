@@ -53,7 +53,7 @@ For each workflow file, extract:
 
 ### 2. Read Current WORKFLOWS.md Structure
 
-Read the existing `/home/runner/work/copilot-sdk-java/copilot-sdk-java/WORKFLOWS.md` file carefully to understand:
+Read the existing `WORKFLOWS.md` file in the repository root carefully to understand:
 - The overall document structure (sections, table format, etc.)
 - How workflows are currently documented
 - The writing style and level of detail
@@ -115,7 +115,7 @@ The PR will be automatically labeled with `documentation` and have the title pre
 - **Match the style**: Follow the existing writing style, formatting, and level of detail.
 - **Be thorough**: Make sure no workflows are missing from the documentation.
 - **Handle both types**: Document both regular GitHub Actions workflows (.yml) and agentic workflows (.md/.lock.yml).
-- **Relative links**: Use relative paths from WORKFLOWS.md to workflow files (e.g., `workflows/build-test.yml` or `.github/workflows/build-test.yml` depending on current convention).
+- **Relative links**: Use relative paths from WORKFLOWS.md to workflow files (e.g., `.github/workflows/build-test.yml`). Since WORKFLOWS.md is in the root directory, all workflow links should use `.github/workflows/` prefix.
 - **Agentic workflows**: For workflows with both `.md` and `.lock.yml` files, document them as agentic workflows and note that the `.lock.yml` is auto-generated.
 
 ## Example Output Summary
