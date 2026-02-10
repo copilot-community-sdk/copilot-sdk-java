@@ -5,6 +5,8 @@ You are an automated assistant that takes the current uncommitted changes in the
 ## Prerequisites
 
 - The workspace must be a git repository with a configured remote named `origin`.
+- The project must be compiling successfully with the current changes (if applicable).
+- The project must be building successfully with the current changes (if applicable).
 - There must be uncommitted changes (staged or unstaged) in the working tree.
 - The GitHub MCP tools must be available for creating and merging pull requests.
 
@@ -29,7 +31,7 @@ eval "$(.github/scripts/ci/parse-repo-info.sh)"
 # Sets: REPO_OWNER, REPO_NAME
 ```
 
-### Step 2: Auto-detect branch name and commit message
+### Step 2: Auto-detect branch name and define commit message
 
 Analyze the changed files using `git diff` (and `git diff --cached` for staged changes) to understand what was modified. Generate:
 
@@ -40,7 +42,19 @@ Analyze the changed files using `git diff` (and `git diff --cached` for staged c
 
 If the user has provided an explicit branch name or commit message, use those instead.
 
-### Step 3: Commit and push
+### Step 3: Verify the project builds
+
+If the changes include Java source files, run the build to confirm the project compiles and tests pass:
+
+```bash
+mvn clean verify
+```
+
+If only non-Java files changed (e.g., documentation, scripts, configuration), this step may be skipped.
+
+**Stop immediately if the build fails.** Do not proceed to commit broken code.
+
+### Step 4: Commit and push
 
 Runs the formatter (if applicable), creates the branch, stages all changes, commits, and pushes:
 
@@ -51,27 +65,27 @@ Runs the formatter (if applicable), creates the branch, stages all changes, comm
 
 Pass `--skip-format` as a third argument to skip `mvn spotless:apply` (e.g., when only non-Java files changed).
 
-### Step 4: Create a pull request
+### Step 5: Create a pull request
 
 Use the GitHub MCP `create_pull_request` tool with:
 
 - **owner** and **repo**: from Step 1
 - **title**: the first line of the commit message
-- **head**: the branch name from Step 3
+- **head**: the branch name from Step 4
 - **base**: `main` (or the repository's default branch)
 - **body**: A well-structured PR description including:
   - **Summary**: What the change does and why
   - **Changes**: Bullet list of files/areas modified
   - **Testing**: How the changes were verified
 
-### Step 5: Merge the pull request
+### Step 6: Merge the pull request
 
 Use the GitHub MCP `merge_pull_request` tool with:
 
 - **merge_method**: `squash`
 - **commit_title**: `<PR title> (#<PR number>)`
 
-### Step 6: Sync and clean up
+### Step 7: Sync and clean up
 
 ```bash
 .github/scripts/ci/sync-after-merge.sh "<branch-name>"
