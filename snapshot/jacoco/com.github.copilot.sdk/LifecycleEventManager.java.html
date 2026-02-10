@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LifecycleEventManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GitHub Copilot Community SDK :: Java</a> &gt; <a href="index.source.html" class="el_package">com.github.copilot.sdk</a> &gt; <span class="el_source">LifecycleEventManager.java</span></div><h1>LifecycleEventManager.java</h1><pre class="source lang-java linenums">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *--------------------------------------------------------------------------------------------*/
+
+package com.github.copilot.sdk;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.github.copilot.sdk.json.SessionLifecycleEvent;
+import com.github.copilot.sdk.json.SessionLifecycleHandler;
+
+/**
+ * Manages lifecycle event subscriptions and dispatching.
+ * &lt;p&gt;
+ * This class handles registration/unregistration of lifecycle event handlers
+ * and dispatches events to the appropriate handlers.
+ */
+<span class="fc" id="L23">final class LifecycleEventManager {</span>
+
+<span class="fc" id="L25">    private static final Logger LOG = Logger.getLogger(LifecycleEventManager.class.getName());</span>
+
+<span class="fc" id="L27">    private final List&lt;SessionLifecycleHandler&gt; wildcardHandlers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L28">    private final Map&lt;String, List&lt;SessionLifecycleHandler&gt;&gt; typedHandlers = new ConcurrentHashMap&lt;&gt;();</span>
+<span class="fc" id="L29">    private final Object handlersLock = new Object();</span>
+
+    /**
+     * Subscribes to all session lifecycle events.
+     *
+     * @param handler
+     *            a callback that receives lifecycle events
+     * @return an AutoCloseable that, when closed, unsubscribes the handler
+     */
+    AutoCloseable subscribe(SessionLifecycleHandler handler) {
+<span class="nc" id="L39">        synchronized (handlersLock) {</span>
+<span class="nc" id="L40">            wildcardHandlers.add(handler);</span>
+<span class="nc" id="L41">        }</span>
+<span class="nc" id="L42">        return () -&gt; {</span>
+<span class="nc" id="L43">            synchronized (handlersLock) {</span>
+<span class="nc" id="L44">                wildcardHandlers.remove(handler);</span>
+<span class="nc" id="L45">            }</span>
+<span class="nc" id="L46">        };</span>
+    }
+
+    /**
+     * Subscribes to a specific session lifecycle event type.
+     *
+     * @param eventType
+     *            the event type to listen for
+     * @param handler
+     *            a callback that receives events of the specified type
+     * @return an AutoCloseable that, when closed, unsubscribes the handler
+     */
+    AutoCloseable subscribe(String eventType, SessionLifecycleHandler handler) {
+<span class="nc" id="L59">        synchronized (handlersLock) {</span>
+<span class="nc" id="L60">            typedHandlers.computeIfAbsent(eventType, k -&gt; new ArrayList&lt;&gt;()).add(handler);</span>
+<span class="nc" id="L61">        }</span>
+<span class="nc" id="L62">        return () -&gt; {</span>
+<span class="nc" id="L63">            synchronized (handlersLock) {</span>
+<span class="nc" id="L64">                List&lt;SessionLifecycleHandler&gt; handlers = typedHandlers.get(eventType);</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">                if (handlers != null) {</span>
+<span class="nc" id="L66">                    handlers.remove(handler);</span>
+                }
+<span class="nc" id="L68">            }</span>
+<span class="nc" id="L69">        };</span>
+    }
+
+    /**
+     * Dispatches a lifecycle event to all registered handlers.
+     *
+     * @param event
+     *            the lifecycle event to dispatch
+     */
+    void dispatch(SessionLifecycleEvent event) {
+        List&lt;SessionLifecycleHandler&gt; typed;
+        List&lt;SessionLifecycleHandler&gt; wildcard;
+
+<span class="fc" id="L82">        synchronized (handlersLock) {</span>
+<span class="fc" id="L83">            List&lt;SessionLifecycleHandler&gt; handlers = typedHandlers.get(event.getType());</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">            typed = handlers != null ? new ArrayList&lt;&gt;(handlers) : new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L85">            wildcard = new ArrayList&lt;&gt;(wildcardHandlers);</span>
+<span class="fc" id="L86">        }</span>
+
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        for (SessionLifecycleHandler handler : typed) {</span>
+            try {
+<span class="nc" id="L90">                handler.onLifecycleEvent(event);</span>
+<span class="nc" id="L91">            } catch (Exception e) {</span>
+<span class="nc" id="L92">                LOG.log(Level.WARNING, &quot;Lifecycle handler error&quot;, e);</span>
+<span class="nc" id="L93">            }</span>
+<span class="nc" id="L94">        }</span>
+
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        for (SessionLifecycleHandler handler : wildcard) {</span>
+            try {
+<span class="nc" id="L98">                handler.onLifecycleEvent(event);</span>
+<span class="nc" id="L99">            } catch (Exception e) {</span>
+<span class="nc" id="L100">                LOG.log(Level.WARNING, &quot;Lifecycle handler error&quot;, e);</span>
+<span class="nc" id="L101">            }</span>
+<span class="nc" id="L102">        }</span>
+<span class="fc" id="L103">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

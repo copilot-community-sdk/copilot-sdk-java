@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ToolResultObject.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GitHub Copilot Community SDK :: Java</a> &gt; <a href="index.source.html" class="el_package">com.github.copilot.sdk.json</a> &gt; <span class="el_source">ToolResultObject.java</span></div><h1>ToolResultObject.java</h1><pre class="source lang-java linenums">/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *--------------------------------------------------------------------------------------------*/
+
+package com.github.copilot.sdk.json;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+/**
+ * Result object returned from a tool execution.
+ * &lt;p&gt;
+ * This class represents the structured result of a tool invocation, including
+ * text output, binary data, error information, and telemetry.
+ *
+ * &lt;h2&gt;Example: Success Result&lt;/h2&gt;
+ *
+ * &lt;pre&gt;{@code
+ * return new ToolResultObject().setResultType(&quot;success&quot;).setTextResultForLlm(&quot;File contents: &quot; + content);
+ * }&lt;/pre&gt;
+ *
+ * &lt;h2&gt;Example: Error Result&lt;/h2&gt;
+ *
+ * &lt;pre&gt;{@code
+ * return new ToolResultObject().setResultType(&quot;error&quot;).setError(&quot;File not found: &quot; + path);
+ * }&lt;/pre&gt;
+ *
+ * @see ToolHandler
+ * @see ToolBinaryResult
+ * @since 1.0.0
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+<span class="fc" id="L37">public final class ToolResultObject {</span>
+
+    @JsonProperty(&quot;textResultForLlm&quot;)
+    private String textResultForLlm;
+
+    @JsonProperty(&quot;binaryResultsForLlm&quot;)
+    private List&lt;ToolBinaryResult&gt; binaryResultsForLlm;
+
+<span class="fc" id="L45">    @JsonProperty(&quot;resultType&quot;)</span>
+    private String resultType = &quot;success&quot;;
+
+    @JsonProperty(&quot;error&quot;)
+    private String error;
+
+    @JsonProperty(&quot;sessionLog&quot;)
+    private String sessionLog;
+
+    @JsonProperty(&quot;toolTelemetry&quot;)
+    private Map&lt;String, Object&gt; toolTelemetry;
+
+    /**
+     * Gets the text result to be sent to the LLM.
+     *
+     * @return the text result
+     */
+    public String getTextResultForLlm() {
+<span class="fc" id="L63">        return textResultForLlm;</span>
+    }
+
+    /**
+     * Sets the text result to be sent to the LLM.
+     *
+     * @param textResultForLlm
+     *            the text result
+     * @return this result for method chaining
+     */
+    public ToolResultObject setTextResultForLlm(String textResultForLlm) {
+<span class="fc" id="L74">        this.textResultForLlm = textResultForLlm;</span>
+<span class="fc" id="L75">        return this;</span>
+    }
+
+    /**
+     * Gets the binary results to be sent to the LLM.
+     *
+     * @return the list of binary results
+     */
+    public List&lt;ToolBinaryResult&gt; getBinaryResultsForLlm() {
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        return binaryResultsForLlm == null ? null : Collections.unmodifiableList(binaryResultsForLlm);</span>
+    }
+
+    /**
+     * Sets binary results (images, files) to be sent to the LLM.
+     *
+     * @param binaryResultsForLlm
+     *            the list of binary results
+     * @return this result for method chaining
+     */
+    public ToolResultObject setBinaryResultsForLlm(List&lt;ToolBinaryResult&gt; binaryResultsForLlm) {
+<span class="nc" id="L95">        this.binaryResultsForLlm = binaryResultsForLlm;</span>
+<span class="nc" id="L96">        return this;</span>
+    }
+
+    /**
+     * Gets the result type.
+     *
+     * @return the result type (&quot;success&quot; or &quot;error&quot;)
+     */
+    public String getResultType() {
+<span class="fc" id="L105">        return resultType;</span>
+    }
+
+    /**
+     * Sets the result type.
+     *
+     * @param resultType
+     *            &quot;success&quot; or &quot;error&quot;
+     * @return this result for method chaining
+     */
+    public ToolResultObject setResultType(String resultType) {
+<span class="fc" id="L116">        this.resultType = resultType;</span>
+<span class="fc" id="L117">        return this;</span>
+    }
+
+    /**
+     * Gets the error message.
+     *
+     * @return the error message, or {@code null} if successful
+     */
+    public String getError() {
+<span class="fc" id="L126">        return error;</span>
+    }
+
+    /**
+     * Sets an error message for failed tool execution.
+     *
+     * @param error
+     *            the error message
+     * @return this result for method chaining
+     */
+    public ToolResultObject setError(String error) {
+<span class="fc" id="L137">        this.error = error;</span>
+<span class="fc" id="L138">        return this;</span>
+    }
+
+    /**
+     * Gets the session log entry.
+     *
+     * @return the session log text
+     */
+    public String getSessionLog() {
+<span class="fc" id="L147">        return sessionLog;</span>
+    }
+
+    /**
+     * Sets a log entry to be recorded in the session.
+     *
+     * @param sessionLog
+     *            the log entry
+     * @return this result for method chaining
+     */
+    public ToolResultObject setSessionLog(String sessionLog) {
+<span class="nc" id="L158">        this.sessionLog = sessionLog;</span>
+<span class="nc" id="L159">        return this;</span>
+    }
+
+    /**
+     * Gets the tool telemetry data.
+     *
+     * @return the telemetry map
+     */
+    public Map&lt;String, Object&gt; getToolTelemetry() {
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        return toolTelemetry == null ? null : Collections.unmodifiableMap(toolTelemetry);</span>
+    }
+
+    public ToolResultObject setToolTelemetry(Map&lt;String, Object&gt; toolTelemetry) {
+<span class="nc" id="L172">        this.toolTelemetry = toolTelemetry;</span>
+<span class="nc" id="L173">        return this;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
