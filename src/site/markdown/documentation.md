@@ -72,7 +72,7 @@ session.on(AssistantMessageEvent.class, msg -> {
 });
 
 session.on(SessionErrorEvent.class, err -> {
-    System.err.println("Error: " + err.getData().getMessage());
+    System.err.println("Error: " + err.getData().message());
 });
 
 session.on(SessionIdleEvent.class, idle -> {
@@ -91,7 +91,7 @@ session.on(event -> {
         case AssistantMessageEvent msg -> 
             System.out.println("Response: " + msg.getData().getContent());
         case SessionErrorEvent err -> 
-            System.err.println("Error: " + err.getData().getMessage());
+            System.err.println("Error: " + err.getData().message());
         case SessionIdleEvent idle -> 
             done.complete(null);
         default -> { }
@@ -202,7 +202,7 @@ var done = new CompletableFuture<Void>();
 
 session.on(AssistantMessageDeltaEvent.class, delta -> {
     // Print each chunk as it arrives
-    System.out.print(delta.getData().getDeltaContent());
+    System.out.print(delta.getData().deltaContent());
 });
 
 session.on(SessionIdleEvent.class, idle -> {
