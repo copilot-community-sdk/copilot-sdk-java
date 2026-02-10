@@ -19,7 +19,7 @@ on:
   merge_group:
 
 permissions:
-  contents: read
+  contents: write
   checks: write
 
 jobs:
@@ -85,6 +85,20 @@ jobs:
             target/jacoco-test-results/sdk-tests.exec
             target/surefire-reports/
           retention-days: 1
+
+      - name: Generate and commit JaCoCo badge
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          .github/scripts/generate-coverage-badge.sh
+
+          # Commit if changed
+          if [[ $(git status --porcelain .github/badges/) ]]; then
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add .github/badges/
+            git commit -m "Update JaCoCo coverage badge"
+            git push
+          fi
 
       - name: Generate Test Report Summary
         if: always()
