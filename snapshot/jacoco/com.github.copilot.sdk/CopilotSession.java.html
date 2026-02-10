@@ -113,8 +113,8 @@ public final class CopilotSession implements AutoCloseable {
      *            the JSON-RPC client for communication
      */
     CopilotSession(String sessionId, JsonRpcClient rpc) {
-<span class="nc" id="L116">        this(sessionId, rpc, null);</span>
-<span class="nc" id="L117">    }</span>
+<span class="fc" id="L116">        this(sessionId, rpc, null);</span>
+<span class="fc" id="L117">    }</span>
 
     /**
      * Creates a new session with the given ID, RPC client, and workspace path.
@@ -598,10 +598,10 @@ public final class CopilotSession implements AutoCloseable {
 <span class="fc" id="L598">            var invocation = new PermissionInvocation();</span>
 <span class="fc" id="L599">            invocation.setSessionId(sessionId);</span>
 <span class="fc" id="L600">            return handler.handle(request, invocation).exceptionally(ex -&gt; {</span>
-<span class="nc" id="L601">                LOG.log(Level.SEVERE, &quot;Permission handler threw an exception&quot;, ex);</span>
-<span class="nc" id="L602">                PermissionRequestResult result = new PermissionRequestResult();</span>
-<span class="nc" id="L603">                result.setKind(&quot;denied-no-approval-rule-and-could-not-request-from-user&quot;);</span>
-<span class="nc" id="L604">                return result;</span>
+<span class="fc" id="L601">                LOG.log(Level.SEVERE, &quot;Permission handler threw an exception&quot;, ex);</span>
+<span class="fc" id="L602">                PermissionRequestResult result = new PermissionRequestResult();</span>
+<span class="fc" id="L603">                result.setKind(&quot;denied-no-approval-rule-and-could-not-request-from-user&quot;);</span>
+<span class="fc" id="L604">                return result;</span>
             });
 <span class="fc" id="L606">        } catch (Exception e) {</span>
 <span class="fc" id="L607">            LOG.log(Level.SEVERE, &quot;Failed to process permission request&quot;, e);</span>
@@ -635,15 +635,15 @@ public final class CopilotSession implements AutoCloseable {
      */
     CompletableFuture&lt;UserInputResponse&gt; handleUserInputRequest(UserInputRequest request) {
 <span class="fc" id="L637">        UserInputHandler handler = userInputHandler.get();</span>
-<span class="pc bpc" id="L638" title="1 of 2 branches missed.">        if (handler == null) {</span>
-<span class="nc" id="L639">            return CompletableFuture.failedFuture(new IllegalStateException(&quot;No user input handler registered&quot;));</span>
+<span class="fc bfc" id="L638" title="All 2 branches covered.">        if (handler == null) {</span>
+<span class="fc" id="L639">            return CompletableFuture.failedFuture(new IllegalStateException(&quot;No user input handler registered&quot;));</span>
         }
 
         try {
 <span class="fc" id="L643">            var invocation = new UserInputInvocation().setSessionId(sessionId);</span>
 <span class="fc" id="L644">            return handler.handle(request, invocation).exceptionally(ex -&gt; {</span>
-<span class="nc" id="L645">                LOG.log(Level.SEVERE, &quot;User input handler threw an exception&quot;, ex);</span>
-<span class="nc" id="L646">                throw new RuntimeException(&quot;User input handler error&quot;, ex);</span>
+<span class="fc" id="L645">                LOG.log(Level.SEVERE, &quot;User input handler threw an exception&quot;, ex);</span>
+<span class="fc" id="L646">                throw new RuntimeException(&quot;User input handler error&quot;, ex);</span>
             });
 <span class="nc" id="L648">        } catch (Exception e) {</span>
 <span class="nc" id="L649">            LOG.log(Level.SEVERE, &quot;Failed to process user input request&quot;, e);</span>
@@ -676,8 +676,8 @@ public final class CopilotSession implements AutoCloseable {
      */
     CompletableFuture&lt;Object&gt; handleHooksInvoke(String hookType, JsonNode input) {
 <span class="fc" id="L678">        SessionHooks hooks = hooksHandler.get();</span>
-<span class="pc bpc" id="L679" title="1 of 2 branches missed.">        if (hooks == null) {</span>
-<span class="nc" id="L680">            return CompletableFuture.completedFuture(null);</span>
+<span class="fc bfc" id="L679" title="All 2 branches covered.">        if (hooks == null) {</span>
+<span class="fc" id="L680">            return CompletableFuture.completedFuture(null);</span>
         }
 
 <span class="fc" id="L683">        var invocation = new HookInvocation().setSessionId(sessionId);</span>
