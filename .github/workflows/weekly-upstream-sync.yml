@@ -38,6 +38,8 @@ jobs:
           UPSTREAM_HEAD=$(git rev-parse HEAD)
           echo "Upstream HEAD: $UPSTREAM_HEAD"
 
+          echo "last_merge=$LAST_MERGE" >> "$GITHUB_OUTPUT"
+
           if [ "$LAST_MERGE" = "$UPSTREAM_HEAD" ]; then
             echo "No new upstream changes since last merge."
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
@@ -47,7 +49,6 @@ jobs:
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
             echo "commit_count=$COMMIT_COUNT" >> "$GITHUB_OUTPUT"
             echo "upstream_head=$UPSTREAM_HEAD" >> "$GITHUB_OUTPUT"
-            echo "last_merge=$LAST_MERGE" >> "$GITHUB_OUTPUT"
 
             # Generate a short summary of changes
             SUMMARY=$(git log --oneline "$LAST_MERGE".."$UPSTREAM_HEAD" | head -20)
