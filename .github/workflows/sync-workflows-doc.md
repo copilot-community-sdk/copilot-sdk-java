@@ -115,7 +115,7 @@ The PR will be automatically labeled with `documentation` and have the title pre
 - **Match the style**: Follow the existing writing style, formatting, and level of detail.
 - **Be thorough**: Make sure no workflows are missing from the documentation.
 - **Handle both types**: Document both regular GitHub Actions workflows (.yml) and agentic workflows (.md/.lock.yml).
-- **Relative links**: Use relative paths from WORKFLOWS.md to workflow files (e.g., `.github/workflows/build-test.yml`). Since WORKFLOWS.md is in the root directory, all workflow links should use `.github/workflows/` prefix.
+- **Relative links**: Use relative paths from WORKFLOWS.md to workflow files matching the existing convention (e.g., `workflows/build-test.yml`). This format is used throughout the existing document and should be maintained for consistency.
 - **Agentic workflows**: For workflows with both `.md` and `.lock.yml` files, document them as agentic workflows and note that the `.lock.yml` is auto-generated.
 
 ## Example Output Summary
