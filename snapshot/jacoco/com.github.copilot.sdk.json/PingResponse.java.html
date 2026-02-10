@@ -17,75 +17,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="fc" id="L20">public class PingResponse {</span>
-
-    @JsonProperty(&quot;message&quot;)
-    private String message;
-
-    @JsonProperty(&quot;timestamp&quot;)
-    private long timestamp;
-
-    @JsonProperty(&quot;protocolVersion&quot;)
-    private Integer protocolVersion;
-
-    /**
-     * Gets the echo message from the server.
-     *
-     * @return the message echoed back by the server
-     */
-    public String getMessage() {
-<span class="fc" id="L37">        return message;</span>
-    }
-
-    /**
-     * Sets the message.
-     *
-     * @param message
-     *            the message
-     */
-    public void setMessage(String message) {
-<span class="fc" id="L47">        this.message = message;</span>
-<span class="fc" id="L48">    }</span>
-
-    /**
-     * Gets the server timestamp.
-     *
-     * @return the timestamp in milliseconds since epoch
-     */
-    public long getTimestamp() {
-<span class="fc" id="L56">        return timestamp;</span>
-    }
-
-    /**
-     * Sets the timestamp.
-     *
-     * @param timestamp
-     *            the timestamp
-     */
-    public void setTimestamp(long timestamp) {
-<span class="fc" id="L66">        this.timestamp = timestamp;</span>
-<span class="fc" id="L67">    }</span>
-
-    /**
-     * Gets the SDK protocol version supported by the server.
-     * &lt;p&gt;
-     * The SDK validates that this version matches the expected version to ensure
-     * compatibility.
-     *
-     * @return the protocol version, or {@code null} if not reported
-     */
-    public Integer getProtocolVersion() {
-<span class="fc" id="L78">        return protocolVersion;</span>
-    }
-
-    /**
-     * Sets the protocol version.
-     *
-     * @param protocolVersion
-     *            the protocol version
-     */
-    public void setProtocolVersion(Integer protocolVersion) {
-<span class="fc" id="L88">        this.protocolVersion = protocolVersion;</span>
-<span class="fc" id="L89">    }</span>
+<span class="fc" id="L20">public record PingResponse(</span>
+        /** The echo message from the server. */
+        @JsonProperty(&quot;message&quot;) String message,
+        /** The server timestamp in milliseconds since epoch. */
+        @JsonProperty(&quot;timestamp&quot;) long timestamp,
+        /**
+         * The SDK protocol version supported by the server. The SDK validates that this
+         * version matches the expected version to ensure compatibility.
+         */
+        @JsonProperty(&quot;protocolVersion&quot;) Integer protocolVersion) {
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

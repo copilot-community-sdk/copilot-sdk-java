@@ -16,38 +16,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @since 1.0.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="nc" id="L19">public class SetForegroundSessionResponse {</span>
-
-    @JsonProperty(&quot;success&quot;)
-    private boolean success;
-
-    @JsonProperty(&quot;error&quot;)
-    private String error;
-
-    /**
-     * Whether the operation was successful.
-     *
-     * @return true if successful
-     */
-    public boolean isSuccess() {
-<span class="nc" id="L33">        return success;</span>
-    }
-
-    public void setSuccess(boolean success) {
-<span class="nc" id="L37">        this.success = success;</span>
-<span class="nc" id="L38">    }</span>
-
-    /**
-     * Gets the error message if the operation failed.
-     *
-     * @return the error message, or null if successful
-     */
-    public String getError() {
-<span class="nc" id="L46">        return error;</span>
-    }
-
-    public void setError(String error) {
-<span class="nc" id="L50">        this.error = error;</span>
-<span class="nc" id="L51">    }</span>
+<span class="nc" id="L19">public record SetForegroundSessionResponse(</span>
+        /** Whether the operation was successful. */
+        @JsonProperty(&quot;success&quot;) boolean success,
+        /** The error message, or null if successful. */
+        @JsonProperty(&quot;error&quot;) String error) {
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

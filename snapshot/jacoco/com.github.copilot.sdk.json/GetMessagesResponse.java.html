@@ -12,17 +12,6 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="fc" id="L15">public final class GetMessagesResponse {</span>
-
-    @JsonProperty(&quot;events&quot;)
-    private List&lt;JsonNode&gt; events;
-
-    public List&lt;JsonNode&gt; getEvents() {
-<span class="fc" id="L21">        return events;</span>
-    }
-
-    public void setEvents(List&lt;JsonNode&gt; events) {
-<span class="fc" id="L25">        this.events = events;</span>
-<span class="fc" id="L26">    }</span>
+<span class="fc" id="L15">public record GetMessagesResponse(@JsonProperty(&quot;events&quot;) List&lt;JsonNode&gt; events) {</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

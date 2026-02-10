@@ -16,38 +16,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @since 1.0.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="nc" id="L19">public class GetForegroundSessionResponse {</span>
-
-    @JsonProperty(&quot;sessionId&quot;)
-    private String sessionId;
-
-    @JsonProperty(&quot;workspacePath&quot;)
-    private String workspacePath;
-
-    /**
-     * Gets the session ID currently displayed in the TUI.
-     *
-     * @return the session ID, or null if no foreground session
-     */
-    public String getSessionId() {
-<span class="nc" id="L33">        return sessionId;</span>
-    }
-
-    public void setSessionId(String sessionId) {
-<span class="nc" id="L37">        this.sessionId = sessionId;</span>
-<span class="nc" id="L38">    }</span>
-
-    /**
-     * Gets the workspace path of the foreground session.
-     *
-     * @return the workspace path, or null
-     */
-    public String getWorkspacePath() {
-<span class="nc" id="L46">        return workspacePath;</span>
-    }
-
-    public void setWorkspacePath(String workspacePath) {
-<span class="nc" id="L50">        this.workspacePath = workspacePath;</span>
-<span class="nc" id="L51">    }</span>
+<span class="nc" id="L19">public record GetForegroundSessionResponse(</span>
+        /** The session ID currently displayed in the TUI, or null if none. */
+        @JsonProperty(&quot;sessionId&quot;) String sessionId,
+        /** The workspace path of the foreground session, or null. */
+        @JsonProperty(&quot;workspacePath&quot;) String workspacePath) {
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

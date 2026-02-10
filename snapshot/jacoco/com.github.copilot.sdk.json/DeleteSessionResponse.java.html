@@ -17,50 +17,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="fc" id="L20">public final class DeleteSessionResponse {</span>
-
-    @JsonProperty(&quot;success&quot;)
-    private boolean success;
-
-    @JsonProperty(&quot;error&quot;)
-    private String error;
-
-    /**
-     * Returns whether the deletion was successful.
-     *
-     * @return {@code true} if the session was deleted successfully
-     */
-    public boolean isSuccess() {
-<span class="fc" id="L34">        return success;</span>
-    }
-
-    /**
-     * Sets whether the deletion was successful.
-     *
-     * @param success
-     *            {@code true} if successful
-     */
-    public void setSuccess(boolean success) {
-<span class="fc" id="L44">        this.success = success;</span>
-<span class="fc" id="L45">    }</span>
-
-    /**
-     * Gets the error message if the deletion failed.
-     *
-     * @return the error message, or {@code null} if successful
-     */
-    public String getError() {
-<span class="nc" id="L53">        return error;</span>
-    }
-
-    /**
-     * Sets the error message.
-     *
-     * @param error
-     *            the error message
-     */
-    public void setError(String error) {
-<span class="nc" id="L63">        this.error = error;</span>
-<span class="nc" id="L64">    }</span>
+<span class="fc" id="L20">public record DeleteSessionResponse(</span>
+        /** Whether the deletion was successful. */
+        @JsonProperty(&quot;success&quot;) boolean success,
+        /** The error message, or {@code null} if successful. */
+        @JsonProperty(&quot;error&quot;) String error) {
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

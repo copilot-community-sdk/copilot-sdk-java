@@ -9,15 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="nc" id="L12">public final class GetLastSessionIdResponse {</span>
-    @JsonProperty(&quot;sessionId&quot;)
-    private String sessionId;
-
-    public String getSessionId() {
-<span class="nc" id="L17">        return sessionId;</span>
-    }
-    public void setSessionId(String sessionId) {
-<span class="nc" id="L20">        this.sessionId = sessionId;</span>
-<span class="nc" id="L21">    }</span>
+<span class="nc" id="L12">public record GetLastSessionIdResponse(@JsonProperty(&quot;sessionId&quot;) String sessionId) {</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
