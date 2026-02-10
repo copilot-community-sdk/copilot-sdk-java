@@ -113,6 +113,12 @@ jbang https://github.com/copilot-community-sdk/copilot-sdk-java/blob/latest/jban
 
 > Want to add your project? Open a PR!
 
+## CI/CD Workflows
+
+This project uses several GitHub Actions workflows for building, testing, releasing, and syncing with the upstream SDK. 
+
+See [WORKFLOWS.md](WORKFLOWS.md) for a full overview and details on each workflow.
+
 ## Contributing
 
 Contributions are welcome! Please see the [Contributing Guide](CONTRIBUTING.md) for details.
