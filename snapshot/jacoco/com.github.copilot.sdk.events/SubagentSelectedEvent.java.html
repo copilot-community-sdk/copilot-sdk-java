@@ -32,40 +32,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 <span class="fc" id="L32">    }</span>
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="fc" id="L35">    public static class SubagentSelectedData {</span>
+<span class="fc" id="L35">    public record SubagentSelectedData(@JsonProperty(&quot;agentName&quot;) String agentName,</span>
+            @JsonProperty(&quot;agentDisplayName&quot;) String agentDisplayName, @JsonProperty(&quot;tools&quot;) String[] tools) {
 
-        @JsonProperty(&quot;agentName&quot;)
-        private String agentName;
-
-        @JsonProperty(&quot;agentDisplayName&quot;)
-        private String agentDisplayName;
-
-        @JsonProperty(&quot;tools&quot;)
-        private String[] tools;
-
-        public String getAgentName() {
-<span class="fc" id="L47">            return agentName;</span>
+        /** Returns a defensive copy of the tools array. */
+        @Override
+        public String[] tools() {
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">            return tools == null ? null : tools.clone();</span>
         }
-
-        public void setAgentName(String agentName) {
-<span class="fc" id="L51">            this.agentName = agentName;</span>
-<span class="fc" id="L52">        }</span>
-
-        public String getAgentDisplayName() {
-<span class="fc" id="L55">            return agentDisplayName;</span>
-        }
-
-        public void setAgentDisplayName(String agentDisplayName) {
-<span class="fc" id="L59">            this.agentDisplayName = agentDisplayName;</span>
-<span class="fc" id="L60">        }</span>
-
-        public String[] getTools() {
-<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            return tools == null ? null : tools.clone();</span>
-        }
-
-        public void setTools(String[] tools) {
-<span class="fc" id="L67">            this.tools = tools;</span>
-<span class="fc" id="L68">        }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
