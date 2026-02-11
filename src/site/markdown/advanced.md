@@ -66,7 +66,7 @@ var session = client.createSession(
 ).get();
 ```
 
-See [ToolDefinition](apidocs/com/github/copilot/sdk/ToolDefinition.html) Javadoc for schema details.
+See [ToolDefinition](apidocs/com/github/copilot/sdk/json/ToolDefinition.html) Javadoc for schema details.
 
 ---
 
