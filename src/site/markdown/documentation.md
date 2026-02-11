@@ -12,6 +12,9 @@ This guide covers common use cases for the Copilot SDK for Java. For complete AP
 - [Streaming Responses](#Streaming_Responses)
 - [Session Operations](#Session_Operations)
 - [Choosing a Model](#Choosing_a_Model)
+- [Reasoning Effort](#Reasoning_Effort)
+- [Tool Filtering](#Tool_Filtering)
+- [Working Directory](#Working_Directory)
 - [Connection State & Diagnostics](#Connection_State__Diagnostics)
 - [Message Delivery Mode](#Message_Delivery_Mode)
 - [Session Management](#Session_Management)
@@ -309,6 +312,90 @@ var session = client.createSession(
     new SessionConfig().setModel("claude-sonnet-4")
 ).get();
 ```
+
+---
+
+## Reasoning Effort
+
+For models that support it, control how much effort the model spends reasoning before responding:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setModel("o3-mini")
+        .setReasoningEffort("high")
+).get();
+```
+
+| Level | Description |
+|-------|-------------|
+| `"low"` | Fastest responses, less detailed reasoning |
+| `"medium"` | Balanced speed and reasoning depth |
+| `"high"` | Thorough reasoning, slower responses |
+| `"xhigh"` | Maximum reasoning effort |
+
+> **Note:** Only applies to reasoning models (e.g., `o3-mini`). Non-reasoning models ignore this setting.
+
+---
+
+## Tool Filtering
+
+Control which built-in tools the assistant can use with allowlists and blocklists.
+
+### Allowlist (Available Tools)
+
+Restrict the session to only specific tools:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setAvailableTools(List.of("read_file", "search_code", "list_dir"))
+).get();
+```
+
+When `availableTools` is set, the assistant can **only** use tools in this list.
+
+### Blocklist (Excluded Tools)
+
+Allow all tools except specific ones:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setExcludedTools(List.of("execute_command", "write_file"))
+).get();
+```
+
+Tools in the `excludedTools` list will not be available to the assistant.
+
+### Combining with Custom Tools
+
+Tool filtering applies to built-in tools. Your custom tools (registered via `setTools()`) are always available:
+
+```java
+var lookupTool = ToolDefinition.create("lookup_issue", "Fetch issue", schema, handler);
+
+var session = client.createSession(
+    new SessionConfig()
+        .setTools(List.of(lookupTool))           // Custom tool always available
+        .setAvailableTools(List.of("read_file")) // Only allow read_file from built-ins
+).get();
+```
+
+---
+
+## Working Directory
+
+Set the working directory for file operations in the session:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setWorkingDirectory("/path/to/project")
+).get();
+```
+
+This affects how the assistant resolves relative file paths when using tools like `read_file`, `write_file`, and `search_code`.
 
 ---
 
