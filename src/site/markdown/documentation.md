@@ -114,13 +114,13 @@ session.on(event -> {
 | `SessionIdleEvent` | Session finished processing |
 | `SessionErrorEvent` | An error occurred |
 
-For the complete list of all 33 event types, see [Event Types Reference](#Event_Types_Reference) below.
+For the complete list of all event types, see [Event Types Reference](#Event_Types_Reference) below.
 
 ---
 
 ## Event Types Reference
 
-The SDK supports 33 event types organized by category. All events extend `AbstractSessionEvent`.
+The SDK supports event types organized by category. All events extend `AbstractSessionEvent`.
 
 ### Session Events
 
