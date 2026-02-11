@@ -140,7 +140,7 @@ GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,SubagentSelec
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,SkillInvokedEvent.SkillInvokedData,0,15,0,0,0,1,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,ToolExecutionCompleteEvent,0,12,0,0,0,5,0,4,0,4
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,SessionCompactionStartEvent,3,9,0,0,1,4,1,3,1,3
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,AssistantUsageEvent.AssistantUsageData,2,46,1,1,0,2,1,2,0,2
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,AssistantUsageEvent.AssistantUsageData,0,48,0,2,0,2,0,3,0,2
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,AssistantReasoningDeltaEvent.AssistantReasoningDeltaData,0,9,0,0,0,1,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,ToolExecutionCompleteEvent.ToolExecutionCompleteData,2,31,1,1,0,2,1,2,0,2
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.events,SessionTruncationEvent.SessionTruncationData,0,27,0,0,0,1,0,1,0,1
@@ -160,5 +160,5 @@ GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotSession,53,74
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,JsonRpcClient,27,635,4,66,10,172,4,52,0,21
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,JsonRpcException,0,10,0,0,0,4,0,2,0,2
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,RpcHandlerDispatcher,116,624,3,39,37,140,4,44,1,26
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CliServerManager,48,379,10,44,12,87,9,27,0,9
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CliServerManager,42,385,10,44,10,89,9,27,0,9
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient.Connection,0,9,0,0,0,1,0,1,0,1

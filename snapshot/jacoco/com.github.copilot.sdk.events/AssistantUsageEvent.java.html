@@ -47,7 +47,7 @@ import java.util.Map;
         /** Returns a defensive copy of the quota snapshots map. */
         @Override
         public Map&lt;String, Object&gt; quotaSnapshots() {
-<span class="pc bpc" id="L50" title="1 of 2 branches missed.">            return quotaSnapshots == null ? null : Collections.unmodifiableMap(quotaSnapshots);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            return quotaSnapshots == null ? Collections.emptyMap() : Collections.unmodifiableMap(quotaSnapshots);</span>
         }
     }
 }

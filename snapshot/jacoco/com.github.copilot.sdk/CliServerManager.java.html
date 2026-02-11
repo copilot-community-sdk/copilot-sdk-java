@@ -147,8 +147,8 @@ final class CliServerManager {
 <span class="fc bfc" id="L147" title="All 2 branches covered.">                while ((line = reader.readLine()) != null) {</span>
 <span class="fc" id="L148">                    LOG.fine(&quot;[CLI] &quot; + line);</span>
                 }
-<span class="nc" id="L150">            } catch (IOException e) {</span>
-<span class="nc" id="L151">                LOG.log(Level.FINE, &quot;Error reading stderr&quot;, e);</span>
+<span class="fc" id="L150">            } catch (IOException e) {</span>
+<span class="fc" id="L151">                LOG.log(Level.FINE, &quot;Error reading stderr&quot;, e);</span>
 <span class="fc" id="L152">            }</span>
 <span class="fc" id="L153">        }, &quot;cli-stderr-reader&quot;);</span>
 <span class="fc" id="L154">        stderrThread.setDaemon(true);</span>
