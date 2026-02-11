@@ -36,6 +36,35 @@ mvn clean package -DskipTests
 mvn test -Pdebug
 ```
 
+### Running Tests from AI Agents / Copilot
+
+When running tests to verify changes, **always use `mvn verify` without `-q` and without piping through `grep`**. The full output is needed to diagnose failures. Do NOT use commands like:
+
+```bash
+# BAD - hides critical failure details, often requires a second run
+mvn verify -q 2>&1 | grep -E 'Tests run:|BUILD'
+mvn verify 2>&1 | grep -E 'Tests run.*in com|BUILD|test failure'
+```
+
+Instead, use one of these approaches:
+
+```bash
+# GOOD - run tests with full output (preferred for investigating failures)
+mvn verify
+
+# GOOD - run tests showing just the summary and result using Maven's built-in log level
+mvn verify -B --fail-at-end 2>&1 | tail -30
+
+# GOOD - run a single test class when debugging a specific test
+mvn test -Dtest=CopilotClientTest
+```
+
+**Interpreting results:**
+- `BUILD SUCCESS` at the end means all tests passed. No further investigation needed.
+- `BUILD FAILURE` means something failed. The lines immediately above `BUILD FAILURE` will contain the relevant error information. Look for `[ERROR]` lines near the bottom of the output.
+- The Surefire summary line `Tests run: X, Failures: Y, Errors: Z, Skipped: W` appears near the end and gives the counts.
+- **Do NOT run tests a second time** just to get different output formatting. One run with full output is sufficient.
+
 ## Architecture
 
 ### Core Components
