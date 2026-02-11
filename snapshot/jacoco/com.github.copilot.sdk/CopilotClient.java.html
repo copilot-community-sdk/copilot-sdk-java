@@ -527,7 +527,7 @@ public final class CopilotClient implements AutoCloseable {
      * @return an AutoCloseable that, when closed, unsubscribes the handler
      */
     public AutoCloseable onLifecycle(SessionLifecycleHandler handler) {
-<span class="nc" id="L530">        return lifecycleManager.subscribe(handler);</span>
+<span class="fc" id="L530">        return lifecycleManager.subscribe(handler);</span>
     }
 
     /**
@@ -542,7 +542,7 @@ public final class CopilotClient implements AutoCloseable {
      * @return an AutoCloseable that, when closed, unsubscribes the handler
      */
     public AutoCloseable onLifecycle(String eventType, SessionLifecycleHandler handler) {
-<span class="nc" id="L545">        return lifecycleManager.subscribe(eventType, handler);</span>
+<span class="fc" id="L545">        return lifecycleManager.subscribe(eventType, handler);</span>
     }
 
     private CompletableFuture&lt;Connection&gt; ensureConnected() {
