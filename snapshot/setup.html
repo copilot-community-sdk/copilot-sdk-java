@@ -542,7 +542,33 @@ public class CopilotClientPool {
 <td>Working directory</td>
 <td>current dir</td></tr></tbody>
 </table>
-</section><section><a id="Best_Practices"></a>
+<section><a id="Extra_CLI_Arguments"></a>
+<h3>Extra CLI Arguments</h3>
+<p>Pass additional command-line arguments to the CLI process:</p>
+
+<pre class="prettyprint"><code class="language-java">var options = new CopilotClientOptions()
+    .setCliArgs(new String[]{&quot;--verbose&quot;, &quot;--no-telemetry&quot;});
+
+try (var client = new CopilotClient(options)) {
+    client.start().get();
+    // CLI process receives the extra flags
+}
+</code></pre></section><section><a id="Custom_Environment_Variables"></a>
+<h3>Custom Environment Variables</h3>
+<p>Set environment variables for the CLI process (merged with the inherited system environment):</p>
+
+<pre class="prettyprint"><code class="language-java">var options = new CopilotClientOptions()
+    .setEnvironment(Map.of(
+        &quot;HTTPS_PROXY&quot;, &quot;http://proxy.example.com:8080&quot;,
+        &quot;NO_PROXY&quot;, &quot;localhost,127.0.0.1&quot;
+    ));
+
+try (var client = new CopilotClient(options)) {
+    client.start().get();
+    // CLI process uses the proxy settings
+}
+</code></pre>
+<p>This is useful for configuring proxy servers, custom CA certificates, or any environment-specific settings the CLI needs.</p></section></section><section><a id="Best_Practices"></a>
 <h2>Best Practices</h2><section><a id="Development"></a>
 <h3>Development</h3>
 <ul>

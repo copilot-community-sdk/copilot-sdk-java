@@ -683,7 +683,34 @@ switch (state) {
 <td><code>ERROR</code></td>
 <td>Connection failed (check logs for details)</td></tr></tbody>
 </table>
-</section><section><a id="Server_Status"></a>
+</section><section><a id="State_Transitions"></a>
+<h3>State Transitions</h3>
+
+<pre><code class="nohighlight nocode">                 start()
+  DISCONNECTED &#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x25ba; CONNECTING
+                               &#x2502;
+                    &#x250c;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x253c;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2510;
+                    &#x2502; success  &#x2502;          &#x2502; failure
+                    &#x25bc;          &#x2502;          &#x25bc;
+              CONNECTED        &#x2502;        ERROR
+                    &#x2502;          &#x2502;
+        stop() /    &#x2502;          &#x2502;
+        forceStop() &#x2502;          &#x2502;
+                    &#x25bc;          &#x2502;
+              DISCONNECTED &#x25c4;&#x2500;&#x2500;&#x2500;&#x2518;
+                    &#x2502;
+                    &#x2502; start()  (retry)
+                    &#x25bc;
+               CONNECTING
+</code></pre>
+<ul>
+
+<li><strong>DISCONNECTED &#x2192; CONNECTING:</strong> <code>start()</code> was called</li>
+<li><strong>CONNECTING &#x2192; CONNECTED:</strong> Server connection and protocol handshake succeeded</li>
+<li><strong>CONNECTING &#x2192; ERROR:</strong> Connection or protocol verification failed</li>
+<li><strong>CONNECTED &#x2192; DISCONNECTED:</strong> <code>stop()</code> or <code>forceStop()</code> was called, or <code>close()</code> via try-with-resources</li>
+<li><strong>DISCONNECTED &#x2192; CONNECTING:</strong> <code>start()</code> can be called again to retry</li>
+</ul></section><section><a id="Server_Status"></a>
 <h3>Server Status</h3>
 <p>Get CLI version and protocol information:</p>
 

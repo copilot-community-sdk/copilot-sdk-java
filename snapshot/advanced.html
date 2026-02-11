@@ -271,12 +271,41 @@ var session = client.createSession(
 ).get();
 </code></pre><hr /></section></section><section><a id="File_Attachments"></a>
 <h2>File Attachments</h2>
-<p>Include files as context for the AI to analyze.</p>
+<p>Include files as context for the AI to analyze. The <code>Attachment</code> record takes three parameters:</p>
+<table class="table table-striped">
+<thead>
+<tr class="a">
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th></tr></thead><tbody>
+<tr class="b">
+<td><code>type</code></td>
+<td>String</td>
+<td>The attachment type &#x2014; use <code>&quot;file&quot;</code> for filesystem files</td></tr>
+<tr class="a">
+<td><code>path</code></td>
+<td>String</td>
+<td>The absolute path to the file on disk</td></tr>
+<tr class="b">
+<td><code>displayName</code></td>
+<td>String</td>
+<td>A human-readable label shown to the AI (e.g., the filename or a description)</td></tr></tbody>
+</table>
 
 <pre class="prettyprint"><code class="language-java">session.send(new MessageOptions()
     .setPrompt(&quot;Review this file for bugs&quot;)
     .setAttachments(List.of(
         new Attachment(&quot;file&quot;, &quot;/path/to/file.java&quot;, &quot;MyService.java&quot;)
+    ))
+).get();
+</code></pre>
+<p>You can attach multiple files in a single message:</p>
+
+<pre class="prettyprint"><code class="language-java">session.send(new MessageOptions()
+    .setPrompt(&quot;Compare these two implementations&quot;)
+    .setAttachments(List.of(
+        new Attachment(&quot;file&quot;, &quot;/src/main/OldImpl.java&quot;, &quot;Old Implementation&quot;),
+        new Attachment(&quot;file&quot;, &quot;/src/main/NewImpl.java&quot;, &quot;New Implementation&quot;)
     ))
 ).get();
 </code></pre><hr /></section><section><a id="Bring_Your_Own_Key_.28BYOK.29"></a>
@@ -564,7 +593,36 @@ var session = client.createSession(
 client.start().get();   // Start manually
 // ... use client ...
 client.stop().get();    // Stop manually
-</code></pre><hr /></section><section><a id="Session_Lifecycle_Events"></a>
+</code></pre><section><a id="Graceful_Stop_vs_Force_Stop"></a>
+<h3>Graceful Stop vs Force Stop</h3>
+<p>The SDK provides two shutdown methods:</p>
+<table class="table table-striped">
+<thead>
+<tr class="a">
+<th>Method</th>
+<th>Behavior</th></tr></thead><tbody>
+<tr class="b">
+<td><code>stop()</code></td>
+<td>Gracefully closes all open sessions, then shuts down the connection</td></tr>
+<tr class="a">
+<td><code>forceStop()</code></td>
+<td>Immediately clears sessions and shuts down &#x2014; no graceful session cleanup</td></tr></tbody>
+</table>
+
+<p>Use <code>stop()</code> for normal shutdown &#x2014; it ensures each session is properly closed (flushing pending operations) before terminating the connection:</p>
+
+<pre class="prettyprint"><code class="language-java">// Graceful: closes all sessions, then disconnects
+client.stop().get();
+</code></pre>
+<p>Use <code>forceStop()</code> when you need to terminate immediately, such as during error recovery or when the server is unresponsive:</p>
+
+<pre class="prettyprint"><code class="language-java">// Immediate: skips session cleanup, kills connection
+client.forceStop().get();
+</code></pre>
+<blockquote>
+
+<p><strong>Tip:</strong> In <code>try-with-resources</code> blocks, <code>close()</code> delegates to <code>stop()</code>, so graceful cleanup happens automatically.</p>
+</blockquote><hr /></section></section><section><a id="Session_Lifecycle_Events"></a>
 <h2>Session Lifecycle Events</h2>
 <p>Subscribe to lifecycle events to be notified when sessions are created, deleted, updated, or change foreground/background state.</p><section><a id="Subscribing_to_All_Lifecycle_Events"></a>
 <h3>Subscribing to All Lifecycle Events</h3>
