@@ -364,9 +364,7 @@ Intercept tool execution and session lifecycle events using hooks.
 var hooks = new SessionHooks()
     .setOnPreToolUse((input, invocation) -> {
         System.out.println("Tool: " + input.getToolName());
-        return CompletableFuture.completedFuture(
-            new PreToolUseHookOutput().setPermissionDecision("allow")
-        );
+        return CompletableFuture.completedFuture(PreToolUseHookOutput.allow());
     })
     .setOnPostToolUse((input, invocation) -> {
         System.out.println("Result: " + input.getToolResult());
