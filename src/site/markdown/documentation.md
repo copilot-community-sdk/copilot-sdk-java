@@ -18,6 +18,7 @@ This guide covers common use cases for the Copilot SDK for Java. For complete AP
 - [Connection State & Diagnostics](#Connection_State__Diagnostics)
 - [Message Delivery Mode](#Message_Delivery_Mode)
 - [Session Management](#Session_Management)
+- [SessionConfig Reference](#SessionConfig_Reference)
 
 ---
 
@@ -560,6 +561,36 @@ See [ResumeSessionConfig](apidocs/com/github/copilot/sdk/json/ResumeSessionConfi
 // Delete a specific session
 client.deleteSession(sessionId).get();
 ```
+
+---
+
+## SessionConfig Reference
+
+Complete list of all `SessionConfig` options for `createSession()`:
+
+| Option | Type | Description | Guide |
+|--------|------|-------------|-------|
+| `sessionId` | String | Custom session ID (auto-generated if omitted) | — |
+| `model` | String | AI model to use | [Choosing a Model](#Choosing_a_Model) |
+| `reasoningEffort` | String | Reasoning depth: `"low"`, `"medium"`, `"high"`, `"xhigh"` | [Reasoning Effort](#Reasoning_Effort) |
+| `tools` | List&lt;ToolDefinition&gt; | Custom tools the assistant can invoke | [Custom Tools](advanced.html#Custom_Tools) |
+| `systemMessage` | SystemMessageConfig | Customize assistant behavior | [System Messages](advanced.html#System_Messages) |
+| `availableTools` | List&lt;String&gt; | Allowlist of built-in tool names | [Tool Filtering](#Tool_Filtering) |
+| `excludedTools` | List&lt;String&gt; | Blocklist of built-in tool names | [Tool Filtering](#Tool_Filtering) |
+| `provider` | ProviderConfig | BYOK API provider configuration | [BYOK](advanced.html#Bring_Your_Own_Key_BYOK) |
+| `onPermissionRequest` | PermissionHandler | Handler for permission requests | [Permission Handling](advanced.html#Permission_Handling) |
+| `onUserInputRequest` | UserInputHandler | Handler for user input requests | [User Input Handling](advanced.html#User_Input_Handling) |
+| `hooks` | SessionHooks | Lifecycle and tool execution hooks | [Session Hooks](hooks.html) |
+| `workingDirectory` | String | Working directory for file operations | [Working Directory](#Working_Directory) |
+| `streaming` | boolean | Enable streaming response chunks | [Streaming Responses](#Streaming_Responses) |
+| `mcpServers` | Map&lt;String, Object&gt; | MCP server configurations | [MCP Servers](mcp.html) |
+| `customAgents` | List&lt;CustomAgentConfig&gt; | Custom agent definitions | [Custom Agents](advanced.html#Custom_Agents) |
+| `infiniteSessions` | InfiniteSessionConfig | Auto-compaction for long conversations | [Infinite Sessions](advanced.html#Infinite_Sessions) |
+| `skillDirectories` | List&lt;String&gt; | Directories to load skills from | [Skills](advanced.html#Skills_Configuration) |
+| `disabledSkills` | List&lt;String&gt; | Skills to disable by name | [Skills](advanced.html#Skills_Configuration) |
+| `configDir` | String | Custom configuration directory | [Config Dir](advanced.html#Custom_Configuration_Directory) |
+
+See [SessionConfig](apidocs/com/github/copilot/sdk/json/SessionConfig.html) Javadoc for full details.
 
 ---
 

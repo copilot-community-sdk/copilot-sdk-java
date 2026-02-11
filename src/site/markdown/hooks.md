@@ -393,3 +393,12 @@ To handle errors gracefully in your hooks:
 - [PreToolUseHookOutput Javadoc](apidocs/com/github/copilot/sdk/json/PreToolUseHookOutput.html)
 - [PostToolUseHookInput Javadoc](apidocs/com/github/copilot/sdk/json/PostToolUseHookInput.html)
 - [PostToolUseHookOutput Javadoc](apidocs/com/github/copilot/sdk/json/PostToolUseHookOutput.html)
+
+---
+
+## Next Steps
+
+- 📖 **[Documentation](documentation.html)** - Core concepts, events, session management
+- 📖 **[Advanced Usage](advanced.html)** - Tools, BYOK, MCP Servers, Custom Agents
+- 📖 **[MCP Servers](mcp.html)** - Integrate external tools via Model Context Protocol
+- 📖 **[API Javadoc](apidocs/index.html)** - Complete API reference

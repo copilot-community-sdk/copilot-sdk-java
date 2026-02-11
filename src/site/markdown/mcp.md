@@ -115,3 +115,12 @@ var session = client.createSession(
 - [MCP Specification](https://modelcontextprotocol.io/)
 - [MCP Servers Directory](https://github.com/modelcontextprotocol/servers)
 - [GitHub MCP Server](https://github.com/github/github-mcp-server)
+
+---
+
+## Next Steps
+
+- 📖 **[Documentation](documentation.html)** - Core concepts, events, session management
+- 📖 **[Advanced Usage](advanced.html)** - Tools, BYOK, System Messages, Custom Agents
+- 📖 **[Session Hooks](hooks.html)** - Intercept tool execution and session lifecycle events
+- 📖 **[API Javadoc](apidocs/index.html)** - Complete API reference

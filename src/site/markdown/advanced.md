@@ -627,3 +627,13 @@ session.setEventErrorPolicy(EventErrorPolicy.SUPPRESS_AND_LOG_ERRORS);
 ```
 
 See [EventErrorPolicy](apidocs/com/github/copilot/sdk/EventErrorPolicy.html) and [EventErrorHandler](apidocs/com/github/copilot/sdk/EventErrorHandler.html) Javadoc for details.
+
+---
+
+## Next Steps
+
+- 📖 **[Documentation](documentation.html)** - Core concepts, events, streaming, models, tool filtering, reasoning effort
+- 📖 **[Session Hooks](hooks.html)** - All 5 hook types with inputs, outputs, and examples
+- 📖 **[MCP Servers](mcp.html)** - Local and remote MCP server integration
+- 📖 **[Setup & Deployment](setup.html)** - OAuth, backend services, scaling, configuration reference
+- 📖 **[API Javadoc](apidocs/index.html)** - Complete API reference

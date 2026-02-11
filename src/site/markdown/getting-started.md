@@ -349,3 +349,13 @@ copilot auth login
 ### "Connection timeout"
 
 Check your internet connection and firewall settings. The SDK communicates with GitHub's Copilot service.
+
+---
+
+## Next Steps
+
+- 📖 **[Documentation](documentation.html)** - Core concepts, events, streaming, session management
+- 📖 **[Advanced Usage](advanced.html)** - Tools, BYOK, MCP Servers, System Messages, Custom Agents
+- 📖 **[Session Hooks](hooks.html)** - Intercept tool execution and session lifecycle events
+- 📖 **[Setup & Deployment](setup.html)** - OAuth, backend services, scaling
+- 📖 **[API Javadoc](apidocs/index.html)** - Complete API reference
