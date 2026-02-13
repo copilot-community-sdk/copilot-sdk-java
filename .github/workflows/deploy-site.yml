@@ -216,10 +216,13 @@ jobs:
       - name: Copy version index page
         run: |
           cp .github/templates/versions.html site/index.html
+          cp .github/templates/styles.css site/styles.css
 
       - name: Update version list from git tags
         run: |
           cd site
+          
+          REPO_URL="https://github.com/copilot-community-sdk/copilot-sdk-java"
           
           # Get versions from git tags (already sorted by version, descending)
           VERSIONS=$(git -C .. tag -l | grep -E '^v?[0-9]+\.[0-9]+' | sed 's/^v//' | sort -Vr)
@@ -232,17 +235,17 @@ jobs:
           
           # Add snapshot if exists (goes to current versions)
           if [ "$HAS_SNAPSHOT" = "true" ]; then
-            CURRENT_HTML+='<li><a href="./snapshot/">Development (main branch)</a><span class="badge snapshot">snapshot</span></li>'
+            CURRENT_HTML+='<li><span class="version-name">Development (main branch)</span><span class="version-links"><a href="./snapshot/" class="doc-link">documentation ↗</a><a href="'"$REPO_URL"'/blob/main/CHANGELOG.md" class="release-link">release notes ↗</a><span class="badge snapshot">snapshot</span></span></li>'
           fi
           
           # Add versioned releases from tags (first one is latest, rest go to older)
           for v in $VERSIONS; do
             if [ -d "$v" ]; then
               if [ "$IS_FIRST_VERSION" = "true" ]; then
-                CURRENT_HTML+="<li class=\"latest-version\"><a href=\"./$v/\">Version $v</a><span class=\"badge latest\">latest</span></li>"
+                CURRENT_HTML+='<li class="latest-version"><span class="version-name">Version '"$v"'</span><span class="version-links"><a href="./'"$v"'/" class="doc-link">documentation ↗</a><a href="'"$REPO_URL"'/releases/tag/v'"$v"'" class="release-link">release notes ↗</a><span class="badge latest">latest</span></span></li>'
                 IS_FIRST_VERSION="false"
               else
-                OLDER_HTML+="<li><a href=\"./$v/\">Version $v</a></li>"
+                OLDER_HTML+='<li><span>'"$v"'</span><span class="older-links"><a href="./'"$v"'/" class="doc-link">documentation ↗</a><a href="'"$REPO_URL"'/releases/tag/v'"$v"'" class="release-link">release notes ↗</a></span></li>'
               fi
             fi
           done
