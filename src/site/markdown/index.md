@@ -15,6 +15,8 @@ Welcome to the documentation for the **Copilot SDK for Java** — a Java SDK for
 
 Add the dependency to your project:
 
+> **Note:** If this is a `-SNAPSHOT` version, clone the project repository and run `./mvnw install` locally first so the artifact is available in your local Maven cache. Otherwise, the version is available on Maven Central.
+
 **Maven:**
 
 ```xml
