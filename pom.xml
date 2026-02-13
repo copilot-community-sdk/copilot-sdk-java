@@ -375,7 +375,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-coverage/jacoco-resources</outputDirectory>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco/jacoco-resources</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/site/jacoco-resources</directory>

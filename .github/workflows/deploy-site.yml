@@ -257,7 +257,7 @@ jobs:
       - name: Overlay custom JaCoCo CSS
         run: |
           cd site
-          for dir in */jacoco-coverage/jacoco-resources; do
+          for dir in */jacoco/jacoco-resources; do
             if [ -d "$dir" ]; then
               cp ../src/site/jacoco-resources/report.css "$dir/report.css"
               echo "Overlaid JaCoCo CSS in $dir"
