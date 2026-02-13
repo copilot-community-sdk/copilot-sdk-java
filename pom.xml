@@ -368,6 +368,23 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>overlay-jacoco-css</id>
+                        <phase>site</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-coverage/jacoco-resources</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/site/jacoco-resources</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                            <overwrite>true</overwrite>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <!-- Maven Site Plugin -->
