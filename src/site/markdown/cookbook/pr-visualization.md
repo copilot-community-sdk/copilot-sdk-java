@@ -228,7 +228,7 @@ public class PRVisualization {
 You can also run this example directly with JBang:
 
 ```bash
-//DEPS io.github.copilot-community-sdk:copilot-sdk:1.0.8
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 
 # Then run:
 jbang PRVisualization.java github/copilot-sdk
