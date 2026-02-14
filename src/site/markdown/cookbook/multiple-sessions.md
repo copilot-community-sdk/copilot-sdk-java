@@ -9,6 +9,7 @@ You need to run multiple conversations in parallel, each with its own context an
 ## Java
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 import com.github.copilot.sdk.*;
 import com.github.copilot.sdk.events.*;
 import com.github.copilot.sdk.json.*;
@@ -99,6 +100,7 @@ try {
 ## Managing session lifecycle with CompletableFuture
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 import java.util.concurrent.CompletableFuture;
 import java.util.List;
 

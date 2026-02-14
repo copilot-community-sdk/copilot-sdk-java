@@ -62,6 +62,15 @@
             <item name="Session Hooks" href="hooks.html"/>
         </menu>
 
+        <menu name="Cookbook">
+            <item name="Overview" href="cookbook/README.html"/>
+            <item name="Error Handling" href="cookbook/error-handling.html"/>
+            <item name="Multiple Sessions" href="cookbook/multiple-sessions.html"/>
+            <item name="Managing Local Files" href="cookbook/managing-local-files.html"/>
+            <item name="PR Visualization" href="cookbook/pr-visualization.html"/>
+            <item name="Persisting Sessions" href="cookbook/persisting-sessions.html"/>
+        </menu>
+
         <menu ref="reports"/>
 
     </body>

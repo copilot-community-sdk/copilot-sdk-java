@@ -9,6 +9,7 @@ You want users to be able to continue a conversation even after closing and reop
 ## Creating a session with a custom ID
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 import com.github.copilot.sdk.*;
 import com.github.copilot.sdk.events.*;
 import com.github.copilot.sdk.json.*;
@@ -127,6 +128,7 @@ public class SessionHistory {
 ## Complete example with session management
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 import java.util.Scanner;
 
 public class SessionManager {

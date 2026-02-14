@@ -31,6 +31,7 @@ java PRVisualization.java github/copilot-sdk
 ## Full example: PRVisualization.java
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 import com.github.copilot.sdk.*;
 import com.github.copilot.sdk.events.*;
 import com.github.copilot.sdk.json.*;

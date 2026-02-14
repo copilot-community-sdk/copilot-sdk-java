@@ -9,6 +9,7 @@ You need to handle various error conditions like connection failures, timeouts, 
 ## Basic error handling
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 import com.github.copilot.sdk.*;
 import com.github.copilot.sdk.events.*;
 import com.github.copilot.sdk.json.*;
@@ -40,6 +41,10 @@ public class BasicErrorHandling {
 ## Handling specific error types
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
+import com.github.copilot.sdk.*;
+import com.github.copilot.sdk.events.*;
+import com.github.copilot.sdk.json.*;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -69,6 +74,10 @@ public class SpecificErrorHandling {
 ## Timeout handling
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
+import com.github.copilot.sdk.*;
+import com.github.copilot.sdk.events.*;
+import com.github.copilot.sdk.json.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -96,6 +105,10 @@ public class TimeoutHandling {
 ## Aborting a request
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
+import com.github.copilot.sdk.*;
+import com.github.copilot.sdk.events.*;
+import com.github.copilot.sdk.json.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -123,6 +136,11 @@ public class AbortRequest {
 ## Graceful shutdown
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
+import com.github.copilot.sdk.*;
+import com.github.copilot.sdk.events.*;
+import com.github.copilot.sdk.json.*;
+
 public class GracefulShutdown {
     public static void main(String[] args) {
         var client = new CopilotClient();
@@ -150,6 +168,11 @@ public class GracefulShutdown {
 ## Try-with-resources pattern
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
+import com.github.copilot.sdk.*;
+import com.github.copilot.sdk.events.*;
+import com.github.copilot.sdk.json.*;
+
 public class TryWithResources {
     public static void doWork() throws Exception {
         try (var client = new CopilotClient()) {
@@ -175,6 +198,10 @@ public class TryWithResources {
 ## Handling tool errors
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
+import com.github.copilot.sdk.*;
+import com.github.copilot.sdk.events.*;
+import com.github.copilot.sdk.json.*;
 import java.util.Map;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
