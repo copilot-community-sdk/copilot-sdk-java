@@ -8,7 +8,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-> **Upstream sync:** [`github/copilot-sdk@05e3c46`](https://github.com/github/copilot-sdk/commit/05e3c46c8c23130c9c064dc43d00ec78f7a75eab)
+> **Upstream sync:** [`github/copilot-sdk@e40d57c`](https://github.com/github/copilot-sdk/commit/e40d57c86e18b495722adbf42045288c03924342)
+
+### Added
+
+#### Session Context and Filtering
+
+Added session context tracking and filtering capabilities to help manage multiple Copilot sessions across different repositories and working directories.
+
+**New Classes:**
+- `SessionContext` - Represents working directory context (cwd, gitRoot, repository, branch) with fluent setters
+- `SessionListFilter` - Filter sessions by context fields (extends SessionContext)
+- `SessionContextChangedEvent` - Event fired when working directory context changes between turns
+
+**Updated APIs:**
+- `SessionMetadata.getContext()` - Returns optional context information for persisted sessions
+- `CopilotClient.listSessions(SessionListFilter)` - New overload to filter sessions by context criteria
+
+**Example:**
+```java
+// List sessions for a specific repository
+var filter = new SessionListFilter()
+    .setRepository("owner/repo")
+    .setBranch("main");
+var sessions = client.listSessions(filter).get();
+
+// Access context information
+for (var session : sessions) {
+    var ctx = session.getContext();
+    if (ctx != null) {
+        System.out.println("CWD: " + ctx.getCwd());
+        System.out.println("Repo: " + ctx.getRepository());
+    }
+}
+
+// Listen for context changes
+session.on(SessionContextChangedEvent.class, event -> {
+    SessionContext newContext = event.getData();
+    System.out.println("Working directory changed to: " + newContext.getCwd());
+});
+```
+
+**Requirements:**
+- GitHub Copilot CLI 0.0.409 or later
 
 ## [1.0.8] - 2026-02-08
 

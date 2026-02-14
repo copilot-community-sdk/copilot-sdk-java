@@ -24,6 +24,10 @@ This guide covers advanced scenarios for extending and customizing your Copilot 
 - [Permission Handling](#Permission_Handling)
 - [Session Hooks](#Session_Hooks)
 - [Manual Server Control](#Manual_Server_Control)
+- [Session Context and Filtering](#Session_Context_and_Filtering)
+  - [Listing Sessions with Context](#Listing_Sessions_with_Context)
+  - [Filtering Sessions by Context](#Filtering_Sessions_by_Context)
+  - [Context Changed Events](#Context_Changed_Events)
 - [Session Lifecycle Events](#Session_Lifecycle_Events)
   - [Subscribing to All Lifecycle Events](#Subscribing_to_All_Lifecycle_Events)
   - [Subscribing to Specific Event Types](#Subscribing_to_Specific_Event_Types)
@@ -497,6 +501,65 @@ client.forceStop().get();
 
 > **Tip:** In `try-with-resources` blocks, `close()` delegates to `stop()`, so graceful session cleanup happens automatically.
 > `close()` is blocking and waits up to `CopilotClient.AUTOCLOSEABLE_TIMEOUT_SECONDS` seconds for shutdown to complete.
+
+---
+
+## Session Context and Filtering
+
+Track and filter sessions by their working directory context including the current directory, git repository, and branch information.
+
+### Listing Sessions with Context
+
+Session metadata may include context information for persisted sessions:
+
+```java
+var sessions = client.listSessions().get();
+for (var session : sessions) {
+    var context = session.getContext();
+    if (context != null) {
+        System.out.println("Session: " + session.getSessionId());
+        System.out.println("  Working dir: " + context.getCwd());
+        System.out.println("  Repository: " + context.getRepository());
+        System.out.println("  Branch: " + context.getBranch());
+        System.out.println("  Git root: " + context.getGitRoot());
+    }
+}
+```
+
+### Filtering Sessions by Context
+
+Use `SessionListFilter` to filter sessions by context fields:
+
+```java
+// Find sessions for a specific repository
+var filter = new SessionListFilter()
+    .setRepository("owner/myproject")
+    .setBranch("main");
+
+var sessions = client.listSessions(filter).get();
+```
+
+Filter options:
+- `setCwd(String)` - Filter by exact working directory match
+- `setGitRoot(String)` - Filter by git repository root
+- `setRepository(String)` - Filter by repository in "owner/repo" format
+- `setBranch(String)` - Filter by git branch name
+
+### Context Changed Events
+
+Listen for changes to the working directory context:
+
+```java
+session.on(SessionContextChangedEvent.class, event -> {
+    var newContext = event.getData();
+    System.out.println("Context changed:");
+    System.out.println("  New CWD: " + newContext.getCwd());
+    System.out.println("  Repository: " + newContext.getRepository());
+    System.out.println("  Branch: " + newContext.getBranch());
+});
+```
+
+The `session.context_changed` event fires when the working directory context changes between conversation turns.
 
 ---
 
