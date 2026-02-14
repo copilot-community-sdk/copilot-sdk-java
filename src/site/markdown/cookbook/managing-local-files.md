@@ -2,12 +2,33 @@
 
 Use Copilot to intelligently organize files in a folder based on their metadata.
 
+## Prerequisites
+
+Install [JBang](https://www.jbang.dev/) to run these examples:
+
+```bash
+# macOS (using Homebrew)
+brew install jbangdev/tap/jbang
+
+# Linux/macOS (using curl)
+curl -Ls https://sh.jbang.dev | bash -s - app setup
+
+# Windows (using Scoop)
+scoop install jbang
+```
+
 ## Example scenario
 
 You have a folder with many files and want to organize them into subfolders based on metadata like file type, creation date, size, or other attributes. Copilot can analyze the files and suggest or execute a grouping strategy.
 
 ## Example code
 
+**Usage:**
+```bash
+jbang ManagingLocalFiles.java
+```
+
+**Code:**
 ```java
 //DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 import com.github.copilot.sdk.*;

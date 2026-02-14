@@ -2,12 +2,33 @@
 
 Save and restore conversation sessions across application restarts.
 
+## Prerequisites
+
+Install [JBang](https://www.jbang.dev/) to run these examples:
+
+```bash
+# macOS (using Homebrew)
+brew install jbangdev/tap/jbang
+
+# Linux/macOS (using curl)
+curl -Ls https://sh.jbang.dev | bash -s - app setup
+
+# Windows (using Scoop)
+scoop install jbang
+```
+
 ## Example scenario
 
 You want users to be able to continue a conversation even after closing and reopening your application.
 
 ## Creating a session with a custom ID
 
+**Usage:**
+```bash
+jbang PersistingSessions.java
+```
+
+**Code:**
 ```java
 //DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 import com.github.copilot.sdk.*;

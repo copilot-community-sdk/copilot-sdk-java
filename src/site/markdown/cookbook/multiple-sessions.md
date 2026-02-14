@@ -2,12 +2,33 @@
 
 Manage multiple independent conversations simultaneously.
 
+## Prerequisites
+
+Install [JBang](https://www.jbang.dev/) to run these examples:
+
+```bash
+# macOS (using Homebrew)
+brew install jbangdev/tap/jbang
+
+# Linux/macOS (using curl)
+curl -Ls https://sh.jbang.dev | bash -s - app setup
+
+# Windows (using Scoop)
+scoop install jbang
+```
+
 ## Example scenario
 
 You need to run multiple conversations in parallel, each with its own context and history.
 
 ## Java
 
+**Usage:**
+```bash
+jbang MultipleSessions.java
+```
+
+**Code:**
 ```java
 //DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 import com.github.copilot.sdk.*;

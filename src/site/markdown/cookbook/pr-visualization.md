@@ -2,30 +2,33 @@
 
 Build an interactive CLI tool that visualizes pull request age distribution for a GitHub repository using Copilot's built-in capabilities.
 
+## Prerequisites
+
+Install [JBang](https://www.jbang.dev/) to run this example:
+
+```bash
+# macOS (using Homebrew)
+brew install jbangdev/tap/jbang
+
+# Linux/macOS (using curl)
+curl -Ls https://sh.jbang.dev | bash -s - app setup
+
+# Windows (using Scoop)
+scoop install jbang
+```
+
 ## Example scenario
 
 You want to understand how long PRs have been open in a repository. This tool detects the current Git repo or accepts a repo as input, then lets Copilot fetch PR data via the GitHub MCP Server and generate a chart image.
-
-## Prerequisites
-
-Add the following dependency to your `pom.xml`:
-
-```xml
-<dependency>
-    <groupId>io.github.copilot-community-sdk</groupId>
-    <artifactId>copilot-sdk</artifactId>
-    <version>1.0.8</version>
-</dependency>
-```
 
 ## Usage
 
 ```bash
 # Auto-detect from current git repo
-java PRVisualization.java
+jbang PRVisualization.java
 
 # Specify a repo explicitly
-java PRVisualization.java github/copilot-sdk
+jbang PRVisualization.java github/copilot-sdk
 ```
 
 ## Full example: PRVisualization.java
@@ -222,14 +225,3 @@ public class PRVisualization {
 | Flexibility     | Fixed logic       | **AI decides best approach**      |
 | Chart types     | What you coded    | **Any type Copilot can generate** |
 | Data grouping   | Hardcoded buckets | **Intelligent grouping**          |
-
-## Running with JBang
-
-You can also run this example directly with JBang:
-
-```bash
-//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
-
-# Then run:
-jbang PRVisualization.java github/copilot-sdk
-```

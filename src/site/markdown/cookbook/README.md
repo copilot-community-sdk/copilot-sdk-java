@@ -2,6 +2,25 @@
 
 This folder hosts short, practical recipes for using the GitHub Copilot SDK with Java. Each recipe is concise, copy‑pasteable, and points to fuller examples and tests.
 
+## Prerequisites
+
+All cookbook examples can be run directly using [JBang](https://www.jbang.dev/), which allows you to run Java code without a full project setup.
+
+**Install JBang:**
+
+```bash
+# macOS (using Homebrew)
+brew install jbangdev/tap/jbang
+
+# Linux/macOS (using curl)
+curl -Ls https://sh.jbang.dev | bash -s - app setup
+
+# Windows (using Scoop)
+scoop install jbang
+```
+
+For other installation methods, see the [JBang installation guide](https://www.jbang.dev/download/).
+
 ## Recipes
 
 - [Error Handling](error-handling.md): Handle errors gracefully including connection failures, timeouts, and cleanup.

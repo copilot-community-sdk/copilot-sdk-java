@@ -2,12 +2,33 @@
 
 Handle errors gracefully in your Copilot SDK applications.
 
+## Prerequisites
+
+Install [JBang](https://www.jbang.dev/) to run these examples:
+
+```bash
+# macOS (using Homebrew)
+brew install jbangdev/tap/jbang
+
+# Linux/macOS (using curl)
+curl -Ls https://sh.jbang.dev | bash -s - app setup
+
+# Windows (using Scoop)
+scoop install jbang
+```
+
 ## Example scenario
 
 You need to handle various error conditions like connection failures, timeouts, and invalid responses.
 
 ## Basic error handling
 
+**Usage:**
+```bash
+jbang BasicErrorHandling.java
+```
+
+**Code:**
 ```java
 //DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
 import com.github.copilot.sdk.*;
