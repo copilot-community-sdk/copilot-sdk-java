@@ -39,7 +39,6 @@ import com.github.copilot.sdk.*;
 import com.github.copilot.sdk.events.*;
 import com.github.copilot.sdk.json.*;
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 public class PRVisualization {
