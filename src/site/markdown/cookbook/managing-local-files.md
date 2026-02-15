@@ -25,6 +25,10 @@ You have a folder with many files and want to organize them into subfolders base
 
 **Usage:**
 ```bash
+# Use with a specific folder (recommended)
+jbang ManagingLocalFiles.java /path/to/your/folder
+
+# Or run without arguments to use a safe default (temp directory)
 jbang ManagingLocalFiles.java
 ```
 
@@ -63,19 +67,19 @@ public class ManagingLocalFiles {
 
             session.on(SessionIdleEvent.class, evt -> done.countDown());
 
-            // Ask Copilot to organize files
-            String userHome = System.getProperty("user.home");
-            String targetFolder = Paths.get(userHome, "Downloads").toString();
+            // Ask Copilot to organize files - using a safe example folder
+            // For real use, replace with your target folder
+            String targetFolder = args.length > 0 ? args[0] : 
+                System.getProperty("java.io.tmpdir") + "/example-files";
 
             String prompt = String.format("""
-                Analyze the files in "%s" and organize them into subfolders.
+                Analyze the files in "%s" and show how you would organize them into subfolders.
 
                 1. First, list all files and their metadata
                 2. Preview grouping by file extension
-                3. Create appropriate subfolders (e.g., "images", "documents", "videos")
-                4. Move each file to its appropriate subfolder
-
-                Please confirm before moving any files.
+                3. Suggest appropriate subfolders (e.g., "images", "documents", "videos")
+                
+                IMPORTANT: DO NOT move any files. Only show the plan.
                 """, targetFolder);
 
             session.send(new MessageOptions().setPrompt(prompt));

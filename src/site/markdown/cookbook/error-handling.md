@@ -66,24 +66,28 @@ public class BasicErrorHandling {
 import com.github.copilot.sdk.*;
 import com.github.copilot.sdk.events.*;
 import com.github.copilot.sdk.json.*;
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 public class SpecificErrorHandling {
     public static void startClient() {
         try (var client = new CopilotClient()) {
             client.start().get();
             // ... use client ...
-        } catch (IOException ex) {
-            System.err.println("Copilot CLI not found. Please install it first.");
-            System.err.println("Details: " + ex.getMessage());
-        } catch (TimeoutException ex) {
-            System.err.println("Could not connect to Copilot CLI server.");
-            System.err.println("Details: " + ex.getMessage());
         } catch (ExecutionException ex) {
-            System.err.println("Unexpected error: " + ex.getCause().getMessage());
-            ex.getCause().printStackTrace();
+            Throwable cause = ex.getCause();
+            if (cause instanceof java.io.IOException) {
+                System.err.println("Copilot CLI not found. Please install it first.");
+                System.err.println("Details: " + cause.getMessage());
+            } else if (cause instanceof java.util.concurrent.TimeoutException) {
+                System.err.println("Could not connect to Copilot CLI server.");
+                System.err.println("Details: " + cause.getMessage());
+            } else {
+                System.err.println("Unexpected error: " + cause.getMessage());
+                cause.printStackTrace();
+            }
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            System.err.println("Operation interrupted: " + ex.getMessage());
         } catch (Exception ex) {
             System.err.println("Unexpected error: " + ex.getMessage());
             ex.printStackTrace();

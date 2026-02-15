@@ -125,6 +125,11 @@ public class DeleteSession {
 ## Getting session history
 
 ```java
+//DEPS io.github.copilot-community-sdk:copilot-sdk:${project.version}
+import com.github.copilot.sdk.*;
+import com.github.copilot.sdk.events.*;
+import com.github.copilot.sdk.json.*;
+
 public class SessionHistory {
     public static void main(String[] args) throws Exception {
         try (var client = new CopilotClient()) {
@@ -133,11 +138,15 @@ public class SessionHistory {
             var session = client.resumeSession("user-123-conversation").get();
 
             var messages = session.getMessages().get();
-            for (var msg : messages) {
-                System.out.printf("[%s] %s%n",
-                    msg.getType(),
-                    msg.getContent() != null ? msg.getContent() : "(no content)"
-                );
+            for (var event : messages) {
+                // Print different event types appropriately
+                if (event instanceof AssistantMessageEvent msg) {
+                    System.out.printf("[assistant] %s%n", msg.getData().getContent());
+                } else if (event instanceof UserMessageEvent userMsg) {
+                    System.out.printf("[user] %s%n", userMsg.getData().getPrompt());
+                } else {
+                    System.out.printf("[%s]%n", event.getType());
+                }
             }
 
             session.close();
