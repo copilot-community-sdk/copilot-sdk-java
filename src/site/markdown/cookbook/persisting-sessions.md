@@ -143,7 +143,7 @@ public class SessionHistory {
                 if (event instanceof AssistantMessageEvent msg) {
                     System.out.printf("[assistant] %s%n", msg.getData().getContent());
                 } else if (event instanceof UserMessageEvent userMsg) {
-                    System.out.printf("[user] %s%n", userMsg.getData().getPrompt());
+                    System.out.printf("[user] %s%n", userMsg.getData().content());
                 } else {
                     System.out.printf("[%s]%n", event.getType());
                 }
