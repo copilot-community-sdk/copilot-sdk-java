@@ -12,6 +12,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+#### Cookbook with Practical Recipes
+
+Added a comprehensive cookbook with 5 practical recipes demonstrating common SDK usage patterns. All examples are JBang-compatible and can be run directly without a full Maven project setup.
+
+**Recipes:**
+- **Error Handling** - Connection failures, timeouts, cleanup patterns, tool errors
+- **Multiple Sessions** - Parallel conversations, custom session IDs, lifecycle management  
+- **Managing Local Files** - AI-powered file organization with grouping strategies
+- **PR Visualization** - Interactive CLI tool for analyzing PR age distribution via GitHub MCP Server
+- **Persisting Sessions** - Save and resume conversations across restarts
+
+**Location:** `src/site/markdown/cookbook/`
+
+**Usage:**
+```bash
+jbang BasicErrorHandling.java
+jbang MultipleSessions.java
+jbang PRVisualization.java github/copilot-sdk
+```
+
+Each recipe includes JBang prerequisites, usage instructions, and best practices.
+
 #### Session Context and Filtering
 
 Added session context tracking and filtering capabilities to help manage multiple Copilot sessions across different repositories and working directories.
