@@ -148,6 +148,8 @@ public class AbortRequest {
                 System.out.println("Request aborted");
             } catch (Exception ex) {
                 System.err.println("Failed to abort: " + ex.getMessage());
+            } finally {
+                scheduler.shutdown();
             }
         }, 5, TimeUnit.SECONDS);
     }
