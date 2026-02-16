@@ -135,27 +135,6 @@ This SDK tracks the official [Copilot SDK](https://github.com/github/copilot-sdk
 - **VS Code Copilot Chat** — type `/agentic-merge-upstream`
 - **GitHub Copilot CLI** — use `copilot` CLI with the same skill reference
 
-### Automated Test Coverage Improvement
-
-The repository includes an [Agentic Workflow](https://github.com/github/gh-aw) that automatically identifies untested code and creates comprehensive tests to increase coverage. The workflow is triggered manually:
-
-**To run the workflow:**
-1. Navigate to the repository on GitHub
-2. Go to **Actions** → **Increase Test Coverage** workflow
-3. Click "Run workflow"
-4. Optionally specify:
-   - `target_package` — Focus on a specific package (e.g., `com.github.copilot.sdk.json`)
-   - `min_coverage_threshold` — Target coverage percentage (default: 80%)
-
-**What it does:**
-- Analyzes current test coverage using JaCoCo
-- Identifies methods, branches, and edge cases lacking tests
-- Creates high-quality tests following repository patterns
-- Groups related tests logically
-- Creates a PR for human review with coverage metrics
-
-The workflow follows all repository conventions (Spotless formatting, existing test patterns, E2E test infrastructure) and ensures no production code is modified unnecessarily.
-
 ### Development Setup
 
 ```bash
