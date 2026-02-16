@@ -183,7 +183,12 @@ jobs:
                   RELEASE_NOTES=$(envsubst < .github/workflows/notes.template)
                   
                   # Get the previous tag for generating notes
-                  PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+                  # Fetch all tags and find the previous version tag (excluding 'latest' and the current tag)
+                  CURRENT_TAG="v${VERSION}"
+                  PREV_TAG=$(git tag -l 'v*' --sort=-version:refname | grep -v "^${CURRENT_TAG}$" | grep -v "^latest$" | head -n 1)
+                  
+                  echo "Current tag: ${CURRENT_TAG}"
+                  echo "Previous tag: ${PREV_TAG}"
                   
                   # Build the gh release command
                   GH_ARGS=("v${VERSION}")
