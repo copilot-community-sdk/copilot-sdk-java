@@ -209,7 +209,11 @@
 <tr class="b">
 <td><a href="#Session_End_Hook">Session End</a></td>
 <td>When session ends</td>
-<td>Nothing (observation only)</td></tr></tbody>
+<td>Nothing (observation only)</td></tr>
+<tr class="a">
+<td><a href="#Checking_Whether_Hooks_Are_Registered">Checking Whether Hooks Are Registered</a></td>
+<td>Before session creation</td>
+<td>Whether any handlers are configured</td></tr></tbody>
 </table>
 <hr /></section><section><a id="Quick_Start"></a>
 <h2>Quick Start</h2>
@@ -362,7 +366,7 @@ var session = client.createSession(
 <td>Arguments that were passed</td></tr>
 <tr class="b">
 <td><code>getToolResult()</code></td>
-<td><code>String</code></td>
+<td><code>JsonNode</code></td>
 <td>Result from the tool</td></tr>
 <tr class="a">
 <td><code>getCwd()</code></td>
@@ -432,7 +436,7 @@ var session = client.createSession(
 <th>Type</th>
 <th>Description</th></tr></thead><tbody>
 <tr class="b">
-<td><code>getPrompt()</code></td>
+<td><code>prompt()</code></td>
 <td><code>String</code></td>
 <td>The user's prompt text</td></tr>
 <tr class="a">
@@ -468,9 +472,9 @@ var session = client.createSession(
 <th>Type</th>
 <th>Description</th></tr></thead><tbody>
 <tr class="b">
-<td><code>getSource()</code></td>
+<td><code>source()</code></td>
 <td><code>String</code></td>
-<td><code>&quot;new&quot;</code> or <code>&quot;resumed&quot;</code></td></tr>
+<td><code>&quot;startup&quot;</code>, <code>&quot;resume&quot;</code>, or <code>&quot;new&quot;</code></td></tr>
 <tr class="a">
 <td><code>getTimestamp()</code></td>
 <td><code>long</code></td>
@@ -502,7 +506,7 @@ var session = client.createSession(
 <th>Type</th>
 <th>Description</th></tr></thead><tbody>
 <tr class="b">
-<td><code>getReason()</code></td>
+<td><code>reason()</code></td>
 <td><code>String</code></td>
 <td>Why the session ended</td></tr>
 <tr class="a">
@@ -603,7 +607,20 @@ public class HooksExample {
 <td>The session ID where the hook was triggered</td></tr></tbody>
 </table>
 
-<p>This allows you to correlate hooks with specific sessions when managing multiple concurrent sessions.</p><hr /></section><section><a id="Error_Handling"></a>
+<p>This allows you to correlate hooks with specific sessions when managing multiple concurrent sessions.</p></section><section><a id="Checking_Whether_Hooks_Are_Registered"></a>
+<h2>Checking Whether Hooks Are Registered</h2>
+<p>Use <code>hasHooks()</code> to quickly verify that at least one hook handler is configured:</p>
+
+<pre class="prettyprint"><code class="language-java">var hooks = new SessionHooks()
+    .setOnPreToolUse((input, invocation) -&gt;
+        CompletableFuture.completedFuture(PreToolUseHookOutput.allow()));
+
+if (hooks.hasHooks()) {
+    var session = client.createSession(
+        new SessionConfig().setHooks(hooks)
+    ).get();
+}
+</code></pre><hr /></section><section><a id="Error_Handling"></a>
 <h2>Error Handling</h2>
 <p>If a hook throws an exception, the SDK logs the error and continues with default behavior:</p>
 <ul>

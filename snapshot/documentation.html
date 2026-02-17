@@ -199,7 +199,11 @@
 <li><a href="#Connection_State__Diagnostics">Connection State &amp; Diagnostics</a></li>
 <li><a href="#Message_Delivery_Mode">Message Delivery Mode</a></li>
 <li><a href="#Session_Management">Session Management</a></li>
-<li><a href="#SessionConfig_Reference">SessionConfig Reference</a></li>
+<li><a href="#SessionConfig_Reference">SessionConfig Reference</a>
+<ul>
+
+<li><a href="#Cloning_SessionConfig">Cloning SessionConfig</a></li>
+</ul></li>
 </ul><hr /></section><section><a id="Basic_Usage"></a>
 <h2>Basic Usage</h2>
 <p>Create a client, start a session, and send a message:</p>
@@ -373,7 +377,11 @@ done.get(); // Wait for completion
 <tr class="b">
 <td><code>SessionCompactionCompleteEvent</code></td>
 <td><code>session.compaction_complete</code></td>
-<td>Context compaction completed</td></tr></tbody>
+<td>Context compaction completed</td></tr>
+<tr class="a">
+<td><code>SessionContextChangedEvent</code></td>
+<td><code>session.context_changed</code></td>
+<td>Working directory context changed</td></tr></tbody>
 </table>
 </section><section><a id="Assistant_Events"></a>
 <h3>Assistant Events</h3>
@@ -1004,8 +1012,19 @@ client.deleteSession(sessionId).get();
 <td>Custom configuration directory</td>
 <td><a href="advanced.html#Custom_Configuration_Directory">Config Dir</a></td></tr></tbody>
 </table>
+<section><a id="Cloning_SessionConfig"></a>
+<h3>Cloning SessionConfig</h3>
+<p>Use <code>clone()</code> to copy a base configuration before making per-session changes:</p>
 
-<p>See <a href="apidocs/com/github/copilot/sdk/json/SessionConfig.html">SessionConfig</a> Javadoc for full details.</p><hr /></section><section><a id="Next_Steps"></a>
+<pre class="prettyprint"><code class="language-java">var base = new SessionConfig()
+    .setModel(&quot;gpt-4.1&quot;)
+    .setStreaming(true);
+
+var derived = base.clone()
+    .setWorkingDirectory(&quot;/repo-a&quot;);
+</code></pre>
+<p><code>clone()</code> creates a shallow copy. Collection fields are copied into new collection instances, while nested objects/handlers are shared references.</p>
+<p>See <a href="apidocs/com/github/copilot/sdk/json/SessionConfig.html">SessionConfig</a> Javadoc for full details.</p><hr /></section></section><section><a id="Next_Steps"></a>
 <h2>Next Steps</h2>
 <ul>
 
