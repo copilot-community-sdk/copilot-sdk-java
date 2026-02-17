@@ -49,13 +49,14 @@ final class SessionRequestBuilder {
 <span class="fc" id="L49">        request.setWorkingDirectory(config.getWorkingDirectory());</span>
 <span class="fc bfc" id="L50" title="All 2 branches covered.">        request.setStreaming(config.isStreaming() ? true : null);</span>
 <span class="fc" id="L51">        request.setMcpServers(config.getMcpServers());</span>
-<span class="fc" id="L52">        request.setCustomAgents(config.getCustomAgents());</span>
-<span class="fc" id="L53">        request.setInfiniteSessions(config.getInfiniteSessions());</span>
-<span class="fc" id="L54">        request.setSkillDirectories(config.getSkillDirectories());</span>
-<span class="fc" id="L55">        request.setDisabledSkills(config.getDisabledSkills());</span>
-<span class="fc" id="L56">        request.setConfigDir(config.getConfigDir());</span>
+<span class="fc" id="L52">        request.setEnvValueMode(&quot;direct&quot;);</span>
+<span class="fc" id="L53">        request.setCustomAgents(config.getCustomAgents());</span>
+<span class="fc" id="L54">        request.setInfiniteSessions(config.getInfiniteSessions());</span>
+<span class="fc" id="L55">        request.setSkillDirectories(config.getSkillDirectories());</span>
+<span class="fc" id="L56">        request.setDisabledSkills(config.getDisabledSkills());</span>
+<span class="fc" id="L57">        request.setConfigDir(config.getConfigDir());</span>
 
-<span class="fc" id="L58">        return request;</span>
+<span class="fc" id="L59">        return request;</span>
     }
 
     /**
@@ -68,34 +69,35 @@ final class SessionRequestBuilder {
      * @return the built request object
      */
     static ResumeSessionRequest buildResumeRequest(String sessionId, ResumeSessionConfig config) {
-<span class="fc" id="L71">        var request = new ResumeSessionRequest();</span>
-<span class="fc" id="L72">        request.setSessionId(sessionId);</span>
+<span class="fc" id="L72">        var request = new ResumeSessionRequest();</span>
+<span class="fc" id="L73">        request.setSessionId(sessionId);</span>
 
-<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (config == null) {</span>
-<span class="fc" id="L75">            return request;</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (config == null) {</span>
+<span class="fc" id="L76">            return request;</span>
         }
 
-<span class="fc" id="L78">        request.setModel(config.getModel());</span>
-<span class="fc" id="L79">        request.setReasoningEffort(config.getReasoningEffort());</span>
-<span class="fc" id="L80">        request.setTools(config.getTools());</span>
-<span class="fc" id="L81">        request.setSystemMessage(config.getSystemMessage());</span>
-<span class="fc" id="L82">        request.setAvailableTools(config.getAvailableTools());</span>
-<span class="fc" id="L83">        request.setExcludedTools(config.getExcludedTools());</span>
-<span class="fc" id="L84">        request.setProvider(config.getProvider());</span>
-<span class="fc bfc" id="L85" title="All 2 branches covered.">        request.setRequestPermission(config.getOnPermissionRequest() != null ? true : null);</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">        request.setRequestUserInput(config.getOnUserInputRequest() != null ? true : null);</span>
-<span class="fc bfc" id="L87" title="All 4 branches covered.">        request.setHooks(config.getHooks() != null &amp;&amp; config.getHooks().hasHooks() ? true : null);</span>
-<span class="fc" id="L88">        request.setWorkingDirectory(config.getWorkingDirectory());</span>
-<span class="fc" id="L89">        request.setConfigDir(config.getConfigDir());</span>
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        request.setDisableResume(config.isDisableResume() ? true : null);</span>
-<span class="fc bfc" id="L91" title="All 2 branches covered.">        request.setStreaming(config.isStreaming() ? true : null);</span>
-<span class="fc" id="L92">        request.setMcpServers(config.getMcpServers());</span>
-<span class="fc" id="L93">        request.setCustomAgents(config.getCustomAgents());</span>
-<span class="fc" id="L94">        request.setSkillDirectories(config.getSkillDirectories());</span>
-<span class="fc" id="L95">        request.setDisabledSkills(config.getDisabledSkills());</span>
-<span class="fc" id="L96">        request.setInfiniteSessions(config.getInfiniteSessions());</span>
+<span class="fc" id="L79">        request.setModel(config.getModel());</span>
+<span class="fc" id="L80">        request.setReasoningEffort(config.getReasoningEffort());</span>
+<span class="fc" id="L81">        request.setTools(config.getTools());</span>
+<span class="fc" id="L82">        request.setSystemMessage(config.getSystemMessage());</span>
+<span class="fc" id="L83">        request.setAvailableTools(config.getAvailableTools());</span>
+<span class="fc" id="L84">        request.setExcludedTools(config.getExcludedTools());</span>
+<span class="fc" id="L85">        request.setProvider(config.getProvider());</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        request.setRequestPermission(config.getOnPermissionRequest() != null ? true : null);</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        request.setRequestUserInput(config.getOnUserInputRequest() != null ? true : null);</span>
+<span class="fc bfc" id="L88" title="All 4 branches covered.">        request.setHooks(config.getHooks() != null &amp;&amp; config.getHooks().hasHooks() ? true : null);</span>
+<span class="fc" id="L89">        request.setWorkingDirectory(config.getWorkingDirectory());</span>
+<span class="fc" id="L90">        request.setConfigDir(config.getConfigDir());</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        request.setDisableResume(config.isDisableResume() ? true : null);</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        request.setStreaming(config.isStreaming() ? true : null);</span>
+<span class="fc" id="L93">        request.setMcpServers(config.getMcpServers());</span>
+<span class="fc" id="L94">        request.setEnvValueMode(&quot;direct&quot;);</span>
+<span class="fc" id="L95">        request.setCustomAgents(config.getCustomAgents());</span>
+<span class="fc" id="L96">        request.setSkillDirectories(config.getSkillDirectories());</span>
+<span class="fc" id="L97">        request.setDisabledSkills(config.getDisabledSkills());</span>
+<span class="fc" id="L98">        request.setInfiniteSessions(config.getInfiniteSessions());</span>
 
-<span class="fc" id="L98">        return request;</span>
+<span class="fc" id="L100">        return request;</span>
     }
 
     /**
@@ -107,23 +109,23 @@ final class SessionRequestBuilder {
      *            the session configuration
      */
     static void configureSession(CopilotSession session, SessionConfig config) {
-<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (config == null) {</span>
-<span class="fc" id="L111">            return;</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (config == null) {</span>
+<span class="fc" id="L113">            return;</span>
         }
 
-<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (config.getTools() != null) {</span>
-<span class="fc" id="L115">            session.registerTools(config.getTools());</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if (config.getTools() != null) {</span>
+<span class="fc" id="L117">            session.registerTools(config.getTools());</span>
         }
-<span class="fc bfc" id="L117" title="All 2 branches covered.">        if (config.getOnPermissionRequest() != null) {</span>
-<span class="fc" id="L118">            session.registerPermissionHandler(config.getOnPermissionRequest());</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (config.getOnPermissionRequest() != null) {</span>
+<span class="fc" id="L120">            session.registerPermissionHandler(config.getOnPermissionRequest());</span>
         }
-<span class="fc bfc" id="L120" title="All 2 branches covered.">        if (config.getOnUserInputRequest() != null) {</span>
-<span class="fc" id="L121">            session.registerUserInputHandler(config.getOnUserInputRequest());</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (config.getOnUserInputRequest() != null) {</span>
+<span class="fc" id="L123">            session.registerUserInputHandler(config.getOnUserInputRequest());</span>
         }
-<span class="fc bfc" id="L123" title="All 2 branches covered.">        if (config.getHooks() != null) {</span>
-<span class="fc" id="L124">            session.registerHooks(config.getHooks());</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (config.getHooks() != null) {</span>
+<span class="fc" id="L126">            session.registerHooks(config.getHooks());</span>
         }
-<span class="fc" id="L126">    }</span>
+<span class="fc" id="L128">    }</span>
 
     /**
      * Configures a resumed session with handlers from the given config.
@@ -134,22 +136,22 @@ final class SessionRequestBuilder {
      *            the resume session configuration
      */
     static void configureSession(CopilotSession session, ResumeSessionConfig config) {
-<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (config == null) {</span>
-<span class="fc" id="L138">            return;</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (config == null) {</span>
+<span class="fc" id="L140">            return;</span>
         }
 
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        if (config.getTools() != null) {</span>
-<span class="fc" id="L142">            session.registerTools(config.getTools());</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if (config.getTools() != null) {</span>
+<span class="fc" id="L144">            session.registerTools(config.getTools());</span>
         }
-<span class="fc bfc" id="L144" title="All 2 branches covered.">        if (config.getOnPermissionRequest() != null) {</span>
-<span class="fc" id="L145">            session.registerPermissionHandler(config.getOnPermissionRequest());</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        if (config.getOnPermissionRequest() != null) {</span>
+<span class="fc" id="L147">            session.registerPermissionHandler(config.getOnPermissionRequest());</span>
         }
-<span class="fc bfc" id="L147" title="All 2 branches covered.">        if (config.getOnUserInputRequest() != null) {</span>
-<span class="fc" id="L148">            session.registerUserInputHandler(config.getOnUserInputRequest());</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if (config.getOnUserInputRequest() != null) {</span>
+<span class="fc" id="L150">            session.registerUserInputHandler(config.getOnUserInputRequest());</span>
         }
-<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (config.getHooks() != null) {</span>
-<span class="fc" id="L151">            session.registerHooks(config.getHooks());</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        if (config.getHooks() != null) {</span>
+<span class="fc" id="L153">            session.registerHooks(config.getHooks());</span>
         }
-<span class="fc" id="L153">    }</span>
+<span class="fc" id="L155">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
