@@ -323,5 +323,33 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 <span class="fc" id="L323">        this.useLoggedInUser = useLoggedInUser;</span>
 <span class="fc" id="L324">        return this;</span>
     }
+
+    /**
+     * Creates a shallow clone of this {@code CopilotClientOptions} instance.
+     * &lt;p&gt;
+     * Array properties (like {@code cliArgs}) are copied into new arrays so that
+     * modifications to the clone do not affect the original. The
+     * {@code environment} map is also copied to a new map instance. Other
+     * reference-type properties are shared between the original and clone.
+     *
+     * @return a clone of this options instance
+     */
+    @Override
+    public CopilotClientOptions clone() {
+<span class="fc" id="L339">        CopilotClientOptions copy = new CopilotClientOptions();</span>
+<span class="fc" id="L340">        copy.cliPath = this.cliPath;</span>
+<span class="fc bfc" id="L341" title="All 2 branches covered.">        copy.cliArgs = this.cliArgs != null ? this.cliArgs.clone() : null;</span>
+<span class="fc" id="L342">        copy.cwd = this.cwd;</span>
+<span class="fc" id="L343">        copy.port = this.port;</span>
+<span class="fc" id="L344">        copy.useStdio = this.useStdio;</span>
+<span class="fc" id="L345">        copy.cliUrl = this.cliUrl;</span>
+<span class="fc" id="L346">        copy.logLevel = this.logLevel;</span>
+<span class="fc" id="L347">        copy.autoStart = this.autoStart;</span>
+<span class="fc" id="L348">        copy.autoRestart = this.autoRestart;</span>
+<span class="fc bfc" id="L349" title="All 2 branches covered.">        copy.environment = this.environment != null ? new java.util.HashMap&lt;&gt;(this.environment) : null;</span>
+<span class="fc" id="L350">        copy.githubToken = this.githubToken;</span>
+<span class="fc" id="L351">        copy.useLoggedInUser = this.useLoggedInUser;</span>
+<span class="fc" id="L352">        return copy;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

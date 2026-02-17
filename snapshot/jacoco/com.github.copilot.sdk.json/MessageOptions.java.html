@@ -4,6 +4,7 @@
 
 package com.github.copilot.sdk.json;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="fc" id="L31">public class MessageOptions {</span>
+<span class="fc" id="L32">public class MessageOptions {</span>
 
     private String prompt;
     private List&lt;Attachment&gt; attachments;
@@ -40,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the prompt text
      */
     public String getPrompt() {
-<span class="fc" id="L43">        return prompt;</span>
+<span class="fc" id="L44">        return prompt;</span>
     }
 
     /**
@@ -51,8 +52,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return this options instance for method chaining
      */
     public MessageOptions setPrompt(String prompt) {
-<span class="fc" id="L54">        this.prompt = prompt;</span>
-<span class="fc" id="L55">        return this;</span>
+<span class="fc" id="L55">        this.prompt = prompt;</span>
+<span class="fc" id="L56">        return this;</span>
     }
 
     /**
@@ -61,7 +62,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the list of attachments
      */
     public List&lt;Attachment&gt; getAttachments() {
-<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        return attachments == null ? null : Collections.unmodifiableList(attachments);</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        return attachments == null ? null : Collections.unmodifiableList(attachments);</span>
     }
 
     /**
@@ -76,8 +77,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @see Attachment
      */
     public MessageOptions setAttachments(List&lt;Attachment&gt; attachments) {
-<span class="nc" id="L79">        this.attachments = attachments;</span>
-<span class="nc" id="L80">        return this;</span>
+<span class="nc" id="L80">        this.attachments = attachments;</span>
+<span class="nc" id="L81">        return this;</span>
     }
 
     /**
@@ -94,8 +95,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return this options instance for method chaining
      */
     public MessageOptions setMode(String mode) {
-<span class="nc" id="L97">        this.mode = mode;</span>
-<span class="nc" id="L98">        return this;</span>
+<span class="fc" id="L98">        this.mode = mode;</span>
+<span class="fc" id="L99">        return this;</span>
     }
 
     /**
@@ -104,7 +105,26 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * @return the delivery mode
      */
     public String getMode() {
-<span class="fc" id="L107">        return mode;</span>
+<span class="fc" id="L108">        return mode;</span>
+    }
+
+    /**
+     * Creates a shallow clone of this {@code MessageOptions} instance.
+     * &lt;p&gt;
+     * Mutable collection properties are copied into new collection instances so
+     * that modifications to those collections on the clone do not affect the
+     * original. Other reference-type properties (like attachment items) are not
+     * deep-cloned; the original and the clone will share those objects.
+     *
+     * @return a clone of this options instance
+     */
+    @Override
+    public MessageOptions clone() {
+<span class="fc" id="L123">        MessageOptions copy = new MessageOptions();</span>
+<span class="fc" id="L124">        copy.prompt = this.prompt;</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        copy.attachments = this.attachments != null ? new ArrayList&lt;&gt;(this.attachments) : null;</span>
+<span class="fc" id="L126">        copy.mode = this.mode;</span>
+<span class="fc" id="L127">        return copy;</span>
     }
 
 }
