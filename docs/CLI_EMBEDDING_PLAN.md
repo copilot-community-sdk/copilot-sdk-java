@@ -63,7 +63,7 @@ Key insights:
 
 ### How .NET SDK Handles This
 
-The upstream .NET Copilot SDK (commit 304d812) uses Runtime Identifiers (RIDs):
+The upstream .NET Copilot SDK (commit [304d812ae](https://github.com/github/copilot-sdk/commit/304d812ae)) uses Runtime Identifiers (RIDs):
 
 **Package structure**:
 ```
@@ -108,7 +108,7 @@ CopilotSDK.nupkg
 copilot-sdk-java/
 ├── copilot-sdk/                    # Core SDK (unchanged)
 ├── copilot-sdk-cli/                # Parent for CLI modules
-│   ├── copilot-sdk-cli-windows/    # Windows x64
+│   ├── copilot-sdk-cli-windows-x64/# Windows x64
 │   ├── copilot-sdk-cli-linux-x64/  # Linux x64
 │   ├── copilot-sdk-cli-linux-arm/  # Linux ARM64
 │   ├── copilot-sdk-cli-macos-intel/# macOS Intel
@@ -130,9 +130,30 @@ copilot-sdk-java/
 </dependency>
 
 <!-- Optional: Add CLI for your platform -->
+<!-- Note: Replace {platform} with: windows-x64, linux-x64, linux-arm, macos-intel, or macos-arm -->
 <dependency>
     <groupId>io.github.copilot-community-sdk</groupId>
-    <artifactId>copilot-sdk-cli-${os.detected.platform}</artifactId>
+    <artifactId>copilot-sdk-cli-{platform}</artifactId>
+    <version>1.0.10</version>
+    <scope>runtime</scope>
+    <optional>true</optional>
+</dependency>
+```
+
+**Alternative with os-maven-plugin** (for automatic platform detection):
+```xml
+<!-- In build/plugins section -->
+<plugin>
+    <groupId>kr.motd.maven</groupId>
+    <artifactId>os-maven-plugin</artifactId>
+    <version>1.7.1</version>
+    <extensions>true</extensions>
+</plugin>
+
+<!-- Then use detected properties in dependencies -->
+<dependency>
+    <groupId>io.github.copilot-community-sdk</groupId>
+    <artifactId>copilot-sdk-cli-${os.detected.name}-${os.detected.arch}</artifactId>
     <version>1.0.10</version>
     <scope>runtime</scope>
     <optional>true</optional>
@@ -400,26 +421,24 @@ strategy:
 5. Add troubleshooting guide
 
 **Example documentation snippet**:
-```markdown
-## Using Bundled CLI
 
-To include the Copilot CLI for your platform:
+To include the Copilot CLI for your platform, add the appropriate platform module as a dependency.
 
+Available platforms:
+- `copilot-sdk-cli-windows-x64` for Windows
+- `copilot-sdk-cli-linux-x64` for Linux x86-64
+- `copilot-sdk-cli-linux-arm` for Linux ARM64
+- `copilot-sdk-cli-macos-intel` for Intel Macs
+- `copilot-sdk-cli-macos-arm` for M1/M2/M3 Macs
+
+Maven example:
 ```xml
 <dependency>
     <groupId>io.github.copilot-community-sdk</groupId>
-    <artifactId>copilot-sdk-cli-${platform}</artifactId>
+    <artifactId>copilot-sdk-cli-linux-x64</artifactId>
     <version>1.0.10</version>
     <scope>runtime</scope>
 </dependency>
-```
-
-Replace `${platform}` with:
-- `windows` for Windows
-- `linux-x64` for Linux x86-64
-- `linux-arm` for Linux ARM64
-- `macos-intel` for Intel Macs
-- `macos-arm` for M1/M2/M3 Macs
 ```
 
 ### Step 6: Release Strategy (Week 8+)
@@ -469,13 +488,13 @@ private static String detectArchitecture() {
 ```
 
 **Platform ID Mapping**:
-| OS Property | Arch Property | Platform ID |
-|------------|---------------|-------------|
-| Windows | amd64 | windows-x64 |
-| Mac OS X | x86_64 | macos-intel |
-| Mac OS X | aarch64 | macos-arm |
-| Linux | amd64 | linux-x64 |
-| Linux | aarch64 | linux-arm |
+| OS Property | Arch Property | Platform ID | Module Name |
+|------------|---------------|-------------|-------------|
+| Windows | amd64 | windows-x64 | copilot-sdk-cli-windows-x64 |
+| Mac OS X | x86_64 | macos-intel | copilot-sdk-cli-macos-intel |
+| Mac OS X | aarch64 | macos-arm | copilot-sdk-cli-macos-arm |
+| Linux | amd64 | linux-x64 | copilot-sdk-cli-linux-x64 |
+| Linux | aarch64 | linux-arm | copilot-sdk-cli-linux-arm |
 
 ### Binary Extraction Strategy
 
@@ -636,8 +655,8 @@ Files.setPosixFilePermissions(binaryPath,
 5. **Maven Central policy**: Any restrictions on 100+ MB total across modules?
    - *Action*: Review Maven Central guidelines
 
-6. **Naming convention**: Module names like `copilot-sdk-cli-windows` or `copilot-sdk-cli-win-x64`?
-   - *Recommendation*: Use descriptive names: `-windows`, `-linux-x64`, `-linux-arm`, `-macos-intel`, `-macos-arm`
+6. **Naming convention**: Module names like `copilot-sdk-cli-windows` or `copilot-sdk-cli-windows-x64`?
+   - *Decision*: Use architecture-specific names for all platforms: `-windows-x64`, `-linux-x64`, `-linux-arm`, `-macos-intel`, `-macos-arm`. This provides clarity and consistency, and allows for future expansion (e.g., if Windows ARM64 becomes common).
 
 ## Next Actions
 
