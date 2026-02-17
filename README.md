@@ -106,6 +106,7 @@ jbang https://github.com/copilot-community-sdk/copilot-sdk-java/blob/latest/jban
 - [Javadoc API Reference](https://copilot-community-sdk.github.io/copilot-sdk-java/apidocs/)
 - [MCP Servers Integration](https://copilot-community-sdk.github.io/copilot-sdk-java/mcp.html)
 - [Cookbook](src/site/markdown/cookbook/) — Practical recipes for common use cases
+- [CLI Embedding Plan](docs/CLI_EMBEDDING_PLAN.md) — Future plan for bundling Copilot CLI
 
 ## Projects Using This SDK
 
