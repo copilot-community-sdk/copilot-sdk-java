@@ -8,7 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-> **Upstream sync:** [`github/copilot-sdk@e40d57c`](https://github.com/github/copilot-sdk/commit/e40d57c86e18b495722adbf42045288c03924342)
+> **Upstream sync:** [`github/copilot-sdk@c263dfc`](https://github.com/github/copilot-sdk/commit/c263dfc69055f9f28ee2d4b121cf617fca5a42dc)
+
+### Added
+
+- `SessionConfig.setClientName(String)` / `getClientName()` — identifies the application using the SDK; included in the User-Agent header for API requests (upstream: [`397ef66`](https://github.com/github/copilot-sdk/commit/397ef66))
+- `ResumeSessionConfig.setClientName(String)` / `getClientName()` — same for resumed sessions
+- `PermissionHandler.APPROVE_ALL` — pre-built handler that approves all permission requests (upstream: [`3e2d2b2`](https://github.com/github/copilot-sdk/commit/3e2d2b2))
+
+### Changed
+
+- **Breaking:** permissions are now denied by default when no `OnPermissionRequest` handler is provided. The `requestPermission` flag is always sent as `true` so the server calls back for every permission request; the SDK returns a deny result when no handler is registered (upstream: [`3e2d2b2`](https://github.com/github/copilot-sdk/commit/3e2d2b2))
 
 ## [1.0.9] - 2026-02-16
 
