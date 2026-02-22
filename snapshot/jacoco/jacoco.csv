@@ -170,5 +170,5 @@ GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotSession,53,74
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,JsonRpcClient,27,635,4,66,10,172,4,52,0,21
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,JsonRpcException,0,10,0,0,0,4,0,2,0,2
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,RpcHandlerDispatcher,116,624,3,39,37,140,4,44,1,26
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CliServerManager,60,427,12,44,15,98,10,29,0,11
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CliServerManager,54,433,12,44,13,100,10,29,0,11
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient.Connection,0,9,0,0,0,1,0,1,0,1

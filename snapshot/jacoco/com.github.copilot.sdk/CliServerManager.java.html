@@ -160,8 +160,8 @@ final class CliServerManager {
 <span class="fc" id="L160">                    }</span>
 <span class="fc" id="L161">                    LOG.fine(&quot;[CLI] &quot; + line);</span>
                 }
-<span class="nc" id="L163">            } catch (IOException e) {</span>
-<span class="nc" id="L164">                LOG.log(Level.FINE, &quot;Error reading stderr&quot;, e);</span>
+<span class="fc" id="L163">            } catch (IOException e) {</span>
+<span class="fc" id="L164">                LOG.log(Level.FINE, &quot;Error reading stderr&quot;, e);</span>
 <span class="fc" id="L165">            }</span>
 <span class="fc" id="L166">        }, &quot;cli-stderr-reader&quot;);</span>
 <span class="fc" id="L167">        stderrThread.setDaemon(true);</span>
