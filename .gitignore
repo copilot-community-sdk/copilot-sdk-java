@@ -3,3 +3,4 @@ target
 examples-test/
 .merge-env
 blog-copilotsdk/
+.claude/worktrees
