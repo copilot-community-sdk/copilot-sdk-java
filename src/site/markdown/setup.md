@@ -7,7 +7,7 @@ This guide explains how to configure the Copilot SDK for different deployment sc
 | Scenario | Configuration | Guide Section |
 |----------|--------------|---------------|
 | Local development | Default (no options) | [Local CLI](#local-cli) |
-| Multi-user app | `setGithubToken(userToken)` | [GitHub OAuth](#github-oauth-authentication) |
+| Multi-user app | `setGitHubToken(userToken)` | [GitHub OAuth](#github-oauth-authentication) |
 | Server deployment | `setCliUrl("host:port")` | [Backend Services](#backend-services) |
 | Custom CLI location | `setCliPath("/path/to/copilot")` | [Bundled CLI](#bundled-cli) |
 | Own model keys | Provider configuration | [BYOK](advanced.html#Bring_Your_Own_Key_BYOK) |
@@ -48,7 +48,7 @@ After obtaining a user's GitHub OAuth token, pass it to the SDK:
 
 ```java
 var options = new CopilotClientOptions()
-    .setGithubToken(userAccessToken)
+    .setGitHubToken(userAccessToken)
     .setUseLoggedInUser(false);
 
 try (var client = new CopilotClient(options)) {
@@ -67,7 +67,7 @@ Your application handles the OAuth flow:
 1. Create a GitHub OAuth App in your GitHub settings
 2. Redirect users to GitHub's authorization URL
 3. Exchange the authorization code for an access token
-4. Pass the token to `CopilotClientOptions.setGithubToken()`
+4. Pass the token to `CopilotClientOptions.setGitHubToken()`
 
 ### Per-User Client Management
 
@@ -76,10 +76,10 @@ Each authenticated user should get their own client instance:
 ```java
 private final Map<String, CopilotClient> clients = new ConcurrentHashMap<>();
 
-public CopilotClient getClientForUser(String userId, String githubToken) {
+public CopilotClient getClientForUser(String userId, String gitHubToken) {
     return clients.computeIfAbsent(userId, id -> {
         var options = new CopilotClientOptions()
-            .setGithubToken(githubToken)
+            .setGitHubToken(gitHubToken)
             .setUseLoggedInUser(false);
         var client = new CopilotClient(options);
         try {
@@ -340,7 +340,7 @@ Complete list of `CopilotClientOptions` settings:
 | `cliPath` | String | Path to CLI executable | `"copilot"` from PATH |
 | `cliUrl` | String | External CLI server URL | `null` (spawn process) |
 | `cliArgs` | String[] | Extra CLI arguments | `null` |
-| `githubToken` | String | GitHub OAuth token | `null` |
+| `gitHubToken` | String | GitHub OAuth token | `null` |
 | `useLoggedInUser` | Boolean | Use system credentials | `true` |
 | `useStdio` | boolean | Use stdio transport | `true` |
 | `port` | int | TCP port for CLI | `0` (random) |

@@ -149,6 +149,17 @@ session.send(new MessageOptions()
 
 Use your own OpenAI or Azure OpenAI API key instead of GitHub Copilot.
 
+Supported providers:
+
+| Provider | Type value | Notes |
+|----------|-----------|-------|
+| OpenAI | `"openai"` | Standard OpenAI API |
+| Azure OpenAI / Azure AI Foundry | `"azure"` | Azure-hosted models |
+| Anthropic | `"anthropic"` | Claude models |
+| Ollama | `"openai"` | Local models via OpenAI-compatible API |
+| Microsoft Foundry Local | `"openai"` | Run AI models locally on your device via OpenAI-compatible API |
+| Other OpenAI-compatible | `"openai"` | vLLM, LiteLLM, etc. |
+
 ### API Key Authentication
 
 ```java
@@ -176,6 +187,40 @@ var session = client.createSession(
 ```
 
 > **Note:** The `bearerToken` option accepts a **static token string** only. The SDK does not refresh this token automatically. If your token expires, requests will fail and you'll need to create a new session with a fresh token.
+
+### Microsoft Foundry Local
+
+[Microsoft Foundry Local](https://foundrylocal.ai) lets you run AI models locally on your own device with an OpenAI-compatible API. Install it via the Foundry Local CLI, then point the SDK at your local endpoint:
+
+```java
+var session = client.createSession(
+    new SessionConfig()
+        .setProvider(new ProviderConfig()
+            .setType("openai")
+            .setBaseUrl("http://localhost:<PORT>/v1"))
+            // No apiKey needed for local Foundry Local
+).get();
+```
+
+> **Note:** Foundry Local starts on a **dynamic port** — the port is not fixed. Use `foundry service status` to confirm the port the service is currently listening on, then use that port in your `baseUrl`.
+
+To get started with Foundry Local:
+
+```bash
+# Windows: Install Foundry Local CLI (requires winget)
+winget install Microsoft.FoundryLocal
+
+# macOS / Linux: see https://foundrylocal.ai for installation instructions
+
+# List available models
+foundry model list
+
+# Run a model (starts the local server automatically)
+foundry model run phi-4-mini
+
+# Check the port the service is running on
+foundry service status
+```
 
 ### Limitations
 
