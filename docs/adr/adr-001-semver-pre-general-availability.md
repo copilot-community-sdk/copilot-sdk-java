@@ -6,7 +6,7 @@ Steve Sanderson agreed that `copilot-sdk-java` will track reference implementati
 
 The reference implementation makes no backward compatibility guarantees pre-1.0 — and neither will we. That said, we're choosing to hold ourselves to a higher standard as a matter of good practice: we'll use minor version bumps as a signal to users when we do ship something breaking.
 
-The 2026-02 state of `copilot-sdk-java` is that it takes Java 17+ as its baseline. This decision precludes the use of Java 21 features such as virtual threads. Our pre-analisys showed the **possibility** of a significant performance benefit when using Virtual Threads with Java 21.
+The 2026-02 state of `copilot-sdk-java` is that it takes Java 17+ as its baseline. This decision precludes the use of Java 21 features such as virtual threads. Our pre-analysis showed the **possibility** of a significant performance benefit when using Virtual Threads with Java 21.
 
 We took an architectural decision to enable us to pursue investigating this possibility immediately.
 
