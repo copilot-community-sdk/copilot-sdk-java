@@ -20,6 +20,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - **Breaking:** permissions are now denied by default when no `OnPermissionRequest` handler is provided. The `requestPermission` flag is always sent as `true` so the server calls back for every permission request; the SDK returns a deny result when no handler is registered (upstream: [`3e2d2b2`](https://github.com/github/copilot-sdk/commit/3e2d2b2))
 
+### Documentation
+
+- Added comprehensive plan for embedding Copilot CLI binaries in Java SDK ([CLI_EMBEDDING_PLAN.md](docs/CLI_EMBEDDING_PLAN.md))
+  - Researched cross-platform approaches similar to JavaFX's Maven classifiers
+  - Analyzed upstream .NET SDK's RID-based bundling strategy
+  - Proposed 4 implementation approaches with detailed trade-offs
+  - Recommended multi-module Maven project with platform-specific artifacts
+  - Outlined 8-week implementation roadmap with phases for infrastructure, runtime discovery, testing, and documentation
+  - Documented technical considerations for platform detection, binary extraction, and security
+
 ## [1.0.9] - 2026-02-16
 
 > **Upstream sync:** [`github/copilot-sdk@e40d57c`](https://github.com/github/copilot-sdk/commit/e40d57c86e18b495722adbf42045288c03924342)
