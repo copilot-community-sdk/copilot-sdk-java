@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 <span class="fc" id="L41">    private boolean autoStart = true;</span>
 <span class="fc" id="L42">    private boolean autoRestart = true;</span>
     private Map&lt;String, String&gt; environment;
-    private String githubToken;
+    private String gitHubToken;
     private Boolean useLoggedInUser;
 
     /**
@@ -279,8 +279,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      *
      * @return the GitHub token, or {@code null} to use other authentication methods
      */
-    public String getGithubToken() {
-<span class="fc" id="L283">        return githubToken;</span>
+    public String getGitHubToken() {
+<span class="fc" id="L283">        return gitHubToken;</span>
     }
 
     /**
@@ -289,13 +289,38 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      * When provided, the token is passed to the CLI server via environment
      * variable. This takes priority over other authentication methods.
      *
-     * @param githubToken
+     * @param gitHubToken
      *            the GitHub token
      * @return this options instance for method chaining
      */
-    public CopilotClientOptions setGithubToken(String githubToken) {
-<span class="fc" id="L297">        this.githubToken = githubToken;</span>
+    public CopilotClientOptions setGitHubToken(String gitHubToken) {
+<span class="fc" id="L297">        this.gitHubToken = gitHubToken;</span>
 <span class="fc" id="L298">        return this;</span>
+    }
+
+    /**
+     * Gets the GitHub token for authentication.
+     *
+     * @return the GitHub token, or {@code null} to use other authentication methods
+     * @deprecated Use {@link #getGitHubToken()} instead.
+     */
+    @Deprecated
+    public String getGithubToken() {
+<span class="nc" id="L309">        return gitHubToken;</span>
+    }
+
+    /**
+     * Sets the GitHub token to use for authentication.
+     *
+     * @param githubToken
+     *            the GitHub token
+     * @return this options instance for method chaining
+     * @deprecated Use {@link #setGitHubToken(String)} instead.
+     */
+    @Deprecated
+    public CopilotClientOptions setGithubToken(String githubToken) {
+<span class="nc" id="L322">        this.gitHubToken = githubToken;</span>
+<span class="nc" id="L323">        return this;</span>
     }
 
     /**
@@ -305,23 +330,23 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      *         explicit tokens, or {@code null} to use default behavior
      */
     public Boolean getUseLoggedInUser() {
-<span class="fc" id="L308">        return useLoggedInUser;</span>
+<span class="fc" id="L333">        return useLoggedInUser;</span>
     }
 
     /**
      * Sets whether to use the logged-in user for authentication.
      * &lt;p&gt;
      * When true, the CLI server will attempt to use stored OAuth tokens or gh CLI
-     * auth. When false, only explicit tokens (githubToken or environment variables)
-     * are used. Default: true (but defaults to false when githubToken is provided).
+     * auth. When false, only explicit tokens (gitHubToken or environment variables)
+     * are used. Default: true (but defaults to false when gitHubToken is provided).
      *
      * @param useLoggedInUser
      *            {@code true} to use logged-in user auth, {@code false} otherwise
      * @return this options instance for method chaining
      */
     public CopilotClientOptions setUseLoggedInUser(Boolean useLoggedInUser) {
-<span class="fc" id="L323">        this.useLoggedInUser = useLoggedInUser;</span>
-<span class="fc" id="L324">        return this;</span>
+<span class="fc" id="L348">        this.useLoggedInUser = useLoggedInUser;</span>
+<span class="fc" id="L349">        return this;</span>
     }
 
     /**
@@ -336,20 +361,20 @@ import com.fasterxml.jackson.annotation.JsonInclude;
      */
     @Override
     public CopilotClientOptions clone() {
-<span class="fc" id="L339">        CopilotClientOptions copy = new CopilotClientOptions();</span>
-<span class="fc" id="L340">        copy.cliPath = this.cliPath;</span>
-<span class="fc bfc" id="L341" title="All 2 branches covered.">        copy.cliArgs = this.cliArgs != null ? this.cliArgs.clone() : null;</span>
-<span class="fc" id="L342">        copy.cwd = this.cwd;</span>
-<span class="fc" id="L343">        copy.port = this.port;</span>
-<span class="fc" id="L344">        copy.useStdio = this.useStdio;</span>
-<span class="fc" id="L345">        copy.cliUrl = this.cliUrl;</span>
-<span class="fc" id="L346">        copy.logLevel = this.logLevel;</span>
-<span class="fc" id="L347">        copy.autoStart = this.autoStart;</span>
-<span class="fc" id="L348">        copy.autoRestart = this.autoRestart;</span>
-<span class="fc bfc" id="L349" title="All 2 branches covered.">        copy.environment = this.environment != null ? new java.util.HashMap&lt;&gt;(this.environment) : null;</span>
-<span class="fc" id="L350">        copy.githubToken = this.githubToken;</span>
-<span class="fc" id="L351">        copy.useLoggedInUser = this.useLoggedInUser;</span>
-<span class="fc" id="L352">        return copy;</span>
+<span class="fc" id="L364">        CopilotClientOptions copy = new CopilotClientOptions();</span>
+<span class="fc" id="L365">        copy.cliPath = this.cliPath;</span>
+<span class="fc bfc" id="L366" title="All 2 branches covered.">        copy.cliArgs = this.cliArgs != null ? this.cliArgs.clone() : null;</span>
+<span class="fc" id="L367">        copy.cwd = this.cwd;</span>
+<span class="fc" id="L368">        copy.port = this.port;</span>
+<span class="fc" id="L369">        copy.useStdio = this.useStdio;</span>
+<span class="fc" id="L370">        copy.cliUrl = this.cliUrl;</span>
+<span class="fc" id="L371">        copy.logLevel = this.logLevel;</span>
+<span class="fc" id="L372">        copy.autoStart = this.autoStart;</span>
+<span class="fc" id="L373">        copy.autoRestart = this.autoRestart;</span>
+<span class="fc bfc" id="L374" title="All 2 branches covered.">        copy.environment = this.environment != null ? new java.util.HashMap&lt;&gt;(this.environment) : null;</span>
+<span class="fc" id="L375">        copy.gitHubToken = this.gitHubToken;</span>
+<span class="fc" id="L376">        copy.useLoggedInUser = this.useLoggedInUser;</span>
+<span class="fc" id="L377">        return copy;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

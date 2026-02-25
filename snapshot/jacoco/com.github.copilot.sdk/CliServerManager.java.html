@@ -70,15 +70,15 @@ final class CliServerManager {
         }
 
         // Add auth-related flags
-<span class="pc bpc" id="L73" title="1 of 4 branches missed.">        if (options.getGithubToken() != null &amp;&amp; !options.getGithubToken().isEmpty()) {</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">        if (options.getGitHubToken() != null &amp;&amp; !options.getGitHubToken().isEmpty()) {</span>
 <span class="fc" id="L74">            args.add(&quot;--auth-token-env&quot;);</span>
 <span class="fc" id="L75">            args.add(&quot;COPILOT_SDK_AUTH_TOKEN&quot;);</span>
         }
 
-        // Default UseLoggedInUser to false when GithubToken is provided
+        // Default UseLoggedInUser to false when GitHubToken is provided
 <span class="fc bfc" id="L79" title="All 2 branches covered.">        boolean useLoggedInUser = options.getUseLoggedInUser() != null</span>
 <span class="fc" id="L80">                ? options.getUseLoggedInUser()</span>
-<span class="pc bpc" id="L81" title="1 of 4 branches missed.">                : (options.getGithubToken() == null || options.getGithubToken().isEmpty());</span>
+<span class="pc bpc" id="L81" title="1 of 4 branches missed.">                : (options.getGitHubToken() == null || options.getGitHubToken().isEmpty());</span>
 <span class="fc bfc" id="L82" title="All 2 branches covered.">        if (!useLoggedInUser) {</span>
 <span class="fc" id="L83">            args.add(&quot;--no-auto-login&quot;);</span>
         }
@@ -106,8 +106,8 @@ final class CliServerManager {
 <span class="fc" id="L106">        pb.environment().remove(&quot;NODE_DEBUG&quot;);</span>
 
         // Set auth token in environment if provided
-<span class="pc bpc" id="L109" title="1 of 4 branches missed.">        if (options.getGithubToken() != null &amp;&amp; !options.getGithubToken().isEmpty()) {</span>
-<span class="fc" id="L110">            pb.environment().put(&quot;COPILOT_SDK_AUTH_TOKEN&quot;, options.getGithubToken());</span>
+<span class="pc bpc" id="L109" title="1 of 4 branches missed.">        if (options.getGitHubToken() != null &amp;&amp; !options.getGitHubToken().isEmpty()) {</span>
+<span class="fc" id="L110">            pb.environment().put(&quot;COPILOT_SDK_AUTH_TOKEN&quot;, options.getGitHubToken());</span>
         }
 
 <span class="fc" id="L113">        Process process = pb.start();</span>
