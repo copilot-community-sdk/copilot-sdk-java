@@ -8,32 +8,30 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Event: assistant.message_delta
+ * Event: assistant.streaming_delta
  *
- * @since 1.0.0
+ * @since 1.0.10
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class AssistantMessageDeltaEvent extends AbstractSessionEvent {
+public final class AssistantStreamingDeltaEvent extends AbstractSessionEvent {
 
     @JsonProperty("data")
-    private AssistantMessageDeltaData data;
+    private AssistantStreamingDeltaData data;
 
     @Override
     public String getType() {
-        return "assistant.message_delta";
+        return "assistant.streaming_delta";
     }
 
-    public AssistantMessageDeltaData getData() {
+    public AssistantStreamingDeltaData getData() {
         return data;
     }
 
-    public void setData(AssistantMessageDeltaData data) {
+    public void setData(AssistantStreamingDeltaData data) {
         this.data = data;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record AssistantMessageDeltaData(@JsonProperty("messageId") String messageId,
-            @JsonProperty("deltaContent") String deltaContent,
-            @JsonProperty("parentToolCallId") String parentToolCallId) {
+    public record AssistantStreamingDeltaData(@JsonProperty("totalResponseSizeBytes") double totalResponseSizeBytes) {
     }
 }

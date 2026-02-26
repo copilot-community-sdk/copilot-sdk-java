@@ -8,32 +8,30 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Event: assistant.message_delta
+ * Event: session.task_complete
  *
- * @since 1.0.0
+ * @since 1.0.10
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class AssistantMessageDeltaEvent extends AbstractSessionEvent {
+public final class SessionTaskCompleteEvent extends AbstractSessionEvent {
 
     @JsonProperty("data")
-    private AssistantMessageDeltaData data;
+    private SessionTaskCompleteData data;
 
     @Override
     public String getType() {
-        return "assistant.message_delta";
+        return "session.task_complete";
     }
 
-    public AssistantMessageDeltaData getData() {
+    public SessionTaskCompleteData getData() {
         return data;
     }
 
-    public void setData(AssistantMessageDeltaData data) {
+    public void setData(SessionTaskCompleteData data) {
         this.data = data;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record AssistantMessageDeltaData(@JsonProperty("messageId") String messageId,
-            @JsonProperty("deltaContent") String deltaContent,
-            @JsonProperty("parentToolCallId") String parentToolCallId) {
+    public record SessionTaskCompleteData(@JsonProperty("summary") String summary) {
     }
 }

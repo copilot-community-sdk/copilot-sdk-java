@@ -47,7 +47,10 @@ import com.github.copilot.sdk.json.SessionMetadata;
  * try (var client = new CopilotClient()) {
  * 	client.start().get();
  *
- * 	var session = client.createSession(new SessionConfig().setModel("gpt-5")).get();
+ * 	var session = client
+ * 			.createSession(
+ * 					new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel("gpt-5"))
+ * 			.get();
  *
  * 	session.on(AssistantMessageEvent.class, msg -> {
  * 		System.out.println(msg.getData().content());
@@ -273,14 +276,27 @@ public final class CopilotClient implements AutoCloseable {
      * <p>
      * The session maintains conversation state and can be used to send messages and
      * receive responses. Remember to close the session when done.
+     * <p>
+     * An {@code onPermissionRequest} handler is required. Use
+     * {@link com.github.copilot.sdk.json.PermissionHandler#APPROVE_ALL} to approve
+     * all permission requests, or provide a custom handler.
      *
      * @param config
-     *            configuration for the session (model, tools, etc.)
+     *            configuration for the session, including the required
+     *            {@code onPermissionRequest} handler
      * @return a future that resolves with the created CopilotSession
-     * @see #createSession()
+     * @throws IllegalArgumentException
+     *             if {@code config} is {@code null} or
+     *             {@code config.getOnPermissionRequest()} is {@code null}
      * @see SessionConfig
      */
     public CompletableFuture<CopilotSession> createSession(SessionConfig config) {
+        if (config == null || config.getOnPermissionRequest() == null) {
+            var ex = new IllegalArgumentException("An onPermissionRequest handler is required when creating a session. "
+                    + "For example, to allow all permissions, use: "
+                    + "new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)");
+            return CompletableFuture.failedFuture(ex);
+        }
         return ensureConnected().thenCompose(connection -> {
             var request = SessionRequestBuilder.buildCreateRequest(config);
 
@@ -294,31 +310,34 @@ public final class CopilotClient implements AutoCloseable {
     }
 
     /**
-     * Creates a new Copilot session with default configuration.
-     *
-     * @return a future that resolves with the created CopilotSession
-     * @see #createSession(SessionConfig)
-     */
-    public CompletableFuture<CopilotSession> createSession() {
-        return createSession(null);
-    }
-
-    /**
      * Resumes an existing Copilot session.
      * <p>
      * This restores a previously saved session, allowing you to continue a
      * conversation. The session's history is preserved.
+     * <p>
+     * An {@code onPermissionRequest} handler is required. Use
+     * {@link com.github.copilot.sdk.json.PermissionHandler#APPROVE_ALL} to approve
+     * all permission requests, or provide a custom handler.
      *
      * @param sessionId
      *            the ID of the session to resume
      * @param config
-     *            configuration for the resumed session
+     *            configuration for the resumed session, including the required
+     *            {@code onPermissionRequest} handler
      * @return a future that resolves with the resumed CopilotSession
-     * @see #resumeSession(String)
+     * @throws IllegalArgumentException
+     *             if {@code config} is {@code null} or
+     *             {@code config.getOnPermissionRequest()} is {@code null}
      * @see #listSessions()
      * @see #getLastSessionId()
      */
     public CompletableFuture<CopilotSession> resumeSession(String sessionId, ResumeSessionConfig config) {
+        if (config == null || config.getOnPermissionRequest() == null) {
+            var ex = new IllegalArgumentException("An onPermissionRequest handler is required when resuming a session. "
+                    + "For example, to allow all permissions, use: "
+                    + "new ResumeSessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)");
+            return CompletableFuture.failedFuture(ex);
+        }
         return ensureConnected().thenCompose(connection -> {
             var request = SessionRequestBuilder.buildResumeRequest(sessionId, config);
 
@@ -329,18 +348,6 @@ public final class CopilotClient implements AutoCloseable {
                 return session;
             });
         });
-    }
-
-    /**
-     * Resumes an existing session with default configuration.
-     *
-     * @param sessionId
-     *            the ID of the session to resume
-     * @return a future that resolves with the resumed CopilotSession
-     * @see #resumeSession(String, ResumeSessionConfig)
-     */
-    public CompletableFuture<CopilotSession> resumeSession(String sessionId) {
-        return resumeSession(sessionId, null);
     }
 
     /**
@@ -440,7 +447,7 @@ public final class CopilotClient implements AutoCloseable {
      *
      * @return a future that resolves with the last session ID, or {@code null} if
      *         no sessions exist
-     * @see #resumeSession(String)
+     * @see #resumeSession(String, com.github.copilot.sdk.json.ResumeSessionConfig)
      */
     public CompletableFuture<String> getLastSessionId() {
         return ensureConnected().thenCompose(
@@ -478,7 +485,7 @@ public final class CopilotClient implements AutoCloseable {
      *
      * @return a future that resolves with a list of session metadata
      * @see SessionMetadata
-     * @see #resumeSession(String)
+     * @see #resumeSession(String, com.github.copilot.sdk.json.ResumeSessionConfig)
      */
     public CompletableFuture<List<SessionMetadata>> listSessions() {
         return listSessions(null);
@@ -508,7 +515,7 @@ public final class CopilotClient implements AutoCloseable {
      * @return a future that resolves with a list of session metadata
      * @see SessionMetadata
      * @see SessionListFilter
-     * @see #resumeSession(String)
+     * @see #resumeSession(String, com.github.copilot.sdk.json.ResumeSessionConfig)
      */
     public CompletableFuture<List<SessionMetadata>> listSessions(SessionListFilter filter) {
         return ensureConnected().thenCompose(connection -> {

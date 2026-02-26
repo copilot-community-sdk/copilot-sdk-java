@@ -20,6 +20,7 @@ import com.github.copilot.sdk.events.SessionCompactionCompleteEvent;
 import com.github.copilot.sdk.events.SessionCompactionStartEvent;
 import com.github.copilot.sdk.json.InfiniteSessionConfig;
 import com.github.copilot.sdk.json.MessageOptions;
+import com.github.copilot.sdk.json.PermissionHandler;
 import com.github.copilot.sdk.json.SessionConfig;
 
 /**
@@ -66,7 +67,8 @@ public class CompactionTest {
                 // Block at 1% to ensure compaction runs
                 .setBufferExhaustionThreshold(0.01);
 
-        var config = new SessionConfig().setInfiniteSessions(infiniteConfig);
+        var config = new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+                .setInfiniteSessions(infiniteConfig);
 
         var events = new ArrayList<AbstractSessionEvent>();
 
@@ -77,9 +79,8 @@ public class CompactionTest {
 
             // Send multiple messages to fill up the context window
             // With such low thresholds, even a few messages should trigger compaction
-            session.sendAndWait(
-                    new MessageOptions().setPrompt("Tell me a long story about a dragon. Be very detailed."))
-                    .get(60, TimeUnit.SECONDS);
+            session.sendAndWait(new MessageOptions().setPrompt("Tell me a story about a dragon. Be detailed.")).get(60,
+                    TimeUnit.SECONDS);
             session.sendAndWait(
                     new MessageOptions().setPrompt("Continue the story with more details about the dragon's castle."))
                     .get(60, TimeUnit.SECONDS);
@@ -132,7 +133,8 @@ public class CompactionTest {
 
         var infiniteConfig = new InfiniteSessionConfig().setEnabled(false);
 
-        var config = new SessionConfig().setInfiniteSessions(infiniteConfig);
+        var config = new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+                .setInfiniteSessions(infiniteConfig);
 
         var compactionEvents = new ArrayList<AbstractSessionEvent>();
 
