@@ -8,7 +8,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.github.copilot.sdk.json.CopilotClientOptions;
+import com.github.copilot.sdk.json.PermissionHandler;
 import com.github.copilot.sdk.json.PingResponse;
+import com.github.copilot.sdk.json.ResumeSessionConfig;
+import com.github.copilot.sdk.json.SessionConfig;
 import com.github.copilot.sdk.json.SessionLifecycleEvent;
 import com.github.copilot.sdk.json.SessionLifecycleEventTypes;
 
@@ -195,7 +198,7 @@ public class CopilotClientTest {
         }
 
         try (var client = new CopilotClient(new CopilotClientOptions().setCliPath(cliPath))) {
-            client.createSession().get();
+            client.createSession(new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
             client.forceStop().get();
 
             assertEquals(ConnectionState.DISCONNECTED, client.getState());
@@ -452,7 +455,8 @@ public class CopilotClientTest {
         }
 
         try (var client = new CopilotClient(new CopilotClientOptions().setCliPath(cliPath))) {
-            var session = client.createSession().get();
+            var session = client
+                    .createSession(new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
 
             // Stop the client first (which closes the RPC connection)
             client.stop().get();
@@ -489,6 +493,41 @@ public class CopilotClientTest {
     void testNullOptionsDefaultsToEmpty() {
         try (var client = new CopilotClient(null)) {
             assertEquals(ConnectionState.DISCONNECTED, client.getState());
+        }
+    }
+
+    @Test
+    void testCreateSessionThrowsWhenNoPermissionHandler() throws Exception {
+        try (var client = new CopilotClient(new CopilotClientOptions().setAutoStart(false))) {
+            var ex = assertThrows(ExecutionException.class, () -> client.createSession(new SessionConfig()).get());
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+            assertTrue(ex.getCause().getMessage().contains("onPermissionRequest"));
+        }
+    }
+
+    @Test
+    void testCreateSessionThrowsWhenConfigIsNull() throws Exception {
+        try (var client = new CopilotClient(new CopilotClientOptions().setAutoStart(false))) {
+            var ex = assertThrows(ExecutionException.class, () -> client.createSession(null).get());
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+        }
+    }
+
+    @Test
+    void testResumeSessionThrowsWhenNoPermissionHandler() throws Exception {
+        try (var client = new CopilotClient(new CopilotClientOptions().setAutoStart(false))) {
+            var ex = assertThrows(ExecutionException.class,
+                    () -> client.resumeSession("some-session-id", new ResumeSessionConfig()).get());
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause());
+            assertTrue(ex.getCause().getMessage().contains("onPermissionRequest"));
+        }
+    }
+
+    @Test
+    void testResumeSessionThrowsWhenConfigIsNull() throws Exception {
+        try (var client = new CopilotClient(new CopilotClientOptions().setAutoStart(false))) {
+            var ex = assertThrows(ExecutionException.class, () -> client.resumeSession("some-session-id", null).get());
+            assertInstanceOf(IllegalArgumentException.class, ex.getCause());
         }
     }
 }

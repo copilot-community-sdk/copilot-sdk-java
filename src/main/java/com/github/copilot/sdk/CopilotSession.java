@@ -90,6 +90,8 @@ public final class CopilotSession implements AutoCloseable {
     private final String sessionId;
     private final String workspacePath;
     private final JsonRpcClient rpc;
+    private final AgentApi agentApi;
+    private final CompactionApi compactionApi;
     private final Set<Consumer<AbstractSessionEvent>> eventHandlers = ConcurrentHashMap.newKeySet();
     private final Map<String, ToolDefinition> toolHandlers = new ConcurrentHashMap<>();
     private final AtomicReference<PermissionHandler> permissionHandler = new AtomicReference<>();
@@ -133,6 +135,8 @@ public final class CopilotSession implements AutoCloseable {
         this.sessionId = sessionId;
         this.rpc = rpc;
         this.workspacePath = workspacePath;
+        this.agentApi = new AgentApi(rpc, sessionId);
+        this.compactionApi = new CompactionApi(rpc, sessionId);
     }
 
     /**
@@ -155,6 +159,31 @@ public final class CopilotSession implements AutoCloseable {
      */
     public String getWorkspacePath() {
         return workspacePath;
+    }
+
+    /**
+     * Gets the agent API for managing custom agents in this session.
+     * <p>
+     * Use this to list available agents, select an agent, or deselect the current
+     * agent.
+     *
+     * @return the agent API
+     * @since 1.0.10
+     */
+    public AgentApi getAgent() {
+        return agentApi;
+    }
+
+    /**
+     * Gets the compaction API for managing session history compaction.
+     * <p>
+     * Use this to trigger session compaction to reduce context size.
+     *
+     * @return the compaction API
+     * @since 1.0.10
+     */
+    public CompactionApi getCompaction() {
+        return compactionApi;
     }
 
     /**
