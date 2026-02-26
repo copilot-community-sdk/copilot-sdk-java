@@ -191,6 +191,7 @@ public class AgentAndCompactRpcTest {
      *      agent_and_compact_rpc/should_compact_session_history_after_messages
      */
     @Test
+    @Disabled("Requires CLI with session.compaction.compact support (see upstream commit 9d998fb)")
     void testShouldCompactSessionHistoryAfterMessages(TestInfo testInfo) throws Exception {
         ctx.configureForTest("agent_and_compact_rpc", "should_compact_session_history_after_messages");
 

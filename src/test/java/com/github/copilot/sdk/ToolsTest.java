@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
@@ -232,6 +233,7 @@ public class ToolsTest {
      * @see Snapshot: tools/invokes_custom_tool_with_permission_handler
      */
     @Test
+    @Disabled("Requires CLI with custom-tool permission support (see upstream commit 388f2f3)")
     void testInvokesCustomToolWithPermissionHandler(TestInfo testInfo) throws Exception {
         ctx.configureForTest("tools", "invokes_custom_tool_with_permission_handler");
 
@@ -282,6 +284,7 @@ public class ToolsTest {
      * @see Snapshot: tools/denies_custom_tool_when_permission_denied
      */
     @Test
+    @Disabled("Requires CLI with custom-tool permission support (see upstream commit 388f2f3)")
     void testDeniesCustomToolWhenPermissionDenied(TestInfo testInfo) throws Exception {
         ctx.configureForTest("tools", "denies_custom_tool_when_permission_denied");
 
