@@ -86,7 +86,7 @@ public class AgentAndCompactRpcTest {
      */
     @Test
     @Disabled("Requires live server - no snapshot available for agent.getCurrent")
-    void testShouldReturnNullWhenNoAgentIsSelected(TestInfo testInfo) throws Exception {
+    void testShouldReturnNullWhenNoAgentIsSelected() throws Exception {
         var customAgents = List.of(new CustomAgentConfig().setName("test-agent").setDisplayName("Test Agent")
                 .setDescription("A test agent").setPrompt("You are a test agent."));
 
