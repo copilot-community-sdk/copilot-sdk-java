@@ -171,7 +171,7 @@ public class AgentAndCompactRpcTest {
      */
     @Test
     @Disabled("Requires live server - no snapshot available for agent.list (no agents)")
-    void testShouldReturnEmptyListWhenNoCustomAgentsConfigured(TestInfo testInfo) throws Exception {
+    void testShouldReturnEmptyListWhenNoCustomAgentsConfigured() throws Exception {
         try (CopilotClient client = ctx.createClient()) {
             CopilotSession session = client
                     .createSession(new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
