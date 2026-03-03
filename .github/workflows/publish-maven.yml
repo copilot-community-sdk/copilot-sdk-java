@@ -59,8 +59,8 @@ jobs:
                   server-id: central
                   server-username: MAVEN_USERNAME
                   server-password: MAVEN_PASSWORD
-                  gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-                  gpg-passphrase: MAVEN_GPG_PASSPHRASE
+                  gpg-private-key: ${{ secrets.GPG_SECRET_KEY }}
+                  gpg-passphrase: GPG_PASSPHRASE
 
             - name: Determine versions
               id: versions
@@ -141,7 +141,7 @@ jobs:
               env:
                   MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
                   MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-                  MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+                  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
             - name: Perform Release and Deploy to Maven Central
               run: |
@@ -151,7 +151,7 @@ jobs:
               env:
                   MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
                   MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-                  MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+                  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
             - name: Rollback documentation commit on failure
               if: failure() && steps.update-docs.outputs.docs_commit_sha != ''
