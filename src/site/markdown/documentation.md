@@ -169,6 +169,7 @@ The SDK supports event types organized by category. All events extend `AbstractS
 | `SessionCompactionStartEvent` | `session.compaction_start` | Context compaction started (infinite sessions) |
 | `SessionCompactionCompleteEvent` | `session.compaction_complete` | Context compaction completed |
 | `SessionContextChangedEvent` | `session.context_changed` | Working directory context changed |
+| `SessionTaskCompleteEvent` | `session.task_complete` | Task completed with summary |
 
 ### Assistant Events
 
@@ -180,6 +181,7 @@ The SDK supports event types organized by category. All events extend `AbstractS
 | `AssistantReasoningDeltaEvent` | `assistant.reasoning_delta` | Streaming reasoning chunk |
 | `AssistantMessageEvent` | `assistant.message` | Complete assistant message |
 | `AssistantMessageDeltaEvent` | `assistant.message_delta` | Streaming message chunk |
+| `AssistantStreamingDeltaEvent` | `assistant.streaming_delta` | Streaming progress with size metrics |
 | `AssistantTurnEndEvent` | `assistant.turn_end` | Assistant finished processing |
 | `AssistantUsageEvent` | `assistant.usage` | Token usage for this turn |
 
@@ -206,6 +208,7 @@ The SDK supports event types organized by category. All events extend `AbstractS
 |-------|-------------|-------------|
 | `SubagentStartedEvent` | `subagent.started` | Subagent was spawned |
 | `SubagentSelectedEvent` | `subagent.selected` | Subagent was selected for task |
+| `SubagentDeselectedEvent` | `subagent.deselected` | Subagent was deselected |
 | `SubagentCompletedEvent` | `subagent.completed` | Subagent completed its task |
 | `SubagentFailedEvent` | `subagent.failed` | Subagent failed |
 

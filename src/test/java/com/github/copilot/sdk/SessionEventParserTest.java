@@ -1343,6 +1343,7 @@ public class SessionEventParserTest {
                             }
                         ],
                         "parentToolCallId": "parent-tc",
+                        "interactionId": "interaction-msg-1",
                         "reasoningOpaque": "opaque-data",
                         "reasoningText": "My reasoning",
                         "encryptedContent": "enc123"
@@ -1356,6 +1357,7 @@ public class SessionEventParserTest {
         assertEquals("msg-rich", data.messageId());
         assertEquals("Full response", data.content());
         assertEquals("parent-tc", data.parentToolCallId());
+        assertEquals("interaction-msg-1", data.interactionId());
         assertEquals("opaque-data", data.reasoningOpaque());
         assertEquals("My reasoning", data.reasoningText());
         assertEquals("enc123", data.encryptedContent());
@@ -1377,7 +1379,6 @@ public class SessionEventParserTest {
                     "data": {
                         "messageId": "msg-delta-1",
                         "deltaContent": "partial text",
-                        "totalResponseSizeBytes": 4096.0,
                         "parentToolCallId": "ptc-1"
                     }
                 }
@@ -1388,8 +1389,60 @@ public class SessionEventParserTest {
         var data = event.getData();
         assertEquals("msg-delta-1", data.messageId());
         assertEquals("partial text", data.deltaContent());
-        assertEquals(4096.0, data.totalResponseSizeBytes());
         assertEquals("ptc-1", data.parentToolCallId());
+    }
+
+    @Test
+    void testAssistantStreamingDeltaEventAllFields() throws Exception {
+        String json = """
+                {
+                    "type": "assistant.streaming_delta",
+                    "data": {
+                        "totalResponseSizeBytes": 4096.0
+                    }
+                }
+                """;
+
+        var event = (AssistantStreamingDeltaEvent) parseJson(json);
+        assertNotNull(event);
+        assertEquals("assistant.streaming_delta", event.getType());
+        assertEquals(4096.0, event.getData().totalResponseSizeBytes());
+    }
+
+    @Test
+    void testAssistantMessageEventIncludesInteractionId() throws Exception {
+        String json = """
+                {
+                    "type": "assistant.message",
+                    "data": {
+                        "messageId": "msg-with-interaction",
+                        "content": "Response",
+                        "interactionId": "interaction-abc-123"
+                    }
+                }
+                """;
+
+        var event = (AssistantMessageEvent) parseJson(json);
+        assertNotNull(event);
+        assertEquals("interaction-abc-123", event.getData().interactionId());
+    }
+
+    @Test
+    void testAssistantTurnStartEventIncludesInteractionId() throws Exception {
+        String json = """
+                {
+                    "type": "assistant.turn_start",
+                    "data": {
+                        "turnId": "turn-with-interaction",
+                        "interactionId": "interaction-xyz-456"
+                    }
+                }
+                """;
+
+        var event = (AssistantTurnStartEvent) parseJson(json);
+        assertNotNull(event);
+        assertEquals("turn-with-interaction", event.getData().turnId());
+        assertEquals("interaction-xyz-456", event.getData().interactionId());
     }
 
     @Test
@@ -1412,6 +1465,23 @@ public class SessionEventParserTest {
                         "quotaSnapshots": {
                             "premium": 100,
                             "standard": 500
+                        },
+                        "copilotUsage": {
+                            "totalNanoAiu": 1234567.0,
+                            "tokenDetails": [
+                                {
+                                    "tokenType": "input",
+                                    "tokenCount": 500.0,
+                                    "batchSize": 100.0,
+                                    "costPerBatch": 0.001
+                                },
+                                {
+                                    "tokenType": "output",
+                                    "tokenCount": 200.0,
+                                    "batchSize": 100.0,
+                                    "costPerBatch": 0.002
+                                }
+                            ]
                         }
                     }
                 }
@@ -1433,6 +1503,15 @@ public class SessionEventParserTest {
         assertEquals("ptc-usage", data.parentToolCallId());
         assertNotNull(data.quotaSnapshots());
         assertEquals(2, data.quotaSnapshots().size());
+
+        // Verify copilotUsage
+        assertNotNull(data.copilotUsage());
+        assertEquals(1234567.0, data.copilotUsage().totalNanoAiu());
+        assertNotNull(data.copilotUsage().tokenDetails());
+        assertEquals(2, data.copilotUsage().tokenDetails().size());
+        assertEquals("input", data.copilotUsage().tokenDetails().get(0).tokenType());
+        assertEquals(500.0, data.copilotUsage().tokenDetails().get(0).tokenCount());
+        assertEquals("output", data.copilotUsage().tokenDetails().get(1).tokenType());
     }
 
     @Test
@@ -1548,6 +1627,8 @@ public class SessionEventParserTest {
                     "data": {
                         "toolCallId": "tc-err-1",
                         "success": false,
+                        "model": "claude-3-5-sonnet",
+                        "interactionId": "interaction-tool-1",
                         "isUserRequested": true,
                         "error": {
                             "message": "File not found",
@@ -1567,6 +1648,8 @@ public class SessionEventParserTest {
         var data = event.getData();
         assertEquals("tc-err-1", data.toolCallId());
         assertFalse(data.success());
+        assertEquals("claude-3-5-sonnet", data.model());
+        assertEquals("interaction-tool-1", data.interactionId());
         assertTrue(data.isUserRequested());
         assertEquals("ptc-complete", data.parentToolCallId());
 

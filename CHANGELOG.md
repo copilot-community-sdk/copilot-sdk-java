@@ -8,17 +8,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-> **Upstream sync:** [`github/copilot-sdk@c263dfc`](https://github.com/github/copilot-sdk/commit/c263dfc69055f9f28ee2d4b121cf617fca5a42dc)
+> **Upstream sync:** [`github/copilot-sdk@b9f746a`](https://github.com/github/copilot-sdk/commit/b9f746ab1b9c5f31af03a6f8a6cf4e680b3fd6b8)
 
 ### Added
 
-- `SessionConfig.setClientName(String)` / `getClientName()` — identifies the application using the SDK; included in the User-Agent header for API requests (upstream: [`397ef66`](https://github.com/github/copilot-sdk/commit/397ef66))
-- `ResumeSessionConfig.setClientName(String)` / `getClientName()` — same for resumed sessions
-- `PermissionHandler.APPROVE_ALL` — pre-built handler that approves all permission requests (upstream: [`3e2d2b2`](https://github.com/github/copilot-sdk/commit/3e2d2b2))
+- `CopilotSession.listAgents()` — lists custom agents available for selection (upstream: [`9d998fb`](https://github.com/github/copilot-sdk/commit/9d998fb))
+- `CopilotSession.getCurrentAgent()` — gets the currently selected custom agent (upstream: [`9d998fb`](https://github.com/github/copilot-sdk/commit/9d998fb))
+- `CopilotSession.selectAgent(String)` — selects a custom agent for the session (upstream: [`9d998fb`](https://github.com/github/copilot-sdk/commit/9d998fb))
+- `CopilotSession.deselectAgent()` — deselects the current custom agent (upstream: [`9d998fb`](https://github.com/github/copilot-sdk/commit/9d998fb))
+- `CopilotSession.compact()` — triggers immediate session context compaction (upstream: [`9d998fb`](https://github.com/github/copilot-sdk/commit/9d998fb))
+- `AgentInfo` — new JSON type representing a custom agent with `name`, `displayName`, and `description` (upstream: [`9d998fb`](https://github.com/github/copilot-sdk/commit/9d998fb))
+- New event types: `SessionTaskCompleteEvent` (`session.task_complete`), `AssistantStreamingDeltaEvent` (`assistant.streaming_delta`), `SubagentDeselectedEvent` (`subagent.deselected`) (upstream: various commits)
+- `AssistantTurnStartEvent` data now includes `interactionId` field
+- `AssistantMessageEvent` data now includes `interactionId` field
+- `ToolExecutionCompleteEvent` data now includes `model` and `interactionId` fields
+- `SkillInvokedEvent` data now includes `pluginName` and `pluginVersion` fields
+- `AssistantUsageEvent` data now includes `copilotUsage` field with `CopilotUsage` and `TokenDetails` nested types
+- E2E tests for custom tool permission approval and denial flows (upstream: [`388f2f3`](https://github.com/github/copilot-sdk/commit/388f2f3))
 
 ### Changed
 
-- **Breaking:** permissions are now denied by default when no `OnPermissionRequest` handler is provided. The `requestPermission` flag is always sent as `true` so the server calls back for every permission request; the SDK returns a deny result when no handler is registered (upstream: [`3e2d2b2`](https://github.com/github/copilot-sdk/commit/3e2d2b2))
+- **Breaking:** `createSession(SessionConfig)` now requires a non-null `onPermissionRequest` handler; throws `IllegalArgumentException` if not provided (upstream: [`279f6c4`](https://github.com/github/copilot-sdk/commit/279f6c4))
+- **Breaking:** `resumeSession(String, ResumeSessionConfig)` now requires a non-null `onPermissionRequest` handler; throws `IllegalArgumentException` if not provided (upstream: [`279f6c4`](https://github.com/github/copilot-sdk/commit/279f6c4))
+- **Breaking:** The no-arg `createSession()` and `resumeSession(String)` overloads were removed (upstream: [`279f6c4`](https://github.com/github/copilot-sdk/commit/279f6c4))
+- `AssistantMessageDeltaEvent` data: `totalResponseSizeBytes` field moved to new `AssistantStreamingDeltaEvent` (upstream: various)
+
+### Fixed
+
+- Permission checks now also apply to SDK-registered custom tools, invoking the `onPermissionRequest` handler with `kind="custom-tool"` before executing tools (upstream: [`388f2f3`](https://github.com/github/copilot-sdk/commit/388f2f3))
 
 ## [1.0.9] - 2026-02-16
 
