@@ -57,7 +57,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="nc" id="L60">public record ToolDefinition(@JsonProperty(&quot;name&quot;) String name, @JsonProperty(&quot;description&quot;) String description,</span>
+<span class="fc" id="L60">public record ToolDefinition(@JsonProperty(&quot;name&quot;) String name, @JsonProperty(&quot;description&quot;) String description,</span>
         @JsonProperty(&quot;parameters&quot;) Object parameters, @JsonIgnore ToolHandler handler,
         @JsonProperty(&quot;overridesBuiltInTool&quot;) Boolean overridesBuiltInTool) {
 
@@ -79,7 +79,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      */
     public static ToolDefinition create(String name, String description, Map&lt;String, Object&gt; schema,
             ToolHandler handler) {
-<span class="nc" id="L82">        return new ToolDefinition(name, description, schema, handler, null);</span>
+<span class="fc" id="L82">        return new ToolDefinition(name, description, schema, handler, null);</span>
     }
 
     /**
@@ -103,7 +103,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      */
     public static ToolDefinition createOverride(String name, String description, Map&lt;String, Object&gt; schema,
             ToolHandler handler) {
-<span class="nc" id="L106">        return new ToolDefinition(name, description, schema, handler, true);</span>
+<span class="fc" id="L106">        return new ToolDefinition(name, description, schema, handler, true);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
