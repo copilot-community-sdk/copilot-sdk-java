@@ -381,7 +381,11 @@ done.get(); // Wait for completion
 <tr class="a">
 <td><code>SessionContextChangedEvent</code></td>
 <td><code>session.context_changed</code></td>
-<td>Working directory context changed</td></tr></tbody>
+<td>Working directory context changed</td></tr>
+<tr class="b">
+<td><code>SessionTaskCompleteEvent</code></td>
+<td><code>session.task_complete</code></td>
+<td>Task completed with summary</td></tr></tbody>
 </table>
 </section><section><a id="Assistant_Events"></a>
 <h3>Assistant Events</h3>
@@ -416,10 +420,14 @@ done.get(); // Wait for completion
 <td><code>assistant.message_delta</code></td>
 <td>Streaming message chunk</td></tr>
 <tr class="b">
+<td><code>AssistantStreamingDeltaEvent</code></td>
+<td><code>assistant.streaming_delta</code></td>
+<td>Streaming progress with size metrics</td></tr>
+<tr class="a">
 <td><code>AssistantTurnEndEvent</code></td>
 <td><code>assistant.turn_end</code></td>
 <td>Assistant finished processing</td></tr>
-<tr class="a">
+<tr class="b">
 <td><code>AssistantUsageEvent</code></td>
 <td><code>assistant.usage</code></td>
 <td>Token usage for this turn</td></tr></tbody>
@@ -487,10 +495,14 @@ done.get(); // Wait for completion
 <td><code>subagent.selected</code></td>
 <td>Subagent was selected for task</td></tr>
 <tr class="b">
+<td><code>SubagentDeselectedEvent</code></td>
+<td><code>subagent.deselected</code></td>
+<td>Subagent was deselected</td></tr>
+<tr class="a">
 <td><code>SubagentCompletedEvent</code></td>
 <td><code>subagent.completed</code></td>
 <td>Subagent completed its task</td></tr>
-<tr class="a">
+<tr class="b">
 <td><code>SubagentFailedEvent</code></td>
 <td><code>subagent.failed</code></td>
 <td>Subagent failed</td></tr></tbody>

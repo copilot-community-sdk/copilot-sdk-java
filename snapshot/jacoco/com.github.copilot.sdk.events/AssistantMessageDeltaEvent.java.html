@@ -34,7 +34,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
     @JsonIgnoreProperties(ignoreUnknown = true)
 <span class="fc" id="L35">    public record AssistantMessageDeltaData(@JsonProperty(&quot;messageId&quot;) String messageId,</span>
             @JsonProperty(&quot;deltaContent&quot;) String deltaContent,
-            @JsonProperty(&quot;totalResponseSizeBytes&quot;) Double totalResponseSizeBytes,
             @JsonProperty(&quot;parentToolCallId&quot;) String parentToolCallId) {
     }
 }

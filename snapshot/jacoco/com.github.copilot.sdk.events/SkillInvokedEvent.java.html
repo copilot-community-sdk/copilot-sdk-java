@@ -40,7 +40,8 @@ import java.util.List;
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
 <span class="fc" id="L42">    public record SkillInvokedData(@JsonProperty(&quot;name&quot;) String name, @JsonProperty(&quot;path&quot;) String path,</span>
-            @JsonProperty(&quot;content&quot;) String content, @JsonProperty(&quot;allowedTools&quot;) List&lt;String&gt; allowedTools) {
+            @JsonProperty(&quot;content&quot;) String content, @JsonProperty(&quot;allowedTools&quot;) List&lt;String&gt; allowedTools,
+            @JsonProperty(&quot;pluginName&quot;) String pluginName, @JsonProperty(&quot;pluginVersion&quot;) String pluginVersion) {
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

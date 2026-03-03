@@ -36,24 +36,25 @@ import java.util.Map;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
 <span class="fc" id="L38">    public record ToolExecutionCompleteData(@JsonProperty(&quot;toolCallId&quot;) String toolCallId,</span>
-            @JsonProperty(&quot;success&quot;) boolean success, @JsonProperty(&quot;isUserRequested&quot;) Boolean isUserRequested,
-            @JsonProperty(&quot;result&quot;) Result result, @JsonProperty(&quot;error&quot;) Error error,
-            @JsonProperty(&quot;toolTelemetry&quot;) Map&lt;String, Object&gt; toolTelemetry,
+            @JsonProperty(&quot;success&quot;) boolean success, @JsonProperty(&quot;model&quot;) String model,
+            @JsonProperty(&quot;interactionId&quot;) String interactionId,
+            @JsonProperty(&quot;isUserRequested&quot;) Boolean isUserRequested, @JsonProperty(&quot;result&quot;) Result result,
+            @JsonProperty(&quot;error&quot;) Error error, @JsonProperty(&quot;toolTelemetry&quot;) Map&lt;String, Object&gt; toolTelemetry,
             @JsonProperty(&quot;parentToolCallId&quot;) String parentToolCallId) {
 
         /** Returns a defensive copy of the tool telemetry map. */
         @Override
         public Map&lt;String, Object&gt; toolTelemetry() {
-<span class="pc bpc" id="L47" title="1 of 2 branches missed.">            return toolTelemetry == null ? null : Collections.unmodifiableMap(toolTelemetry);</span>
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">            return toolTelemetry == null ? null : Collections.unmodifiableMap(toolTelemetry);</span>
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="fc" id="L51">        public record Result(@JsonProperty(&quot;content&quot;) String content,</span>
+<span class="fc" id="L52">        public record Result(@JsonProperty(&quot;content&quot;) String content,</span>
                 @JsonProperty(&quot;detailedContent&quot;) String detailedContent) {
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="fc" id="L56">        public record Error(@JsonProperty(&quot;message&quot;) String message, @JsonProperty(&quot;code&quot;) String code) {</span>
+<span class="fc" id="L57">        public record Error(@JsonProperty(&quot;message&quot;) String message, @JsonProperty(&quot;code&quot;) String code) {</span>
         }
     }
 }

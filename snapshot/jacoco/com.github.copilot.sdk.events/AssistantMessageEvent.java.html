@@ -73,6 +73,7 @@ import java.util.List;
 <span class="fc" id="L73">    public record AssistantMessageData(@JsonProperty(&quot;messageId&quot;) String messageId,</span>
             @JsonProperty(&quot;content&quot;) String content, @JsonProperty(&quot;toolRequests&quot;) List&lt;ToolRequest&gt; toolRequests,
             @JsonProperty(&quot;parentToolCallId&quot;) String parentToolCallId,
+            @JsonProperty(&quot;interactionId&quot;) String interactionId,
             @JsonProperty(&quot;reasoningOpaque&quot;) String reasoningOpaque,
             @JsonProperty(&quot;reasoningText&quot;) String reasoningText,
             @JsonProperty(&quot;encryptedContent&quot;) String encryptedContent) {
@@ -80,14 +81,14 @@ import java.util.List;
         /** Returns a defensive copy of the tool requests list. */
         @Override
         public List&lt;ToolRequest&gt; toolRequests() {
-<span class="pc bpc" id="L83" title="1 of 2 branches missed.">            return toolRequests == null ? null : Collections.unmodifiableList(toolRequests);</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">            return toolRequests == null ? null : Collections.unmodifiableList(toolRequests);</span>
         }
 
         /**
          * Represents a request from the assistant to invoke a tool.
          */
         @JsonIgnoreProperties(ignoreUnknown = true)
-<span class="fc" id="L90">        public record ToolRequest(@JsonProperty(&quot;toolCallId&quot;) String toolCallId, @JsonProperty(&quot;name&quot;) String name,</span>
+<span class="fc" id="L91">        public record ToolRequest(@JsonProperty(&quot;toolCallId&quot;) String toolCallId, @JsonProperty(&quot;name&quot;) String name,</span>
                 @JsonProperty(&quot;arguments&quot;) Object arguments) {
         }
     }

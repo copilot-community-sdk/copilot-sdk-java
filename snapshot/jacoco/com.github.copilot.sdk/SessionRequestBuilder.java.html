@@ -115,14 +115,14 @@ final class SessionRequestBuilder {
      *            the session configuration
      */
     static void configureSession(CopilotSession session, SessionConfig config) {
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (config == null) {</span>
-<span class="fc" id="L119">            return;</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (config == null) {</span>
+<span class="nc" id="L119">            return;</span>
         }
 
 <span class="fc bfc" id="L122" title="All 2 branches covered.">        if (config.getTools() != null) {</span>
 <span class="fc" id="L123">            session.registerTools(config.getTools());</span>
         }
-<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (config.getOnPermissionRequest() != null) {</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if (config.getOnPermissionRequest() != null) {</span>
 <span class="fc" id="L126">            session.registerPermissionHandler(config.getOnPermissionRequest());</span>
         }
 <span class="fc bfc" id="L128" title="All 2 branches covered.">        if (config.getOnUserInputRequest() != null) {</span>

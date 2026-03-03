@@ -55,9 +55,11 @@ import java.util.UUID;
         SessionModelChangeEvent, SessionModeChangedEvent, SessionPlanChangedEvent, SessionWorkspaceFileChangedEvent,
         SessionHandoffEvent, SessionTruncationEvent, SessionSnapshotRewindEvent, SessionUsageInfoEvent,
         SessionCompactionStartEvent, SessionCompactionCompleteEvent, SessionShutdownEvent, SessionContextChangedEvent,
+        SessionTaskCompleteEvent,
         // Assistant events
         AssistantTurnStartEvent, AssistantIntentEvent, AssistantReasoningEvent, AssistantReasoningDeltaEvent,
-        AssistantMessageEvent, AssistantMessageDeltaEvent, AssistantTurnEndEvent, AssistantUsageEvent, AbortEvent,
+        AssistantMessageEvent, AssistantMessageDeltaEvent, AssistantStreamingDeltaEvent, AssistantTurnEndEvent,
+        AssistantUsageEvent, AbortEvent,
         // Tool events
         ToolUserRequestedEvent, ToolExecutionStartEvent, ToolExecutionPartialResultEvent, ToolExecutionProgressEvent,
         ToolExecutionCompleteEvent,
@@ -66,8 +68,8 @@ import java.util.UUID;
         // Skill events
         SkillInvokedEvent,
         // Other events
-        SubagentStartedEvent, SubagentCompletedEvent, SubagentFailedEvent, SubagentSelectedEvent, HookStartEvent,
-        HookEndEvent, SystemMessageEvent {
+        SubagentStartedEvent, SubagentCompletedEvent, SubagentFailedEvent, SubagentSelectedEvent,
+        SubagentDeselectedEvent, HookStartEvent, HookEndEvent, SystemMessageEvent {
 
     @JsonProperty(&quot;id&quot;)
     private UUID id;
@@ -97,7 +99,7 @@ import java.util.UUID;
      * @return the event UUID
      */
     public UUID getId() {
-<span class="fc" id="L100">        return id;</span>
+<span class="fc" id="L102">        return id;</span>
     }
 
     /**
@@ -107,8 +109,8 @@ import java.util.UUID;
      *            the event UUID
      */
     public void setId(UUID id) {
-<span class="fc" id="L110">        this.id = id;</span>
-<span class="fc" id="L111">    }</span>
+<span class="fc" id="L112">        this.id = id;</span>
+<span class="fc" id="L113">    }</span>
 
     /**
      * Gets the timestamp when this event occurred.
@@ -116,7 +118,7 @@ import java.util.UUID;
      * @return the event timestamp
      */
     public OffsetDateTime getTimestamp() {
-<span class="fc" id="L119">        return timestamp;</span>
+<span class="fc" id="L121">        return timestamp;</span>
     }
 
     /**
@@ -126,8 +128,8 @@ import java.util.UUID;
      *            the event timestamp
      */
     public void setTimestamp(OffsetDateTime timestamp) {
-<span class="fc" id="L129">        this.timestamp = timestamp;</span>
-<span class="fc" id="L130">    }</span>
+<span class="fc" id="L131">        this.timestamp = timestamp;</span>
+<span class="fc" id="L132">    }</span>
 
     /**
      * Gets the parent event ID, if this event is a child of another.
@@ -135,7 +137,7 @@ import java.util.UUID;
      * @return the parent event UUID, or {@code null}
      */
     public UUID getParentId() {
-<span class="fc" id="L138">        return parentId;</span>
+<span class="fc" id="L140">        return parentId;</span>
     }
 
     /**
@@ -145,8 +147,8 @@ import java.util.UUID;
      *            the parent event UUID
      */
     public void setParentId(UUID parentId) {
-<span class="fc" id="L148">        this.parentId = parentId;</span>
-<span class="fc" id="L149">    }</span>
+<span class="fc" id="L150">        this.parentId = parentId;</span>
+<span class="fc" id="L151">    }</span>
 
     /**
      * Returns whether this is an ephemeral event.
@@ -156,7 +158,7 @@ import java.util.UUID;
      * @return {@code true} if ephemeral, {@code false} otherwise
      */
     public Boolean getEphemeral() {
-<span class="fc" id="L159">        return ephemeral;</span>
+<span class="fc" id="L161">        return ephemeral;</span>
     }
 
     /**
@@ -166,7 +168,7 @@ import java.util.UUID;
      *            {@code true} if ephemeral
      */
     public void setEphemeral(Boolean ephemeral) {
-<span class="fc" id="L169">        this.ephemeral = ephemeral;</span>
-<span class="fc" id="L170">    }</span>
+<span class="fc" id="L171">        this.ephemeral = ephemeral;</span>
+<span class="fc" id="L172">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
