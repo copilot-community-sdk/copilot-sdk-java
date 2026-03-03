@@ -190,7 +190,7 @@
 );
 
 var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setMcpServers(Map.of(&quot;filesystem&quot;, server))
 ).get();
 
@@ -273,7 +273,7 @@ server.put(&quot;tools&quot;, List.of(&quot;*&quot;));
 <p>Combine tools from several sources.</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setMcpServers(Map.of(
             &quot;filesystem&quot;, filesystemServer,
             &quot;github&quot;, githubServer,

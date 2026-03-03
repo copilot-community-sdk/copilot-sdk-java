@@ -48,13 +48,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *            the JSON Schema defining the tool's parameters
  * @param handler
  *            the handler function to execute when invoked
+ * @param overridesBuiltInTool
+ *            when {@code true}, indicates that this tool intentionally
+ *            overrides a built-in CLI tool with the same name; {@code null} or
+ *            {@code false} means the tool is purely custom
  * @see SessionConfig#setTools(java.util.List)
  * @see ToolHandler
  * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-<span class="fc" id="L56">public record ToolDefinition(@JsonProperty(&quot;name&quot;) String name, @JsonProperty(&quot;description&quot;) String description,</span>
-        @JsonProperty(&quot;parameters&quot;) Object parameters, @JsonIgnore ToolHandler handler) {
+<span class="nc" id="L60">public record ToolDefinition(@JsonProperty(&quot;name&quot;) String name, @JsonProperty(&quot;description&quot;) String description,</span>
+        @JsonProperty(&quot;parameters&quot;) Object parameters, @JsonIgnore ToolHandler handler,
+        @JsonProperty(&quot;overridesBuiltInTool&quot;) Boolean overridesBuiltInTool) {
 
     /**
      * Creates a tool definition with a JSON schema for parameters.
@@ -74,7 +79,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
      */
     public static ToolDefinition create(String name, String description, Map&lt;String, Object&gt; schema,
             ToolHandler handler) {
-<span class="fc" id="L77">        return new ToolDefinition(name, description, schema, handler);</span>
+<span class="nc" id="L82">        return new ToolDefinition(name, description, schema, handler, null);</span>
+    }
+
+    /**
+     * Creates a tool definition that overrides a built-in CLI tool.
+     * &lt;p&gt;
+     * Use this factory method when you want your custom tool to replace a built-in
+     * tool (e.g., {@code grep}, {@code read_file}) with the same name. Setting
+     * {@code overridesBuiltInTool} to {@code true} signals to the CLI that this is
+     * intentional.
+     *
+     * @param name
+     *            the name of the built-in tool to override
+     * @param description
+     *            a description of what the tool does
+     * @param schema
+     *            the JSON Schema as a {@code Map}
+     * @param handler
+     *            the handler function to execute when invoked
+     * @return a new tool definition with the override flag set
+     * @since 1.0.11
+     */
+    public static ToolDefinition createOverride(String name, String description, Map&lt;String, Object&gt; schema,
+            ToolHandler handler) {
+<span class="nc" id="L106">        return new ToolDefinition(name, description, schema, handler, true);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

@@ -215,7 +215,7 @@ try (var client = new CopilotClient()) {
     client.start().get();
 
     var session = client.createSession(
-        new SessionConfig().setModel(&quot;gpt-4.1&quot;)
+        new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;gpt-4.1&quot;)
     ).get();
 
     var response = session.sendAndWait(&quot;Explain Java records in one sentence&quot;).get();
@@ -542,7 +542,7 @@ done.get(); // Wait for completion
 <p>Enable streaming to receive response chunks as they're generated:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setModel(&quot;gpt-4.1&quot;)
         .setStreaming(true)
 ).get();
@@ -637,14 +637,14 @@ for (var model : models) {
 <h3>Use a Specific Model</h3>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig().setModel(&quot;claude-sonnet-4&quot;)
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;claude-sonnet-4&quot;)
 ).get();
 </code></pre><hr /></section></section><section><a id="Reasoning_Effort"></a>
 <h2>Reasoning Effort</h2>
 <p>For models that support it, control how much effort the model spends reasoning before responding:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setModel(&quot;o3-mini&quot;)
         .setReasoningEffort(&quot;high&quot;)
 ).get();
@@ -678,7 +678,7 @@ for (var model : models) {
 <p>Restrict the session to only specific tools:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setAvailableTools(List.of(&quot;read_file&quot;, &quot;search_code&quot;, &quot;list_dir&quot;))
 ).get();
 </code></pre>
@@ -687,7 +687,7 @@ for (var model : models) {
 <p>Allow all tools except specific ones:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setExcludedTools(List.of(&quot;execute_command&quot;, &quot;write_file&quot;))
 ).get();
 </code></pre>
@@ -698,7 +698,7 @@ for (var model : models) {
 <pre class="prettyprint"><code class="language-java">var lookupTool = ToolDefinition.create(&quot;lookup_issue&quot;, &quot;Fetch issue&quot;, schema, handler);
 
 var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setTools(List.of(lookupTool))           // Custom tool always available
         .setAvailableTools(List.of(&quot;read_file&quot;)) // Only allow read_file from built-ins
 ).get();
@@ -707,7 +707,7 @@ var session = client.createSession(
 <p>Set the working directory for file operations in the session:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setWorkingDirectory(&quot;/path/to/project&quot;)
 ).get();
 </code></pre>
@@ -828,11 +828,11 @@ session.send(new MessageOptions()
 <h3>Multiple Concurrent Sessions</h3>
 
 <pre class="prettyprint"><code class="language-java">var session1 = client.createSession(
-    new SessionConfig().setModel(&quot;gpt-4.1&quot;)
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;gpt-4.1&quot;)
 ).get();
 
 var session2 = client.createSession(
-    new SessionConfig().setModel(&quot;claude-sonnet-4&quot;)
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;claude-sonnet-4&quot;)
 ).get();
 
 // Send messages concurrently
@@ -851,7 +851,7 @@ var lastSessionId = client.getLastSessionId().get();
 var sessions = client.listSessions().get();
 
 // Resume a session
-var session = client.resumeSession(lastSessionId).get();
+var session = client.resumeSession(lastSessionId, new ResumeSessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
 </code></pre></section><section><a id="Resume_Options"></a>
 <h3>Resume Options</h3>
 <p>When resuming a session, you can optionally reconfigure many settings. This is useful when you need to change the model, update tool configurations, or modify behavior.</p>
@@ -907,7 +907,7 @@ var session = client.resumeSession(lastSessionId).get();
 <p><strong>Example: Changing Model on Resume</strong></p>
 
 <pre class="prettyprint"><code class="language-java">// Resume with a different model
-var config = new ResumeSessionConfig()
+var config = new ResumeSessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
     .setModel(&quot;claude-sonnet-4&quot;)    // Switch to a different model
     .setReasoningEffort(&quot;high&quot;);    // Increase reasoning effort
 
@@ -1028,7 +1028,7 @@ client.deleteSession(sessionId).get();
 <h3>Cloning SessionConfig</h3>
 <p>Use <code>clone()</code> to copy a base configuration before making per-session changes:</p>
 
-<pre class="prettyprint"><code class="language-java">var base = new SessionConfig()
+<pre class="prettyprint"><code class="language-java">var base = new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
     .setModel(&quot;gpt-4.1&quot;)
     .setStreaming(true);
 

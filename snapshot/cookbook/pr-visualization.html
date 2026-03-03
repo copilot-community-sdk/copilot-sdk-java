@@ -263,7 +263,7 @@ public class PRVisualization {
                 &quot;&quot;&quot;, owner, repoName, cwd);
 
             var session = client.createSession(
-                new SessionConfig()
+                new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
                     .setModel(&quot;gpt-5&quot;)
                     .setSystemMessage(new SystemMessageConfig().setContent(systemMessage))
             ).get();

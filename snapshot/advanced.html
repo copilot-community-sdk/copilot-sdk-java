@@ -186,7 +186,12 @@
 <h2>Table of Contents</h2>
 <ul>
 
-<li><a href="#Custom_Tools">Custom Tools</a></li>
+<li><a href="#Custom_Tools">Custom Tools</a>
+<ul>
+
+<li><a href="#Overriding_Built-in_Tools">Overriding Built-in Tools</a></li>
+</ul></li>
+<li><a href="#Switching_Models_Mid-Session">Switching Models Mid-Session</a></li>
 <li><a href="#System_Messages">System Messages</a>
 <ul>
 
@@ -263,18 +268,64 @@ var lookupTool = ToolDefinition.create(
 );
 
 var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setTools(List.of(lookupTool))
 ).get();
 </code></pre>
-<p>See <a href="apidocs/com/github/copilot/sdk/json/ToolDefinition.html">ToolDefinition</a> Javadoc for schema details.</p><hr /></section><section><a id="System_Messages"></a>
+<p>See <a href="apidocs/com/github/copilot/sdk/json/ToolDefinition.html">ToolDefinition</a> Javadoc for schema details.</p><section><a id="Overriding_Built-in_Tools"></a>
+<h3>Overriding Built-in Tools</h3>
+<p>You can replace a built-in CLI tool (such as <code>grep</code> or <code>read_file</code>) with your own implementation
+by using <code>ToolDefinition.createOverride()</code>. This signals to the CLI that the name collision is
+intentional and your custom implementation should be used instead.</p>
+
+<pre class="prettyprint"><code class="language-java">var customGrep = ToolDefinition.createOverride(
+    &quot;grep&quot;,
+    &quot;Project-aware search with custom filtering&quot;,
+    Map.of(
+        &quot;type&quot;, &quot;object&quot;,
+        &quot;properties&quot;, Map.of(
+            &quot;query&quot;, Map.of(&quot;type&quot;, &quot;string&quot;, &quot;description&quot;, &quot;Search query&quot;)
+        ),
+        &quot;required&quot;, List.of(&quot;query&quot;)
+    ),
+    invocation -&gt; {
+        String query = (String) invocation.getArguments().get(&quot;query&quot;);
+        // Your custom search logic here
+        return CompletableFuture.completedFuture(&quot;Results for: &quot; + query);
+    }
+);
+
+var session = client.createSession(
+    new SessionConfig()
+        .setTools(List.of(customGrep))
+        .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+).get();
+</code></pre><hr /></section></section><section><a id="Switching_Models_Mid-Session"></a>
+<h2>Switching Models Mid-Session</h2>
+<p>You can change the model used by an existing session without losing conversation history.
+The new model takes effect starting with the next message sent.</p>
+
+<pre class="prettyprint"><code class="language-java">var session = client.createSession(
+    new SessionConfig()
+        .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+).get();
+
+// Switch to a different model mid-conversation
+session.setModel(&quot;gpt-4.1&quot;).get();
+
+// Next message will use the new model
+session.sendAndWait(new MessageOptions().setPrompt(&quot;Continue with the new model&quot;)).get();
+</code></pre>
+<p>The session emits a <a href="apidocs/com/github/copilot/sdk/events/SessionModelChangeEvent.html"><code>SessionModelChangeEvent</code></a>
+when the switch completes, which you can observe with <code>session.on(SessionModelChangeEvent.class, event -&gt; ...)</code>.</p>
+<p>See <a href="apidocs/com/github/copilot/sdk/CopilotSession.html#setModel.28java.lang.String.29">CopilotSession.setModel()</a> Javadoc for details.</p><hr /></section><section><a id="System_Messages"></a>
 <h2>System Messages</h2>
 <p>Customize the AI's behavior by adding rules or replacing the default prompt.</p><section><a id="Adding_Rules"></a>
 <h3>Adding Rules</h3>
 <p>Use <code>APPEND</code> mode to add constraints while keeping default guardrails:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setSystemMessage(new SystemMessageConfig()
             .setMode(SystemMessageMode.APPEND)
             .setContent(&quot;&quot;&quot;
@@ -289,7 +340,7 @@ var session = client.createSession(
 <p>Use <code>REPLACE</code> mode for complete control (removes default guardrails):</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setSystemMessage(new SystemMessageConfig()
             .setMode(SystemMessageMode.REPLACE)
             .setContent(&quot;You are a helpful coding assistant.&quot;))
@@ -372,7 +423,7 @@ var session = client.createSession(
 <h3>API Key Authentication</h3>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setProvider(new ProviderConfig()
             .setType(&quot;openai&quot;)
             .setBaseUrl(&quot;https://api.openai.com/v1&quot;)
@@ -383,7 +434,7 @@ var session = client.createSession(
 <p>Some providers require bearer token authentication instead of API keys:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setProvider(new ProviderConfig()
             .setType(&quot;openai&quot;)
             .setBaseUrl(&quot;https://my-custom-endpoint.example.com/v1&quot;)
@@ -398,7 +449,7 @@ var session = client.createSession(
 <p><a href="https://foundrylocal.ai" class="externalLink">Microsoft Foundry Local</a> lets you run AI models locally on your own device with an OpenAI-compatible API. Install it via the Foundry Local CLI, then point the SDK at your local endpoint:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setProvider(new ProviderConfig()
             .setType(&quot;openai&quot;)
             .setBaseUrl(&quot;http://localhost:&lt;PORT&gt;/v1&quot;))
@@ -442,7 +493,7 @@ foundry service status
 <p>When enabled (default), the session automatically compacts older messages as the context window fills up.</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setInfiniteSessions(new InfiniteSessionConfig()
             .setEnabled(true)
             .setBackgroundCompactionThreshold(0.80)  // Start compacting at 80%
@@ -479,7 +530,7 @@ session.on(SessionCompactionCompleteEvent.class, complete -&gt; {
 );
 
 var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setMcpServers(Map.of(&quot;filesystem&quot;, server))
 ).get();
 </code></pre>
@@ -495,7 +546,7 @@ var session = client.createSession(
     .setTools(List.of(&quot;read_file&quot;, &quot;search_code&quot;));
 
 var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setCustomAgents(List.of(reviewer))
 ).get();
 
@@ -555,7 +606,7 @@ session.send(&quot;@code-reviewer Review src/Main.java&quot;).get();
 );
 
 var session = client.createSession(
-    new SessionConfig().setCustomAgents(agents)
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setCustomAgents(agents)
 ).get();
 </code></pre>
 <p>See <a href="apidocs/com/github/copilot/sdk/json/CustomAgentConfig.html">CustomAgentConfig</a> Javadoc for full details.</p><hr /></section></section><section><a id="Skills_Configuration"></a>
@@ -565,7 +616,7 @@ var session = client.createSession(
 <p>Skills are loaded from <code>SKILL.md</code> files in subdirectories of the specified skill directories:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setSkillDirectories(List.of(&quot;/path/to/skills&quot;))
 ).get();
 </code></pre>
@@ -584,7 +635,7 @@ Your skill instructions go here...
 <p>Disable specific skills by name:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setSkillDirectories(List.of(&quot;/path/to/skills&quot;))
         .setDisabledSkills(List.of(&quot;my-skill&quot;))
 ).get();
@@ -593,7 +644,7 @@ Your skill instructions go here...
 <p>Use a custom configuration directory for session settings:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setConfigDir(&quot;/path/to/custom/config&quot;)
 ).get();
 </code></pre>
@@ -602,7 +653,7 @@ Your skill instructions go here...
 <p>Handle user input requests when the AI uses the <code>ask_user</code> tool to gather information from the user.</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setOnUserInputRequest((request, invocation) -&gt; {
             System.out.println(&quot;Agent asks: &quot; + request.getQuestion());
             
@@ -645,7 +696,7 @@ Your skill instructions go here...
 <p>Approve or deny permission requests from the AI.</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setOnPermissionRequest((request, invocation) -&gt; {
             // Inspect request and approve/deny
             var result = new PermissionRequestResult();
@@ -668,7 +719,7 @@ Your skill instructions go here...
     });
 
 var session = client.createSession(
-    new SessionConfig().setHooks(hooks)
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setHooks(hooks)
 ).get();
 </code></pre>
 <p>&#x1f4d6; <strong><a href="hooks.html">Full Session Hooks documentation &#x2192;</a></strong> for all 5 hook types, inputs/outputs, and examples.</p><hr /></section><section><a id="Manual_Server_Control"></a>

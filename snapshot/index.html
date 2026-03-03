@@ -232,7 +232,7 @@ public class Example {
             client.start().get();
             
             var session = client.createSession(
-                new SessionConfig().setModel(&quot;claude-sonnet-4.5&quot;)
+                new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;claude-sonnet-4.5&quot;)
             ).get();
 
             var done = new CompletableFuture&lt;Void&gt;();
@@ -286,7 +286,7 @@ class hello {
     public static void main(String[] args) throws Exception {
         try (var client = new CopilotClient()) {
             client.start().get();
-            var session = client.createSession(new SessionConfig()).get();
+            var session = client.createSession(new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
             var done = new CompletableFuture&lt;Void&gt;();
             session.on(AssistantMessageEvent.class, msg -&gt; {
                 System.out.print(msg.getData().getContent());

@@ -215,7 +215,7 @@
 <pre class="prettyprint"><code class="language-java">try (var client = new CopilotClient()) {
     client.start().get();
     var session = client.createSession(
-        new SessionConfig().setModel(&quot;gpt-4.1&quot;)
+        new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;gpt-4.1&quot;)
     ).get();
     // Use session...
 }
@@ -241,7 +241,7 @@
 try (var client = new CopilotClient(options)) {
     client.start().get();
     var session = client.createSession(
-        new SessionConfig().setModel(&quot;gpt-4.1&quot;)
+        new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;gpt-4.1&quot;)
     ).get();
     // Requests are made on behalf of the authenticated user
 }

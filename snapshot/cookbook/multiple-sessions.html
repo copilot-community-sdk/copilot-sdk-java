@@ -212,11 +212,11 @@ public class MultipleSessions {
 
             // Create multiple independent sessions
             var session1 = client.createSession(
-                new SessionConfig().setModel(&quot;gpt-5&quot;)).get();
+                new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;gpt-5&quot;)).get();
             var session2 = client.createSession(
-                new SessionConfig().setModel(&quot;gpt-5&quot;)).get();
+                new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;gpt-5&quot;)).get();
             var session3 = client.createSession(
-                new SessionConfig().setModel(&quot;claude-sonnet-4.5&quot;)).get();
+                new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;claude-sonnet-4.5&quot;)).get();
 
             // Set up event handlers for each session
             session1.on(AssistantMessageEvent.class, msg -&gt; 
@@ -257,7 +257,7 @@ public class MultipleSessions {
 <p>Use custom IDs for easier tracking:</p>
 
 <pre class="prettyprint"><code class="language-java">var session = client.createSession(
-    new SessionConfig()
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
         .setSessionId(&quot;user-123-chat&quot;)
         .setModel(&quot;gpt-5&quot;)
 ).get();
@@ -290,9 +290,9 @@ public class ParallelSessions {
     public static void runParallelSessions(CopilotClient client) throws Exception {
         // Create sessions in parallel
         var sessionFutures = List.of(
-            client.createSession(new SessionConfig().setModel(&quot;gpt-5&quot;)),
-            client.createSession(new SessionConfig().setModel(&quot;gpt-5&quot;)),
-            client.createSession(new SessionConfig().setModel(&quot;claude-sonnet-4.5&quot;))
+            client.createSession(new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;gpt-5&quot;)),
+            client.createSession(new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;gpt-5&quot;)),
+            client.createSession(new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;claude-sonnet-4.5&quot;))
         );
 
         // Wait for all sessions to be created

@@ -1,5 +1,5 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,ToolDefinition,0,23,0,0,0,2,0,2,0,2
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,ToolDefinition,37,0,0,0,3,0,3,0,3,0
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,SessionEndHookInput,0,18,0,0,0,1,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,JsonRpcRequest,0,31,0,0,0,13,0,9,0,9
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,SessionConfig,46,301,6,22,4,79,8,48,2,40
@@ -171,7 +171,7 @@ GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,LifecycleEventManage
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,EventErrorPolicy,0,15,0,0,0,3,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,SessionRequestBuilder,1,295,2,40,1,72,2,23,0,4
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,ConnectionState,0,27,0,0,0,5,0,1,0,1
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotSession,137,777,11,55,30,202,15,70,7,43
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotSession,928,0,66,0,234,0,86,0,51,0
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotSession.AgentSelectResponse,6,0,0,0,1,0,1,0,1,0
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,RpcHandlerDispatcher,116,624,3,39,37,140,4,44,1,26
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient.Connection,0,9,0,0,0,1,0,1,0,1

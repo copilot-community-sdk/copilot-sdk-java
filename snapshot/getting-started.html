@@ -237,7 +237,7 @@ public class HelloCopilot {
             client.start().get();
             
             var session = client.createSession(
-                new SessionConfig().setModel(&quot;gpt-4.1&quot;)
+                new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;gpt-4.1&quot;)
             ).get();
 
             var response = session.sendAndWait(
@@ -273,7 +273,7 @@ public class StreamingExample {
             client.start().get();
             
             var session = client.createSession(
-                new SessionConfig()
+                new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
                     .setModel(&quot;gpt-4.1&quot;)
                     .setStreaming(true)
             ).get();
@@ -345,7 +345,7 @@ public class ToolExample {
             );
 
             var session = client.createSession(
-                new SessionConfig()
+                new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
                     .setModel(&quot;gpt-4.1&quot;)
                     .setStreaming(true)
                     .setTools(List.of(getWeather))
@@ -416,7 +416,7 @@ public class WeatherAssistant {
             );
 
             var session = client.createSession(
-                new SessionConfig()
+                new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
                     .setModel(&quot;gpt-4.1&quot;)
                     .setStreaming(true)
                     .setTools(List.of(getWeather))
