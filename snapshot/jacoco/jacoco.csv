@@ -5,6 +5,7 @@ GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,JsonRpcRequest,
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,SessionConfig,46,301,6,22,4,79,8,48,2,40
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,ToolBinaryResult,15,0,0,0,1,0,1,0,1,0
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,JsonRpcResponse,0,31,0,0,0,13,0,9,0,9
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,PermissionRequestResultKind,2,60,1,5,1,15,1,8,0,6
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,SessionLifecycleEventMetadata,0,12,0,0,0,1,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,GetStatusResponse,0,19,0,0,0,7,0,5,0,5
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,HookInvocation,0,11,0,0,0,4,0,3,0,3
@@ -12,7 +13,7 @@ GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,DeleteSessionRe
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,ModelCapabilities,0,19,0,0,0,7,0,5,0,5
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,UserInputRequest,5,28,1,1,1,9,2,6,1,6
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,PostToolUseHookOutput,12,0,0,0,1,0,1,0,1,0
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,GetLastSessionIdResponse,6,0,0,0,1,0,1,0,1,0
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,GetLastSessionIdResponse,0,6,0,0,0,1,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,PermissionInvocation,0,11,0,0,0,4,0,3,0,3
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,SendMessageRequest,3,34,1,1,0,13,1,9,0,9
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,PermissionHandler,0,10,0,0,0,2,0,2,0,2
@@ -25,7 +26,7 @@ GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,SessionStartHoo
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,PreToolUseHookOutput,27,36,0,0,3,3,3,3,3,3
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,PreToolUseHookInput,9,26,0,0,3,10,3,6,3,6
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,CreateSessionResponse,0,9,0,0,0,1,0,1,0,1
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,PermissionRequestResult,5,14,0,0,2,5,1,4,1,4
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,PermissionRequestResult,6,23,1,1,2,7,2,5,1,5
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,SessionHooks,0,62,2,8,0,17,2,15,0,12
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,SessionContext,0,35,0,0,0,13,0,9,0,9
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk.json,ResumeSessionResponse,0,9,0,0,0,1,0,1,0,1
@@ -171,12 +172,12 @@ GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,LifecycleEventManage
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,EventErrorPolicy,0,15,0,0,0,3,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,SessionRequestBuilder,1,295,2,40,1,72,2,23,0,4
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,ConnectionState,0,27,0,0,0,5,0,1,0,1
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotSession,151,777,11,55,32,202,16,70,8,43
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotSession,151,777,10,56,32,202,15,71,8,43
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotSession.AgentSelectResponse,6,0,0,0,1,0,1,0,1,0
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,RpcHandlerDispatcher,116,624,3,39,37,140,4,44,1,26
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,RpcHandlerDispatcher,116,624,2,40,37,140,3,45,1,26
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient.Connection,0,9,0,0,0,1,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,SdkProtocolVersion,0,24,0,0,0,7,0,4,0,4
-GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient,149,677,24,58,33,148,28,61,7,41
+GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotClient,135,691,24,58,30,151,26,63,5,43
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CliServerManager.ProcessInfo,0,9,0,0,0,1,0,1,0,1
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,CopilotSession.AgentGetCurrentResponse,6,0,0,0,1,0,1,0,1,0
 GitHub Copilot Community SDK :: Java,com.github.copilot.sdk,SystemMessageMode,0,28,0,0,0,7,0,3,0,3

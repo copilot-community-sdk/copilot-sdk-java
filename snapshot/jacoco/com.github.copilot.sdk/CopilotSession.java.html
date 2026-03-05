@@ -781,7 +781,7 @@ public final class CopilotSession implements AutoCloseable {
 <span class="fc bfc" id="L781" title="All 2 branches covered.">                        for (JsonNode eventNode : response.events()) {</span>
                             try {
 <span class="fc" id="L783">                                AbstractSessionEvent event = SessionEventParser.parse(eventNode);</span>
-<span class="pc bpc" id="L784" title="1 of 2 branches missed.">                                if (event != null) {</span>
+<span class="fc bfc" id="L784" title="All 2 branches covered.">                                if (event != null) {</span>
 <span class="fc" id="L785">                                    events.add(event);</span>
                                 }
 <span class="nc" id="L787">                            } catch (Exception e) {</span>

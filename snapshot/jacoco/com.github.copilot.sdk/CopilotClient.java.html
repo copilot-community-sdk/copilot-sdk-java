@@ -463,9 +463,9 @@ public final class CopilotClient implements AutoCloseable {
      * @see #resumeSession(String, com.github.copilot.sdk.json.ResumeSessionConfig)
      */
     public CompletableFuture&lt;String&gt; getLastSessionId() {
-<span class="nc" id="L466">        return ensureConnected().thenCompose(</span>
-<span class="nc" id="L467">                connection -&gt; connection.rpc.invoke(&quot;session.getLastId&quot;, Map.of(), GetLastSessionIdResponse.class)</span>
-<span class="nc" id="L468">                        .thenApply(GetLastSessionIdResponse::sessionId));</span>
+<span class="fc" id="L466">        return ensureConnected().thenCompose(</span>
+<span class="fc" id="L467">                connection -&gt; connection.rpc.invoke(&quot;session.getLastId&quot;, Map.of(), GetLastSessionIdResponse.class)</span>
+<span class="fc" id="L468">                        .thenApply(GetLastSessionIdResponse::sessionId));</span>
     }
 
     /**

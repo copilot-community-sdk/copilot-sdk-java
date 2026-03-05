@@ -46,7 +46,7 @@ public interface PermissionHandler {
      * @since 1.0.11
      */
 <span class="fc" id="L48">    PermissionHandler APPROVE_ALL = (request, invocation) -&gt; CompletableFuture</span>
-<span class="fc" id="L49">            .completedFuture(new PermissionRequestResult().setKind(&quot;approved&quot;));</span>
+<span class="fc" id="L49">            .completedFuture(new PermissionRequestResult().setKind(PermissionRequestResultKind.APPROVED));</span>
 
     /**
      * Handles a permission request from the assistant.
