@@ -557,15 +557,27 @@ Approve or deny permission requests from the AI.
 
 ```java
 var session = client.createSession(
-    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
-        .setOnPermissionRequest((request, invocation) -> {
-            // Inspect request and approve/deny
-            var result = new PermissionRequestResult();
-            result.setKind("user-approved");
-            return CompletableFuture.completedFuture(result);
-        })
+    new SessionConfig().setOnPermissionRequest((request, invocation) -> {
+        // Inspect request and approve/deny using typed constants
+        var result = new PermissionRequestResult();
+        result.setKind(PermissionRequestResultKind.APPROVED);
+        return CompletableFuture.completedFuture(result);
+    })
 ).get();
 ```
+
+The `PermissionRequestResultKind` class provides well-known constants for common outcomes:
+
+| Constant | Value | Meaning |
+|---|---|---|
+| `PermissionRequestResultKind.APPROVED` | `"approved"` | The permission was approved |
+| `PermissionRequestResultKind.DENIED_BY_RULES` | `"denied-by-rules"` | Denied by policy rules |
+| `PermissionRequestResultKind.DENIED_COULD_NOT_REQUEST_FROM_USER` | `"denied-no-approval-rule-and-could-not-request-from-user"` | No rule and user could not be prompted |
+| `PermissionRequestResultKind.DENIED_INTERACTIVELY_BY_USER` | `"denied-interactively-by-user"` | User denied interactively |
+
+You can also pass a raw string to `setKind(String)` for custom or extension values. Use
+[`PermissionHandler.APPROVE_ALL`](apidocs/com/github/copilot/sdk/json/PermissionHandler.html) to approve all
+requests without writing a handler.
 
 ---
 
