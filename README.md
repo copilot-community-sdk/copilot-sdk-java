@@ -102,9 +102,9 @@ jbang https://github.com/copilot-community-sdk/copilot-sdk-java/blob/latest/jban
 
 ### Quick Links
 
-- [Getting Started](https://copilot-community-sdk.github.io/copilot-sdk-java/documentation.html)
-- [Javadoc API Reference](https://copilot-community-sdk.github.io/copilot-sdk-java/apidocs/)
-- [MCP Servers Integration](https://copilot-community-sdk.github.io/copilot-sdk-java/mcp.html)
+- [Getting Started](https://copilot-community-sdk.github.io/copilot-sdk-java/latest/documentation.html)
+- [Javadoc API Reference](https://copilot-community-sdk.github.io/copilot-sdk-java/latest/apidocs/)
+- [MCP Servers Integration](https://copilot-community-sdk.github.io/copilot-sdk-java/latest/mcp.html)
 - [Cookbook](src/site/markdown/cookbook/) — Practical recipes for common use cases
 
 ## Projects Using This SDK
