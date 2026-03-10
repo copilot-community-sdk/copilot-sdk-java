@@ -140,4 +140,24 @@ class ConfigCloneTest {
         MessageOptions msgClone = msg.clone();
         assertNull(msgClone.getMode());
     }
+
+    @Test
+    void sessionConfigCloneCopiesAgentProperty() {
+        SessionConfig original = new SessionConfig();
+        original.setAgent("test-agent");
+
+        SessionConfig cloned = original.clone();
+
+        assertEquals("test-agent", cloned.getAgent());
+    }
+
+    @Test
+    void resumeSessionConfigCloneCopiesAgentProperty() {
+        ResumeSessionConfig original = new ResumeSessionConfig();
+        original.setAgent("test-agent");
+
+        ResumeSessionConfig cloned = original.clone();
+
+        assertEquals("test-agent", cloned.getAgent());
+    }
 }

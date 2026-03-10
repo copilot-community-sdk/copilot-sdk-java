@@ -14,7 +14,7 @@ package com.github.copilot.sdk;
  */
 public enum SdkProtocolVersion {
 
-    LATEST(2);
+    LATEST(3), MINIMUM(2);
 
     private int versionNumber;
 
@@ -33,5 +33,14 @@ public enum SdkProtocolVersion {
      */
     public static int get() {
         return LATEST.getVersionNumber();
+    }
+
+    /**
+     * Gets the minimum supported server protocol version.
+     *
+     * @return the minimum protocol version
+     */
+    public static int getMinimum() {
+        return MINIMUM.getVersionNumber();
     }
 }

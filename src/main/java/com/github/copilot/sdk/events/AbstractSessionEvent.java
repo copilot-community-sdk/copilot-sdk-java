@@ -56,6 +56,12 @@ public abstract sealed class AbstractSessionEvent permits
         SessionHandoffEvent, SessionTruncationEvent, SessionSnapshotRewindEvent, SessionUsageInfoEvent,
         SessionCompactionStartEvent, SessionCompactionCompleteEvent, SessionShutdownEvent, SessionContextChangedEvent,
         SessionTaskCompleteEvent,
+        // External tool events
+        ExternalToolRequestedEvent, ExternalToolCompletedEvent,
+        // Command events
+        CommandQueuedEvent, CommandCompletedEvent,
+        // Exit plan mode events
+        ExitPlanModeRequestedEvent, ExitPlanModeCompletedEvent,
         // Assistant events
         AssistantTurnStartEvent, AssistantIntentEvent, AssistantReasoningEvent, AssistantReasoningDeltaEvent,
         AssistantMessageEvent, AssistantMessageDeltaEvent, AssistantStreamingDeltaEvent, AssistantTurnEndEvent,
@@ -69,7 +75,9 @@ public abstract sealed class AbstractSessionEvent permits
         SkillInvokedEvent,
         // Other events
         SubagentStartedEvent, SubagentCompletedEvent, SubagentFailedEvent, SubagentSelectedEvent,
-        SubagentDeselectedEvent, HookStartEvent, HookEndEvent, SystemMessageEvent {
+        SubagentDeselectedEvent, HookStartEvent, HookEndEvent, SystemMessageEvent,
+        // System notification event
+        SystemNotificationEvent {
 
     @JsonProperty("id")
     private UUID id;

@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.copilot.sdk.events.AbstractSessionEvent;
 import com.github.copilot.sdk.events.AssistantMessageEvent;
+import com.github.copilot.sdk.events.ExternalToolRequestedEvent;
 import com.github.copilot.sdk.events.SessionErrorEvent;
 import com.github.copilot.sdk.events.SessionEventParser;
 import com.github.copilot.sdk.events.SessionIdleEvent;
@@ -551,6 +552,11 @@ public final class CopilotSession implements AutoCloseable {
      * @see #setEventErrorPolicy(EventErrorPolicy)
      */
     void dispatchEvent(AbstractSessionEvent event) {
+        // Handle broadcast request events (protocol v3) before dispatching to user
+        // handlers.
+        // Fire-and-forget: the response is sent asynchronously via RPC.
+        handleBroadcastEventAsync(event);
+
         for (Consumer<AbstractSessionEvent> handler : eventHandlers) {
             try {
                 handler.accept(event);
@@ -570,6 +576,80 @@ public final class CopilotSession implements AutoCloseable {
                 }
             }
         }
+    }
+
+    /**
+     * Handles broadcast request events by executing local handlers and responding
+     * via RPC. Implements the protocol v3 broadcast model where tool calls and
+     * permission requests are broadcast as session events to all clients.
+     */
+    private void handleBroadcastEventAsync(AbstractSessionEvent event) {
+        if (event instanceof ExternalToolRequestedEvent toolEvent) {
+            var data = toolEvent.getData();
+            if (data == null || data.requestId() == null || data.toolName() == null) {
+                return;
+            }
+            ToolDefinition tool = toolHandlers.get(data.toolName());
+            if (tool == null) {
+                return; // This client doesn't handle this tool; another client will.
+            }
+            executeToolAndRespondAsync(data.requestId(), data.toolCallId(), data.toolName(), data.arguments(), tool);
+        }
+    }
+
+    /**
+     * Executes a tool handler and sends the result back via the
+     * {@code session.tools.handlePendingToolCall} RPC.
+     */
+    private void executeToolAndRespondAsync(String requestId, String toolCallId, String toolName, Object arguments,
+            ToolDefinition tool) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                var invocation = new com.github.copilot.sdk.json.ToolInvocation().setSessionId(sessionId)
+                        .setToolCallId(toolCallId).setToolName(toolName);
+                if (arguments instanceof com.fasterxml.jackson.databind.JsonNode jsonNode) {
+                    invocation.setArguments(jsonNode);
+                } else if (arguments != null) {
+                    invocation.setArguments(MAPPER.valueToTree(arguments));
+                }
+
+                tool.handler().invoke(invocation).thenAccept(result -> {
+                    try {
+                        com.github.copilot.sdk.json.ToolResultObject toolResult;
+                        if (result instanceof com.github.copilot.sdk.json.ToolResultObject tr) {
+                            toolResult = tr;
+                        } else {
+                            toolResult = com.github.copilot.sdk.json.ToolResultObject
+                                    .success(result instanceof String s ? s : MAPPER.writeValueAsString(result));
+                        }
+                        rpc.invoke("session.tools.handlePendingToolCall",
+                                Map.of("sessionId", sessionId, "requestId", requestId, "result", toolResult),
+                                Void.class);
+                    } catch (Exception e) {
+                        LOG.log(Level.SEVERE, "Error sending tool result via handlePendingToolCall", e);
+                    }
+                }).exceptionally(ex -> {
+                    try {
+                        rpc.invoke("session.tools.handlePendingToolCall",
+                                Map.of("sessionId", sessionId, "requestId", requestId, "error",
+                                        ex.getMessage() != null ? ex.getMessage() : "Tool invocation failed"),
+                                Void.class);
+                    } catch (Exception e) {
+                        LOG.log(Level.SEVERE, "Error sending tool error via handlePendingToolCall", e);
+                    }
+                    return null;
+                });
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Error executing broadcast tool call", e);
+                try {
+                    rpc.invoke("session.tools.handlePendingToolCall", Map.of("sessionId", sessionId, "requestId",
+                            requestId, "error", e.getMessage() != null ? e.getMessage() : "Tool invocation failed"),
+                            Void.class);
+                } catch (Exception ex) {
+                    LOG.log(Level.SEVERE, "Error sending tool error response", ex);
+                }
+            }
+        });
     }
 
     /**
@@ -835,6 +915,60 @@ public final class CopilotSession implements AutoCloseable {
     public CompletableFuture<Void> setModel(String model) {
         ensureNotTerminated();
         return rpc.invoke("session.model.switchTo", Map.of("sessionId", sessionId, "modelId", model), Void.class);
+    }
+
+    /**
+     * Logs a message to the session timeline.
+     * <p>
+     * The message appears in the session event stream and is visible to SDK
+     * consumers. Non-ephemeral messages are also persisted to the session event log
+     * on disk.
+     *
+     * <pre>{@code
+     * session.log("Build completed successfully").get();
+     * session.log("Disk space low", "warning", false).get();
+     * session.log("Temporary status", "info", true).get();
+     * }</pre>
+     *
+     * @param message
+     *            the message to log
+     * @return a future that completes when the log entry is acknowledged
+     * @throws IllegalStateException
+     *             if this session has been terminated
+     * @since 1.0.0
+     */
+    public CompletableFuture<Void> log(String message) {
+        return log(message, null, null);
+    }
+
+    /**
+     * Logs a message with a severity level to the session timeline.
+     *
+     * @param message
+     *            the message to log
+     * @param level
+     *            the severity level: {@code "info"}, {@code "warning"}, or
+     *            {@code "error"}; or {@code null} for the default ({@code "info"})
+     * @param ephemeral
+     *            when {@code true}, the message is transient and not persisted to
+     *            disk; or {@code null} for the default ({@code false})
+     * @return a future that completes when the log entry is acknowledged
+     * @throws IllegalStateException
+     *             if this session has been terminated
+     * @since 1.0.0
+     */
+    public CompletableFuture<Void> log(String message, String level, Boolean ephemeral) {
+        ensureNotTerminated();
+        var params = new java.util.LinkedHashMap<String, Object>();
+        params.put("sessionId", sessionId);
+        params.put("message", message);
+        if (level != null) {
+            params.put("level", level);
+        }
+        if (ephemeral != null) {
+            params.put("ephemeral", ephemeral);
+        }
+        return rpc.invoke("session.log", params, Void.class);
     }
 
     /**

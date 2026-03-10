@@ -54,6 +54,7 @@ final class SessionRequestBuilder {
         request.setStreaming(config.isStreaming() ? true : null);
         request.setMcpServers(config.getMcpServers());
         request.setCustomAgents(config.getCustomAgents());
+        request.setAgent(config.getAgent());
         request.setInfiniteSessions(config.getInfiniteSessions());
         request.setSkillDirectories(config.getSkillDirectories());
         request.setDisabledSkills(config.getDisabledSkills());
@@ -99,6 +100,7 @@ final class SessionRequestBuilder {
         request.setStreaming(config.isStreaming() ? true : null);
         request.setMcpServers(config.getMcpServers());
         request.setCustomAgents(config.getCustomAgents());
+        request.setAgent(config.getAgent());
         request.setSkillDirectories(config.getSkillDirectories());
         request.setDisabledSkills(config.getDisabledSkills());
         request.setInfiniteSessions(config.getInfiniteSessions());

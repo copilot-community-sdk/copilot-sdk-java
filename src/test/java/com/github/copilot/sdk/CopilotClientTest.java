@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.github.copilot.sdk.json.CopilotClientOptions;
+import com.github.copilot.sdk.json.ModelInfo;
 import com.github.copilot.sdk.json.PermissionHandler;
 import com.github.copilot.sdk.json.PingResponse;
 import com.github.copilot.sdk.json.SessionConfig;
@@ -20,8 +21,10 @@ import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -492,6 +495,61 @@ public class CopilotClientTest {
     void testNullOptionsDefaultsToEmpty() {
         try (var client = new CopilotClient(null)) {
             assertEquals(ConnectionState.DISCONNECTED, client.getState());
+        }
+    }
+
+    // ===== onListModels handler =====
+
+    @Test
+    void testListModelsWithCustomHandlerCallsHandler() throws Exception {
+        var customModels = List.of(new ModelInfo().setId("my-custom-model").setName("My Custom Model"));
+
+        var callCount = new AtomicInteger(0);
+        var options = new CopilotClientOptions().setAutoStart(false).setOnListModels(() -> {
+            callCount.incrementAndGet();
+            return CompletableFuture.completedFuture(customModels);
+        });
+
+        try (var client = new CopilotClient(options)) {
+            var models = client.listModels().get();
+            assertEquals(1, callCount.get());
+            assertEquals(1, models.size());
+            assertEquals("my-custom-model", models.get(0).getId());
+        }
+    }
+
+    @Test
+    void testListModelsWithCustomHandlerCachesResults() throws Exception {
+        var customModels = List.of(new ModelInfo().setId("cached-model").setName("Cached Model"));
+
+        var callCount = new AtomicInteger(0);
+        var options = new CopilotClientOptions().setAutoStart(false).setOnListModels(() -> {
+            callCount.incrementAndGet();
+            return CompletableFuture.completedFuture(customModels);
+        });
+
+        try (var client = new CopilotClient(options)) {
+            client.listModels().get();
+            client.listModels().get();
+            assertEquals(1, callCount.get()); // Only called once due to caching
+        }
+    }
+
+    @Test
+    void testListModelsWithCustomHandlerWorksWithoutStart() throws Exception {
+        var customModels = List.of(new ModelInfo().setId("no-start-model").setName("No Start Model"));
+
+        var callCount = new AtomicInteger(0);
+        var options = new CopilotClientOptions().setAutoStart(false).setOnListModels(() -> {
+            callCount.incrementAndGet();
+            return CompletableFuture.completedFuture(customModels);
+        });
+
+        try (var client = new CopilotClient(options)) {
+            var models = client.listModels().get();
+            assertEquals(1, callCount.get());
+            assertEquals(1, models.size());
+            assertEquals("no-start-model", models.get(0).getId());
         }
     }
 }

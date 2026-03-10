@@ -189,21 +189,23 @@ public final class CopilotClient implements AutoCloseable {
     }
 
     private void verifyProtocolVersion(Connection connection) throws Exception {
-        int expectedVersion = SdkProtocolVersion.get();
+        int sdkVersion = SdkProtocolVersion.get();
+        int minVersion = SdkProtocolVersion.getMinimum();
         var params = new HashMap<String, Object>();
         params.put("message", null);
         PingResponse pingResponse = connection.rpc.invoke("ping", params, PingResponse.class).get(30, TimeUnit.SECONDS);
 
         if (pingResponse.protocolVersion() == null) {
-            throw new RuntimeException("SDK protocol version mismatch: SDK expects version " + expectedVersion
+            throw new RuntimeException("SDK protocol version mismatch: SDK expects version " + sdkVersion
                     + ", but server does not report a protocol version. "
                     + "Please update your server to ensure compatibility.");
         }
 
-        if (pingResponse.protocolVersion() != expectedVersion) {
-            throw new RuntimeException("SDK protocol version mismatch: SDK expects version " + expectedVersion
-                    + ", but server reports version " + pingResponse.protocolVersion() + ". "
-                    + "Please update your SDK or server to ensure compatibility.");
+        int serverVersion = pingResponse.protocolVersion().intValue();
+        if (serverVersion < minVersion) {
+            throw new RuntimeException("SDK protocol version mismatch: SDK requires at least version " + minVersion
+                    + ", but server reports version " + serverVersion + ". "
+                    + "Please update your server to ensure compatibility.");
         }
     }
 
@@ -443,6 +445,22 @@ public final class CopilotClient implements AutoCloseable {
         List<ModelInfo> cached = modelsCache;
         if (cached != null) {
             return CompletableFuture.completedFuture(new ArrayList<>(cached));
+        }
+
+        // If a custom handler is configured, use it instead of querying the CLI
+        var onListModels = options.getOnListModels();
+        if (onListModels != null) {
+            synchronized (modelsCacheLock) {
+                if (modelsCache != null) {
+                    return CompletableFuture.completedFuture(new ArrayList<>(modelsCache));
+                }
+            }
+            return onListModels.get().thenApply(models -> {
+                synchronized (modelsCacheLock) {
+                    modelsCache = models;
+                }
+                return new ArrayList<>(models);
+            });
         }
 
         return ensureConnected().thenCompose(connection -> {
