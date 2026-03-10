@@ -140,4 +140,36 @@ class ConfigCloneTest {
         MessageOptions msgClone = msg.clone();
         assertNull(msgClone.getMode());
     }
+
+    @Test
+    void sessionConfigAgentCopiedByClone() {
+        SessionConfig original = new SessionConfig();
+        original.setAgent("custom-agent");
+
+        SessionConfig cloned = original.clone();
+
+        assertEquals("custom-agent", cloned.getAgent());
+    }
+
+    @Test
+    void resumeSessionConfigAgentCopiedByClone() {
+        ResumeSessionConfig original = new ResumeSessionConfig();
+        original.setAgent("resume-agent");
+
+        ResumeSessionConfig cloned = original.clone();
+
+        assertEquals("resume-agent", cloned.getAgent());
+    }
+
+    @Test
+    void copilotClientOptionsOnListModelsCopiedByClone() {
+        java.util.function.Supplier<java.util.concurrent.CompletableFuture<java.util.List<com.github.copilot.sdk.json.ModelInfo>>> handler = () -> java.util.concurrent.CompletableFuture
+                .completedFuture(java.util.List.of());
+        CopilotClientOptions original = new CopilotClientOptions();
+        original.setOnListModels(handler);
+
+        CopilotClientOptions cloned = original.clone();
+
+        assertSame(handler, cloned.getOnListModels());
+    }
 }

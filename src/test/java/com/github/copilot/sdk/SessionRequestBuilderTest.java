@@ -237,4 +237,44 @@ public class SessionRequestBuilderTest {
         constructor.setAccessible(true);
         return constructor.newInstance("builder-test-session", null, null);
     }
+
+    // =========================================================================
+    // agent field tests
+    // =========================================================================
+
+    @Test
+    void testBuildCreateRequestWithAgent() {
+        var config = new SessionConfig().setAgent("my-agent");
+
+        CreateSessionRequest request = SessionRequestBuilder.buildCreateRequest(config);
+
+        assertEquals("my-agent", request.getAgent());
+    }
+
+    @Test
+    void testBuildCreateRequestAgentNullByDefault() {
+        var config = new SessionConfig();
+
+        CreateSessionRequest request = SessionRequestBuilder.buildCreateRequest(config);
+
+        assertNull(request.getAgent());
+    }
+
+    @Test
+    void testBuildResumeRequestWithAgent() {
+        var config = new ResumeSessionConfig().setAgent("resume-agent");
+
+        ResumeSessionRequest request = SessionRequestBuilder.buildResumeRequest("sess-123", config);
+
+        assertEquals("resume-agent", request.getAgent());
+    }
+
+    @Test
+    void testBuildResumeRequestAgentNullByDefault() {
+        var config = new ResumeSessionConfig();
+
+        ResumeSessionRequest request = SessionRequestBuilder.buildResumeRequest("sess-456", config);
+
+        assertNull(request.getAgent());
+    }
 }

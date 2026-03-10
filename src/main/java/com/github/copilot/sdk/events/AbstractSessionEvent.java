@@ -69,7 +69,10 @@ public abstract sealed class AbstractSessionEvent permits
         SkillInvokedEvent,
         // Other events
         SubagentStartedEvent, SubagentCompletedEvent, SubagentFailedEvent, SubagentSelectedEvent,
-        SubagentDeselectedEvent, HookStartEvent, HookEndEvent, SystemMessageEvent {
+        SubagentDeselectedEvent, HookStartEvent, HookEndEvent, SystemMessageEvent, SystemNotificationEvent,
+        // Protocol v3 broadcast events
+        ExternalToolRequestedEvent, ExternalToolCompletedEvent, PermissionRequestedEvent, CommandQueuedEvent,
+        CommandCompletedEvent, ExitPlanModeRequestedEvent, ExitPlanModeCompletedEvent {
 
     @JsonProperty("id")
     private UUID id;

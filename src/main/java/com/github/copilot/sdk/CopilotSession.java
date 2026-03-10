@@ -38,12 +38,14 @@ import com.github.copilot.sdk.json.PermissionHandler;
 import com.github.copilot.sdk.json.PermissionInvocation;
 import com.github.copilot.sdk.json.PermissionRequest;
 import com.github.copilot.sdk.json.PermissionRequestResult;
+import com.github.copilot.sdk.json.PermissionRequestResultKind;
 import com.github.copilot.sdk.json.PostToolUseHookInput;
 import com.github.copilot.sdk.json.PreToolUseHookInput;
 import com.github.copilot.sdk.json.SendMessageRequest;
 import com.github.copilot.sdk.json.SendMessageResponse;
 import com.github.copilot.sdk.json.SessionEndHookInput;
 import com.github.copilot.sdk.json.SessionHooks;
+import com.github.copilot.sdk.json.SessionLogRequestLevel;
 import com.github.copilot.sdk.json.SessionStartHookInput;
 import com.github.copilot.sdk.json.ToolDefinition;
 import com.github.copilot.sdk.json.UserInputHandler;
@@ -573,6 +575,118 @@ public final class CopilotSession implements AutoCloseable {
     }
 
     /**
+     * Handles broadcast request events (protocol v3) by executing the appropriate
+     * handler and responding via RPC. This implements the protocol v3 broadcast
+     * model where tool calls and permission requests are broadcast as session
+     * events to all listening clients.
+     * <p>
+     * Fire-and-forget: called asynchronously so handler errors do not interrupt
+     * event dispatch to user listeners.
+     */
+    private void handleBroadcastEvent(AbstractSessionEvent event) {
+        if (event instanceof ExternalToolRequestedEvent toolEvent) {
+            var data = toolEvent.getData();
+            if (data == null || data.getRequestId() == null || data.getToolName() == null) {
+                return;
+            }
+            ToolDefinition tool = getTool(data.getToolName());
+            if (tool == null) {
+                return; // This client doesn't handle this tool; another client will.
+            }
+            executeToolAndRespond(data.getRequestId(), data.getToolCallId(), data.getToolName(), data.getArguments(),
+                    tool);
+        } else if (event instanceof PermissionRequestedEvent permEvent) {
+            var data = permEvent.getData();
+            if (data == null || data.requestId() == null || data.permissionRequest() == null) {
+                return;
+            }
+            PermissionHandler handler = permissionHandler.get();
+            if (handler == null) {
+                return; // This client doesn't handle permissions; another client will.
+            }
+            executePermissionAndRespond(data.requestId(), data.permissionRequest(), handler);
+        }
+    }
+
+    /**
+     * Executes a tool handler and sends the result back via the
+     * {@code session.tools.handlePendingToolCall} RPC.
+     */
+    private void executeToolAndRespond(String requestId, String toolCallId, String toolName, JsonNode arguments,
+            ToolDefinition tool) {
+        var invocation = new com.github.copilot.sdk.json.ToolInvocation();
+        invocation.setSessionId(sessionId);
+        invocation.setToolCallId(toolCallId);
+        invocation.setToolName(toolName);
+        invocation.setArguments(arguments);
+
+        tool.handler().invoke(invocation).whenComplete((result, ex) -> {
+            try {
+                var params = new java.util.HashMap<String, Object>();
+                params.put("sessionId", sessionId);
+                params.put("requestId", requestId);
+                if (ex != null) {
+                    params.put("error", ex.getMessage());
+                } else {
+                    com.github.copilot.sdk.json.ToolResultObject toolResult;
+                    if (result instanceof com.github.copilot.sdk.json.ToolResultObject tr) {
+                        toolResult = tr;
+                    } else {
+                        toolResult = com.github.copilot.sdk.json.ToolResultObject
+                                .success(result instanceof String s ? s : MAPPER.writeValueAsString(result));
+                    }
+                    params.put("result", toolResult);
+                }
+                rpc.invoke("session.tools.handlePendingToolCall", params, Void.class).whenComplete((v, rpcEx) -> {
+                    if (rpcEx != null) {
+                        LOG.log(Level.WARNING, "Failed to respond to tool call " + requestId, rpcEx);
+                    }
+                });
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Error responding to tool call " + requestId, e);
+            }
+        });
+    }
+
+    /**
+     * Executes a permission handler and sends the result back via the
+     * {@code session.permissions.handlePendingPermissionRequest} RPC.
+     */
+    private void executePermissionAndRespond(String requestId, PermissionRequest permissionRequest,
+            PermissionHandler handler) {
+        var invocation = new PermissionInvocation();
+        invocation.setSessionId(sessionId);
+
+        CompletableFuture<PermissionRequestResult> resultFuture;
+        try {
+            resultFuture = handler.handle(permissionRequest, invocation);
+        } catch (Exception e) {
+            resultFuture = CompletableFuture.failedFuture(e);
+        }
+
+        resultFuture.whenComplete((result, ex) -> {
+            try {
+                PermissionRequestResult finalResult = (ex != null || result == null)
+                        ? new PermissionRequestResult()
+                                .setKind(PermissionRequestResultKind.DENIED_COULD_NOT_REQUEST_FROM_USER)
+                        : result;
+                var params = new java.util.HashMap<String, Object>();
+                params.put("sessionId", sessionId);
+                params.put("requestId", requestId);
+                params.put("result", finalResult);
+                rpc.invoke("session.permissions.handlePendingPermissionRequest", params, Void.class)
+                        .whenComplete((v, rpcEx) -> {
+                            if (rpcEx != null) {
+                                LOG.log(Level.WARNING, "Failed to respond to permission request " + requestId, rpcEx);
+                            }
+                        });
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Error responding to permission request " + requestId, e);
+            }
+        });
+    }
+
+    /**
      * Registers custom tool handlers for this session.
      * <p>
      * Called internally when creating or resuming a session with tools.
@@ -913,6 +1027,60 @@ public final class CopilotSession implements AutoCloseable {
     public CompletableFuture<Void> compact() {
         ensureNotTerminated();
         return rpc.invoke("session.compaction.compact", Map.of("sessionId", sessionId), Void.class);
+    }
+
+    /**
+     * Logs a message to the session timeline.
+     * <p>
+     * The message appears in the session event stream and is visible to SDK
+     * consumers. Non-ephemeral messages are also persisted to the session event log
+     * on disk.
+     *
+     * <pre>{@code
+     * session.log("Build completed successfully").get();
+     * session.log("Disk space low", SessionLogRequestLevel.WARNING, null).get();
+     * session.log("Temporary status", null, true).get();
+     * }</pre>
+     *
+     * @param message
+     *            the message to log
+     * @param level
+     *            the log severity level, or {@code null} for the default
+     *            ({@link SessionLogRequestLevel#INFO})
+     * @param ephemeral
+     *            when {@code true}, the message is not persisted to disk
+     * @return a future that completes when the log entry is acknowledged
+     * @throws IllegalStateException
+     *             if this session has been terminated
+     * @since 1.0.14
+     */
+    public CompletableFuture<Void> log(String message, SessionLogRequestLevel level, Boolean ephemeral) {
+        ensureNotTerminated();
+        var params = new java.util.HashMap<String, Object>();
+        params.put("sessionId", sessionId);
+        params.put("message", message);
+        if (level != null) {
+            params.put("level", level.name().toLowerCase());
+        }
+        if (ephemeral != null) {
+            params.put("ephemeral", ephemeral);
+        }
+        return rpc.invoke("session.log", params, Void.class);
+    }
+
+    /**
+     * Logs a message to the session timeline at the default ({@code info}) level.
+     *
+     * @param message
+     *            the message to log
+     * @return a future that completes when the log entry is acknowledged
+     * @throws IllegalStateException
+     *             if this session has been terminated
+     * @see #log(String, SessionLogRequestLevel, Boolean)
+     * @since 1.0.14
+     */
+    public CompletableFuture<Void> log(String message) {
+        return log(message, null, null);
     }
 
     /**

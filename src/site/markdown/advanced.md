@@ -17,9 +17,11 @@ This guide covers advanced scenarios for extending and customizing your Copilot 
 - [Infinite Sessions](#Infinite_Sessions)
   - [Manual Compaction](#Manual_Compaction)
   - [Compaction Events](#Compaction_Events)
+- [Session Logging](#Session_Logging)
 - [MCP Servers](#MCP_Servers)
 - [Custom Agents](#Custom_Agents)
   - [Programmatic Agent Selection](#Programmatic_Agent_Selection)
+  - [Pre-selecting an Agent at Session Start](#Pre-selecting_an_Agent_at_Session_Start)
 - [Skills Configuration](#Skills_Configuration)
   - [Loading Skills](#Loading_Skills)
   - [Disabling Skills](#Disabling_Skills)
@@ -298,6 +300,24 @@ You must use an API key or static bearer token that you manage yourself.
 
 **Why not Entra ID?** While Entra ID does issue bearer tokens, these tokens are short-lived (typically 1 hour) and require automatic refresh via the Azure Identity SDK. The `bearerToken` option only accepts a static string—there is no callback mechanism for the SDK to request fresh tokens. For long-running workloads requiring Entra authentication, you would need to implement your own token refresh logic and create new sessions with updated tokens.
 
+#### Custom Model List
+
+By default, `listModels()` queries the CLI server. When using a custom provider, the CLI may not know which models are available. Use `setOnListModels()` to provide your own model list without requiring the CLI server to be started:
+
+```java
+var options = new CopilotClientOptions()
+    .setOnListModels(() -> CompletableFuture.completedFuture(List.of(
+        new ModelInfo().setId("my-model").setName("My Custom Model")
+    )));
+
+try (var client = new CopilotClient(options)) {
+    // No client.start() needed — the custom handler is called directly
+    var models = client.listModels().get();
+}
+```
+
+Results are cached after the first call.
+
 ---
 
 ## Infinite Sessions
@@ -347,6 +367,26 @@ For short conversations, disable to avoid overhead:
 ```java
 new InfiniteSessionConfig().setEnabled(false)
 ```
+
+---
+
+## Session Logging
+
+Log messages to the session timeline to make your application's activity visible alongside the conversation. Log entries appear in the session event stream and are persisted to disk by default.
+
+```java
+// Log at the default info level
+session.log("Build started").get();
+
+// Log at a specific severity level
+session.log("Disk space low", SessionLogRequestLevel.WARNING, null).get();
+session.log("Connection failed", SessionLogRequestLevel.ERROR, null).get();
+
+// Log an ephemeral message (visible in the stream, but not persisted to disk)
+session.log("Processing step 3/10...", null, true).get();
+```
+
+Log entries are reflected back as session events (`session.info`, `session.warning`, or `session.error` with `infoType`/`warningType`/`errorType` equal to `"notification"`).
 
 ---
 
@@ -446,6 +486,20 @@ System.out.println("Selected: " + selected.name());
 
 session.deselectAgent().get(); // Return to the default agent
 ```
+
+### Pre-selecting an Agent at Session Start
+
+Use `setAgent()` to activate a custom agent immediately when the session starts, without requiring a follow-up `selectAgent()` call:
+
+```java
+var session = client.createSession(
+    new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+        .setCustomAgents(List.of(reviewer))
+        .setAgent("reviewer")  // Activate this agent immediately
+).get();
+```
+
+The `agent` value must match the `name` of one of the agents in `customAgents`.
 
 ---
 

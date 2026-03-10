@@ -324,10 +324,57 @@ public class MetadataApiTest {
         }
     }
 
+    // ===== onListModels Tests =====
+
+    @Test
+    void testListModelsWithCustomHandler() throws Exception {
+        var customModels = List.of(new ModelInfo());
+        var callCount = new int[]{0};
+
+        var options = new CopilotClientOptions().setOnListModels(() -> {
+            callCount[0]++;
+            return java.util.concurrent.CompletableFuture.completedFuture(customModels);
+        });
+
+        try (var client = new CopilotClient(options)) {
+            var models = client.listModels().get();
+            assertEquals(1, callCount[0]);
+            assertEquals(1, models.size());
+        }
+    }
+
+    @Test
+    void testListModelsWithCustomHandlerCachesResults() throws Exception {
+        var callCount = new int[]{0};
+        var options = new CopilotClientOptions().setOnListModels(() -> {
+            callCount[0]++;
+            return java.util.concurrent.CompletableFuture.completedFuture(List.of(new ModelInfo()));
+        });
+
+        try (var client = new CopilotClient(options)) {
+            client.listModels().get();
+            client.listModels().get();
+            assertEquals(1, callCount[0], "Handler should only be called once due to caching");
+        }
+    }
+
+    @Test
+    void testListModelsWithCustomHandlerDoesNotRequireStart() throws Exception {
+        var options = new CopilotClientOptions()
+                .setOnListModels(() -> java.util.concurrent.CompletableFuture.completedFuture(List.of()));
+
+        // Intentionally no client.start() — onListModels should work without a server
+        try (var client = new CopilotClient(options)) {
+            var models = client.listModels().get();
+            assertNotNull(models);
+            assertEquals(0, models.size());
+        }
+    }
+
     // ===== Protocol Version Test =====
 
     @Test
-    void testProtocolVersionIsTwo() {
-        assertEquals(2, SdkProtocolVersion.get());
+    void testProtocolVersionIsThree() {
+        assertEquals(3, SdkProtocolVersion.get());
     }
 }

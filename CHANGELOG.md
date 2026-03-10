@@ -8,7 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-> **Upstream sync:** [`github/copilot-sdk@dcd86c1`](https://github.com/github/copilot-sdk/commit/dcd86c189501ce1b46b787ca60d90f3f315f3079)
+> **Upstream sync:** [`github/copilot-sdk@7235609`](https://github.com/github/copilot-sdk/commit/723560972ecce16566739cdaf10e00c11b9a15f0)
+
+### Added
+
+- **Protocol version 3**: SDK now communicates using protocol v3 and accepts servers running v2 or v3 (upstream: [`11dde6e`](https://github.com/github/copilot-sdk/commit/11dde6e))
+- `SessionConfig.setAgent(String)` / `ResumeSessionConfig.setAgent(String)` — pre-selects a custom agent when the session starts; must match the name of one of the `customAgents` entries (upstream: [`7766b1a`](https://github.com/github/copilot-sdk/commit/7766b1a))
+- `CopilotClientOptions.setOnListModels(Supplier<CompletableFuture<List<ModelInfo>>>)` — custom handler for `listModels()` that bypasses the CLI server; useful in BYOK mode to expose models from a custom provider (upstream: [`e478657`](https://github.com/github/copilot-sdk/commit/e478657))
+- `CopilotSession.log(String)` / `CopilotSession.log(String, SessionLogRequestLevel, Boolean)` — logs a message to the session timeline at a given severity level; supports ephemeral messages that are not persisted (upstream: [`11dde6e`](https://github.com/github/copilot-sdk/commit/11dde6e))
+- `SessionLogRequestLevel` enum — `INFO`, `WARNING`, `ERROR` severity levels for `log()` (upstream: [`11dde6e`](https://github.com/github/copilot-sdk/commit/11dde6e))
+- New session event types for protocol v3: `ExternalToolRequestedEvent` (`external_tool.requested`), `ExternalToolCompletedEvent` (`external_tool.completed`), `PermissionRequestedEvent` (`permission.requested`), `CommandQueuedEvent` (`command.queued`), `CommandCompletedEvent` (`command.completed`), `ExitPlanModeRequestedEvent` (`exit_plan_mode.requested`), `ExitPlanModeCompletedEvent` (`exit_plan_mode.completed`), `SystemNotificationEvent` (`system.notification`) (upstream: [`11dde6e`](https://github.com/github/copilot-sdk/commit/11dde6e))
+- Protocol v3 broadcast event handling: SDK now automatically handles `external_tool.requested` and `permission.requested` broadcast events by invoking registered handlers and responding via `session.tools.handlePendingToolCall` / `session.permissions.handlePendingPermissionRequest` RPCs (upstream: [`396e8b3`](https://github.com/github/copilot-sdk/commit/396e8b3))
 
 ## [1.0.10] - 2026-03-03
 

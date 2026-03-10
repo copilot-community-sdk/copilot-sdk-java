@@ -67,6 +67,11 @@ public final class CopilotClient implements AutoCloseable {
     private static final Logger LOG = Logger.getLogger(CopilotClient.class.getName());
 
     /**
+     * Minimum protocol version this SDK can communicate with.
+     */
+    private static final int MIN_PROTOCOL_VERSION = 2;
+
+    /**
      * Timeout, in seconds, used by {@link #close()} when waiting for graceful
      * shutdown via {@link #stop()}.
      */
@@ -81,6 +86,7 @@ public final class CopilotClient implements AutoCloseable {
     private final Integer optionsPort;
     private volatile List<ModelInfo> modelsCache;
     private final Object modelsCacheLock = new Object();
+    private final java.util.function.Supplier<CompletableFuture<List<ModelInfo>>> onListModels;
 
     /**
      * Creates a new CopilotClient with default options.
@@ -129,6 +135,7 @@ public final class CopilotClient implements AutoCloseable {
         }
 
         this.serverManager = new CliServerManager(this.options);
+        this.onListModels = this.options.getOnListModels();
     }
 
     /**
@@ -189,20 +196,21 @@ public final class CopilotClient implements AutoCloseable {
     }
 
     private void verifyProtocolVersion(Connection connection) throws Exception {
-        int expectedVersion = SdkProtocolVersion.get();
+        int maxVersion = SdkProtocolVersion.get();
         var params = new HashMap<String, Object>();
         params.put("message", null);
         PingResponse pingResponse = connection.rpc.invoke("ping", params, PingResponse.class).get(30, TimeUnit.SECONDS);
 
         if (pingResponse.protocolVersion() == null) {
-            throw new RuntimeException("SDK protocol version mismatch: SDK expects version " + expectedVersion
-                    + ", but server does not report a protocol version. "
+            throw new RuntimeException("SDK protocol version mismatch: SDK supports versions " + MIN_PROTOCOL_VERSION
+                    + "-" + maxVersion + ", but server does not report a protocol version. "
                     + "Please update your server to ensure compatibility.");
         }
 
-        if (pingResponse.protocolVersion() != expectedVersion) {
-            throw new RuntimeException("SDK protocol version mismatch: SDK expects version " + expectedVersion
-                    + ", but server reports version " + pingResponse.protocolVersion() + ". "
+        int serverVersion = pingResponse.protocolVersion();
+        if (serverVersion < MIN_PROTOCOL_VERSION || serverVersion > maxVersion) {
+            throw new RuntimeException("SDK protocol version mismatch: SDK supports versions " + MIN_PROTOCOL_VERSION
+                    + "-" + maxVersion + ", but server reports version " + serverVersion + ". "
                     + "Please update your SDK or server to ensure compatibility.");
         }
     }
@@ -434,15 +442,32 @@ public final class CopilotClient implements AutoCloseable {
      * <p>
      * Results are cached after the first successful call to avoid rate limiting.
      * The cache is cleared when the client disconnects.
+     * <p>
+     * If an {@code onListModels} handler was provided via
+     * {@link com.github.copilot.sdk.json.CopilotClientOptions#setOnListModels},
+     * that handler is called instead of querying the CLI server. This is useful in
+     * BYOK mode to return models from a custom provider without a running server.
      *
      * @return a future that resolves with a list of available models
      * @see ModelInfo
      */
     public CompletableFuture<List<ModelInfo>> listModels() {
-        // Check cache first
+        // Check cache first (works for both custom handler and server-backed paths)
         List<ModelInfo> cached = modelsCache;
         if (cached != null) {
             return CompletableFuture.completedFuture(new ArrayList<>(cached));
+        }
+
+        if (onListModels != null) {
+            // Use custom handler — no server connection required
+            return onListModels.get().thenApply(models -> {
+                synchronized (modelsCacheLock) {
+                    if (modelsCache == null) {
+                        modelsCache = new ArrayList<>(models);
+                    }
+                }
+                return new ArrayList<>(models);
+            });
         }
 
         return ensureConnected().thenCompose(connection -> {

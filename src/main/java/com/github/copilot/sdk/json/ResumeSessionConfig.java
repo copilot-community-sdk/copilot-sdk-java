@@ -50,6 +50,7 @@ public class ResumeSessionConfig {
     private boolean streaming;
     private Map<String, Object> mcpServers;
     private List<CustomAgentConfig> customAgents;
+    private String agent;
     private List<String> skillDirectories;
     private List<String> disabledSkills;
     private InfiniteSessionConfig infiniteSessions;
@@ -437,6 +438,30 @@ public class ResumeSessionConfig {
     }
 
     /**
+     * Gets the name of the custom agent to activate when the session starts.
+     *
+     * @return the agent name, or {@code null} if not set
+     */
+    public String getAgent() {
+        return agent;
+    }
+
+    /**
+     * Sets the name of the custom agent to activate when the session starts.
+     * <p>
+     * Must match the name of one of the agents in the {@code customAgents} list.
+     *
+     * @param agent
+     *            the agent name to pre-select
+     * @return this config for method chaining
+     * @see #setCustomAgents(List)
+     */
+    public ResumeSessionConfig setAgent(String agent) {
+        this.agent = agent;
+        return this;
+    }
+
+    /**
      * Gets the skill directories.
      *
      * @return the list of skill directory paths
@@ -532,6 +557,7 @@ public class ResumeSessionConfig {
         copy.streaming = this.streaming;
         copy.mcpServers = this.mcpServers != null ? new java.util.HashMap<>(this.mcpServers) : null;
         copy.customAgents = this.customAgents != null ? new ArrayList<>(this.customAgents) : null;
+        copy.agent = this.agent;
         copy.skillDirectories = this.skillDirectories != null ? new ArrayList<>(this.skillDirectories) : null;
         copy.disabledSkills = this.disabledSkills != null ? new ArrayList<>(this.disabledSkills) : null;
         copy.infiniteSessions = this.infiniteSessions;
