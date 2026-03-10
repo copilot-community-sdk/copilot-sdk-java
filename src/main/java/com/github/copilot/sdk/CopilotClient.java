@@ -154,6 +154,7 @@ public final class CopilotClient implements AutoCloseable {
             try {
                 JsonRpcClient rpc;
                 Process process = null;
+                Integer actualPort = optionsPort;
 
                 if (optionsHost != null && optionsPort != null) {
                     // External server (TCP)
@@ -164,9 +165,10 @@ public final class CopilotClient implements AutoCloseable {
                     process = processInfo.process();
                     rpc = serverManager.connectToServer(process, processInfo.port() != null ? "localhost" : null,
                             processInfo.port());
+                    actualPort = processInfo.port();
                 }
 
-                Connection connection = new Connection(rpc, process);
+                Connection connection = new Connection(rpc, process, actualPort);
 
                 // Register handlers for server-to-client calls
                 RpcHandlerDispatcher dispatcher = new RpcHandlerDispatcher(sessions, lifecycleManager::dispatch);
@@ -390,6 +392,27 @@ public final class CopilotClient implements AutoCloseable {
         if (!connectionFuture.isDone())
             return ConnectionState.CONNECTING;
         return ConnectionState.CONNECTED;
+    }
+
+    /**
+     * Gets the actual TCP port that the CLI server is listening on.
+     * <p>
+     * This is useful when the server was started with a random port (port 0) and a
+     * second client needs to connect to the same server instance.
+     *
+     * @return the actual port number, or {@code null} if not using TCP mode or the
+     *         client has not connected yet
+     */
+    public Integer getActualPort() {
+        CompletableFuture<Connection> future = connectionFuture;
+        if (future == null || !future.isDone() || future.isCompletedExceptionally()) {
+            return null;
+        }
+        try {
+            return future.join().actualPort();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -677,7 +700,7 @@ public final class CopilotClient implements AutoCloseable {
         }
     }
 
-    private static record Connection(JsonRpcClient rpc, Process process) {
+    private static record Connection(JsonRpcClient rpc, Process process, Integer actualPort) {
     };
 
 }

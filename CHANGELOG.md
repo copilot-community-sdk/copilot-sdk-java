@@ -8,7 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-> **Upstream sync:** [`github/copilot-sdk@dcd86c1`](https://github.com/github/copilot-sdk/commit/dcd86c189501ce1b46b787ca60d90f3f315f3079)
+> **Upstream sync:** [`github/copilot-sdk@7235609`](https://github.com/github/copilot-sdk/commit/723560972ecce16566739cdaf10e00c11b9a15f0)
+
+### Added
+
+- **Protocol v3** with backward compatibility to v2: SDK now supports servers reporting protocol version 2 or 3; `SdkProtocolVersion.getMinimum()` returns the minimum accepted version (upstream: [`396e8b3`](https://github.com/github/copilot-sdk/commit/396e8b3))
+- `SessionConfig.setAgent(String)` / `ResumeSessionConfig.setAgent(String)` — pre-selects a custom agent when the session starts; must match a name in `customAgents` (upstream: [`7766b1a`](https://github.com/github/copilot-sdk/commit/7766b1a))
+- `CopilotClientOptions.setOnListModels(Supplier)` — custom handler for BYOK (Bring Your Own Key) mode to return a fixed model list instead of querying the CLI server; results are cached like the standard model list (upstream: [`e478657`](https://github.com/github/copilot-sdk/commit/e478657))
+- `CopilotClient.getActualPort()` — returns the TCP port that the CLI server is listening on; useful for multi-client test scenarios where a second client connects to the same server (upstream: infrastructure)
+- `CopilotSession.log(String)` / `CopilotSession.log(String, String, Boolean)` — logs a message to the session timeline at the specified level (`"info"`, `"warning"`, `"error"`); ephemeral messages are not persisted to disk (upstream: runtime API)
+- New session events for protocol v3 broadcast model:
+  - `ExternalToolRequestedEvent` (`external_tool.requested`) — broadcast to all clients when a registered external tool is invoked; the client that registered the tool handles the call and responds via `session.tools.handlePendingToolCall`
+  - `ExternalToolCompletedEvent` (`external_tool.completed`) — broadcast to all clients when an external tool invocation is resolved
+  - `CommandQueuedEvent` (`command.queued`) — emitted when a slash command is queued
+  - `CommandCompletedEvent` (`command.completed`) — emitted when a queued command is resolved
+  - `ExitPlanModeRequestedEvent` (`exit_plan_mode.requested`) — emitted when the agent finishes creating a plan and requests approval to exit plan mode
+  - `ExitPlanModeCompletedEvent` (`exit_plan_mode.completed`) — emitted when an exit-plan-mode request is resolved
+  - `SystemNotificationEvent` (`system.notification`) — delivers system-level notifications (e.g., background agent completion)
+- Broadcast tool handling: when a session receives `ExternalToolRequestedEvent` for a tool it has registered, the SDK automatically invokes the handler and responds via `session.tools.handlePendingToolCall` (protocol v3)
+- Multi-client E2E tests: `MultiClientTest` verifies that tool request/completion events are broadcast to all connected clients and that two clients can register different tools that the agent uses in a single session (upstream: new test file)
+- `E2ETestContext.createClient(boolean useStdio)` — test helper overload for creating a TCP-mode client (useful for multi-client scenarios)
 
 ## [1.0.10] - 2026-03-03
 

@@ -260,8 +260,20 @@ public class E2ETestContext implements AutoCloseable {
      * @return a new CopilotClient
      */
     public CopilotClient createClient() {
+        return createClient(true);
+    }
+
+    /**
+     * Creates a CopilotClient configured for this test context.
+     *
+     * @param useStdio
+     *            when {@code true}, the client connects via stdio; when
+     *            {@code false}, the client uses TCP (useful for multi-client tests)
+     * @return a new CopilotClient
+     */
+    public CopilotClient createClient(boolean useStdio) {
         CopilotClientOptions options = new CopilotClientOptions().setCliPath(cliPath).setCwd(workDir.toString())
-                .setEnvironment(getEnvironment());
+                .setEnvironment(getEnvironment()).setUseStdio(useStdio);
 
         // In CI (GitHub Actions), use a fake token to avoid auth issues
         String ci = System.getenv("GITHUB_ACTIONS");
