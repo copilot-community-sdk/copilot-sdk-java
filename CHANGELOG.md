@@ -8,7 +8,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-> **Upstream sync:** [`github/copilot-sdk@dcd86c1`](https://github.com/github/copilot-sdk/commit/dcd86c189501ce1b46b787ca60d90f3f315f3079)
+> **Upstream sync:** [`github/copilot-sdk@9a0a1a5`](https://github.com/github/copilot-sdk/commit/9a0a1a5f21111f4ad02b5ce911750ecc75e054c3)
+
+### Added
+
+- `CopilotClientOptions.setOnListModels(Supplier<CompletableFuture<List<ModelInfo>>>)` — custom handler for `listModels()` used in BYOK mode to return models from a custom provider instead of querying the CLI (upstream: [`e478657`](https://github.com/github/copilot-sdk/commit/e478657))
+- `SessionConfig.setAgent(String)` — pre-selects a custom agent by name when creating a session (upstream: [`7766b1a`](https://github.com/github/copilot-sdk/commit/7766b1a))
+- `ResumeSessionConfig.setAgent(String)` — pre-selects a custom agent by name when resuming a session (upstream: [`7766b1a`](https://github.com/github/copilot-sdk/commit/7766b1a))
+- `SessionConfig.setOnEvent(Consumer<AbstractSessionEvent>)` — registers an event handler before the `session.create` RPC is issued, ensuring no early events are missed (upstream: [`4125fe7`](https://github.com/github/copilot-sdk/commit/4125fe7))
+- `ResumeSessionConfig.setOnEvent(Consumer<AbstractSessionEvent>)` — registers an event handler before the `session.resume` RPC is issued (upstream: [`4125fe7`](https://github.com/github/copilot-sdk/commit/4125fe7))
+- New broadcast session event types (protocol v3): `ExternalToolRequestedEvent` (`external_tool.requested`), `ExternalToolCompletedEvent` (`external_tool.completed`), `PermissionRequestedEvent` (`permission.requested`), `PermissionCompletedEvent` (`permission.completed`), `CommandQueuedEvent` (`command.queued`), `CommandCompletedEvent` (`command.completed`), `ExitPlanModeRequestedEvent` (`exit_plan_mode.requested`), `ExitPlanModeCompletedEvent` (`exit_plan_mode.completed`), `SystemNotificationEvent` (`system.notification`) (upstream: [`1653812`](https://github.com/github/copilot-sdk/commit/1653812), [`396e8b3`](https://github.com/github/copilot-sdk/commit/396e8b3))
+- `CopilotSession.log(String)` and `CopilotSession.log(String, String, Boolean)` — log a message to the session timeline (upstream: [`4125fe7`](https://github.com/github/copilot-sdk/commit/4125fe7))
+
+### Changed
+
+- **Protocol version bumped to v3.** The SDK now supports CLI servers running v2 or v3 (backward-compatible range). Sessions are now registered in the client's session map *before* the `session.create`/`session.resume` RPC is issued, ensuring broadcast events emitted immediately on session start are never dropped (upstream: [`4125fe7`](https://github.com/github/copilot-sdk/commit/4125fe7), [`1653812`](https://github.com/github/copilot-sdk/commit/1653812))
+- In protocol v3, tool calls and permission requests that have a registered handler are now handled automatically via `ExternalToolRequestedEvent` and `PermissionRequestedEvent` broadcast events; results are sent back via `session.tools.handlePendingToolCall` and `session.permissions.handlePendingPermissionRequest` RPC calls (upstream: [`1653812`](https://github.com/github/copilot-sdk/commit/1653812))
 
 ## [1.0.10] - 2026-03-03
 
