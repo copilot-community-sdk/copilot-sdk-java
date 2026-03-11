@@ -93,7 +93,16 @@ import java.util.Map;
 <span class="fc" id="L93">        TYPE_MAP.put(&quot;system.message&quot;, SystemMessageEvent.class);</span>
 <span class="fc" id="L94">        TYPE_MAP.put(&quot;session.shutdown&quot;, SessionShutdownEvent.class);</span>
 <span class="fc" id="L95">        TYPE_MAP.put(&quot;skill.invoked&quot;, SkillInvokedEvent.class);</span>
-<span class="fc" id="L96">    }</span>
+<span class="fc" id="L96">        TYPE_MAP.put(&quot;external_tool.requested&quot;, ExternalToolRequestedEvent.class);</span>
+<span class="fc" id="L97">        TYPE_MAP.put(&quot;external_tool.completed&quot;, ExternalToolCompletedEvent.class);</span>
+<span class="fc" id="L98">        TYPE_MAP.put(&quot;permission.requested&quot;, PermissionRequestedEvent.class);</span>
+<span class="fc" id="L99">        TYPE_MAP.put(&quot;permission.completed&quot;, PermissionCompletedEvent.class);</span>
+<span class="fc" id="L100">        TYPE_MAP.put(&quot;command.queued&quot;, CommandQueuedEvent.class);</span>
+<span class="fc" id="L101">        TYPE_MAP.put(&quot;command.completed&quot;, CommandCompletedEvent.class);</span>
+<span class="fc" id="L102">        TYPE_MAP.put(&quot;exit_plan_mode.requested&quot;, ExitPlanModeRequestedEvent.class);</span>
+<span class="fc" id="L103">        TYPE_MAP.put(&quot;exit_plan_mode.completed&quot;, ExitPlanModeCompletedEvent.class);</span>
+<span class="fc" id="L104">        TYPE_MAP.put(&quot;system.notification&quot;, SystemNotificationEvent.class);</span>
+<span class="fc" id="L105">    }</span>
 
     /**
      * Parses a JsonNode into the appropriate SessionEvent subclass.
@@ -104,23 +113,23 @@ import java.util.Map;
      */
     public static AbstractSessionEvent parse(JsonNode node) {
         try {
-<span class="fc bfc" id="L107" title="All 2 branches covered.">            String type = node.has(&quot;type&quot;) ? node.get(&quot;type&quot;).asText() : null;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            String type = node.has(&quot;type&quot;) ? node.get(&quot;type&quot;).asText() : null;</span>
 
-<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (type == null) {</span>
-<span class="fc" id="L110">                LOG.warning(&quot;Missing 'type' field in event&quot;);</span>
-<span class="fc" id="L111">                return null;</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            if (type == null) {</span>
+<span class="fc" id="L119">                LOG.warning(&quot;Missing 'type' field in event&quot;);</span>
+<span class="fc" id="L120">                return null;</span>
             }
 
-<span class="fc" id="L114">            Class&lt;? extends AbstractSessionEvent&gt; eventClass = TYPE_MAP.get(type);</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">            if (eventClass == null) {</span>
-<span class="fc" id="L116">                LOG.fine(&quot;Unknown event type: &quot; + type);</span>
-<span class="fc" id="L117">                return null;</span>
+<span class="fc" id="L123">            Class&lt;? extends AbstractSessionEvent&gt; eventClass = TYPE_MAP.get(type);</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            if (eventClass == null) {</span>
+<span class="fc" id="L125">                LOG.fine(&quot;Unknown event type: &quot; + type);</span>
+<span class="fc" id="L126">                return null;</span>
             }
 
-<span class="fc" id="L120">            return MAPPER.treeToValue(node, eventClass);</span>
-<span class="fc" id="L121">        } catch (Exception e) {</span>
-<span class="fc" id="L122">            LOG.log(Level.SEVERE, &quot;Failed to parse session event&quot;, e);</span>
-<span class="fc" id="L123">            return null;</span>
+<span class="fc" id="L129">            return MAPPER.treeToValue(node, eventClass);</span>
+<span class="fc" id="L130">        } catch (Exception e) {</span>
+<span class="fc" id="L131">            LOG.log(Level.SEVERE, &quot;Failed to parse session event&quot;, e);</span>
+<span class="fc" id="L132">            return null;</span>
         }
     }
 }

@@ -147,7 +147,7 @@ final class RpcHandlerDispatcher {
 <span class="fc" id="L147">                            toolResult = tr;</span>
                         } else {
                             toolResult = ToolResultObject
-<span class="fc bfc" id="L150" title="All 2 branches covered.">                                    .success(result instanceof String s ? s : MAPPER.writeValueAsString(result));</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">                                    .success(result instanceof String s ? s : MAPPER.writeValueAsString(result));</span>
                         }
 <span class="fc" id="L152">                        rpc.sendResponse(Long.parseLong(requestId), Map.of(&quot;result&quot;, toolResult));</span>
 <span class="nc" id="L153">                    } catch (Exception e) {</span>
