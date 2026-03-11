@@ -1193,4 +1193,3 @@ public final class CopilotSession implements AutoCloseable {
     }
 
 }
- 
