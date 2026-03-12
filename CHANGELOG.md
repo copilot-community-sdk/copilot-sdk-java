@@ -8,8 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-> **Upstream sync:** [`github/copilot-sdk@9a0a1a5`](https://github.com/github/copilot-sdk/commit/9a0a1a5f21111f4ad02b5ce911750ecc75e054c3)
+> **Upstream sync:** [`github/copilot-sdk@062b61c`](https://github.com/github/copilot-sdk/commit/062b61c8aa63b9b5d45fa1d7b01723e6660ffa83)
 
+## [1.0.11] - 2026-03-12
+
+> **Upstream sync:** [`github/copilot-sdk@062b61c`](https://github.com/github/copilot-sdk/commit/062b61c8aa63b9b5d45fa1d7b01723e6660ffa83)
 ### Added
 
 - `CopilotClientOptions.setOnListModels(Supplier<CompletableFuture<List<ModelInfo>>>)` — custom handler for `listModels()` used in BYOK mode to return models from a custom provider instead of querying the CLI (upstream: [`e478657`](https://github.com/github/copilot-sdk/commit/e478657))
@@ -424,9 +427,13 @@ New types: `GetForegroundSessionResponse`, `SetForegroundSessionResponse`
 - Pre-commit hook for Spotless code formatting
 - Comprehensive API documentation
 
-[Unreleased]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.10...HEAD
+[Unreleased]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.11...HEAD
+[1.0.11]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.10...v1.0.11
+[Unreleased]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.11...HEAD
+[1.0.11]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.10...v1.0.11
 [1.0.10]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.9...v1.0.10
-[Unreleased]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.10...HEAD
+[Unreleased]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.11...HEAD
+[1.0.11]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.10...v1.0.11
 [1.0.10]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.9...v1.0.10
 [1.0.9]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.8...v1.0.9
 [1.0.8]: https://github.com/copilot-community-sdk/copilot-sdk-java/compare/v1.0.7...v1.0.8
