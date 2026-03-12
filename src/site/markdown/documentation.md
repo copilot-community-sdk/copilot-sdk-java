@@ -634,7 +634,7 @@ When resuming a session, you can optionally reconfigure many settings. This is u
 | `skillDirectories` | Directories to load skills from |
 | `disabledSkills` | Skills to disable |
 | `infiniteSessions` | Configure infinite session behavior |
-| `disableResume` | When `true`, creates a new session instead of resuming |
+| `disableResume` | When `true`, resumes without emitting a `session.resume` event |
 | `onEvent` | Event handler registered before session resumption |
 
 **Example: Changing Model on Resume**
