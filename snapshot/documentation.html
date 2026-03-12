@@ -219,7 +219,7 @@ try (var client = new CopilotClient()) {
     ).get();
 
     var response = session.sendAndWait(&quot;Explain Java records in one sentence&quot;).get();
-    System.out.println(response.getData().getContent());
+    System.out.println(response.getData().content());
 
     session.close();
 }
@@ -230,7 +230,7 @@ try (var client = new CopilotClient()) {
 <p>For straightforward interactions, use <code>sendAndWait()</code>:</p>
 
 <pre class="prettyprint"><code class="language-java">var response = session.sendAndWait(&quot;What is the capital of France?&quot;).get();
-System.out.println(response.getData().getContent());
+System.out.println(response.getData().content());
 </code></pre></section><section><a id="Event-Based_Processing"></a>
 <h3>Event-Based Processing</h3>
 <p>For more control, subscribe to events and use <code>send()</code>:</p>
@@ -268,7 +268,7 @@ handling with <code>session.setEventErrorHandler()</code> &#x2014; see the
 
 // Type-safe event handlers (recommended)
 session.on(AssistantMessageEvent.class, msg -&gt; {
-    System.out.println(&quot;Response: &quot; + msg.getData().getContent());
+    System.out.println(&quot;Response: &quot; + msg.getData().content());
 });
 
 session.on(SessionErrorEvent.class, err -&gt; {
@@ -287,7 +287,7 @@ done.get(); // Wait for completion
 <pre class="prettyprint"><code class="language-java">session.on(event -&gt; {
     switch (event) {
         case AssistantMessageEvent msg -&gt; 
-            System.out.println(&quot;Response: &quot; + msg.getData().getContent());
+            System.out.println(&quot;Response: &quot; + msg.getData().content());
         case SessionErrorEvent err -&gt; 
             System.err.println(&quot;Error: &quot; + err.getData().message());
         case SessionIdleEvent idle -&gt; 
@@ -655,11 +655,11 @@ done.get();
 for (var event : history) {
     switch (event) {
         case UserMessageEvent user -&gt; 
-            System.out.println(&quot;User: &quot; + user.getData().getContent());
+            System.out.println(&quot;User: &quot; + user.getData().content());
         case AssistantMessageEvent assistant -&gt; 
-            System.out.println(&quot;Assistant: &quot; + assistant.getData().getContent());
+            System.out.println(&quot;Assistant: &quot; + assistant.getData().content());
         case ToolExecutionCompleteEvent tool -&gt; 
-            System.out.println(&quot;Tool: &quot; + tool.getData().getToolName());
+            System.out.println(&quot;Tool: &quot; + tool.getData().toolCallId());
         default -&gt; { }
     }
 }
@@ -923,8 +923,8 @@ var session2 = client.createSession(
 var future1 = session1.sendAndWait(&quot;Summarize REST APIs&quot;);
 var future2 = session2.sendAndWait(&quot;Summarize GraphQL&quot;);
 
-System.out.println(&quot;GPT: &quot; + future1.get().getData().getContent());
-System.out.println(&quot;Claude: &quot; + future2.get().getData().getContent());
+System.out.println(&quot;GPT: &quot; + future1.get().getData().content());
+System.out.println(&quot;Claude: &quot; + future2.get().getData().content());
 </code></pre></section><section><a id="Resume_a_Previous_Session"></a>
 <h3>Resume a Previous Session</h3>
 

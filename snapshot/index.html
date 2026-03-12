@@ -237,7 +237,7 @@ public class Example {
 
             var done = new CompletableFuture&lt;Void&gt;();
             session.on(AssistantMessageEvent.class, msg -&gt; {
-                System.out.println(msg.getData().getContent());
+                System.out.println(msg.getData().content());
             });
             session.on(SessionIdleEvent.class, idle -&gt; done.complete(null));
 
@@ -289,7 +289,7 @@ class hello {
             var session = client.createSession(new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
             var done = new CompletableFuture&lt;Void&gt;();
             session.on(AssistantMessageEvent.class, msg -&gt; {
-                System.out.print(msg.getData().getContent());
+                System.out.print(msg.getData().content());
             });
             session.on(SessionIdleEvent.class, idle -&gt; done.complete(null));
             session.send(new MessageOptions().setPrompt(&quot;Say hello!&quot;)).get();

@@ -224,15 +224,15 @@ public class ManagingLocalFiles {
             var done = new CountDownLatch(1);
 
             session.on(AssistantMessageEvent.class, msg -&gt; 
-                System.out.println(&quot;\nCopilot: &quot; + msg.getData().getContent())
+                System.out.println(&quot;\nCopilot: &quot; + msg.getData().content())
             );
 
             session.on(ToolExecutionStartEvent.class, evt -&gt; 
-                System.out.println(&quot;  &#x2192; Running: &quot; + evt.getData().getToolName())
+                System.out.println(&quot;  &#x2192; Running: &quot; + evt.getData().toolName())
             );
 
             session.on(ToolExecutionCompleteEvent.class, evt -&gt; 
-                System.out.println(&quot;  &#x2713; Completed: &quot; + evt.getData().getToolCallId())
+                System.out.println(&quot;  &#x2713; Completed: &quot; + evt.getData().toolCallId())
             );
 
             session.on(SessionIdleEvent.class, evt -&gt; done.countDown());
@@ -326,7 +326,7 @@ public class InteractiveFileOrganizer {
                 new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL).setModel(&quot;gpt-5&quot;)).get();
 
             session.on(AssistantMessageEvent.class, msg -&gt; 
-                System.out.println(&quot;\nCopilot: &quot; + msg.getData().getContent())
+                System.out.println(&quot;\nCopilot: &quot; + msg.getData().content())
             );
 
             System.out.print(&quot;Enter folder path to organize: &quot;);

@@ -588,7 +588,7 @@ public class HooksExample {
             ).get();
             
             var response = session.sendAndWait(&quot;List files in /tmp&quot;).get();
-            System.out.println(response.getData().getContent());
+            System.out.println(response.getData().content());
             
             session.close();
         }

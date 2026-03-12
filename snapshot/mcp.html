@@ -195,7 +195,7 @@ var session = client.createSession(
 ).get();
 
 var result = session.sendAndWait(&quot;List files in the directory&quot;).get();
-System.out.println(result.getData().getContent());
+System.out.println(result.getData().content());
 </code></pre>
 <blockquote>
 
