@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 > **Upstream sync:** [`github/copilot-sdk@062b61c`](https://github.com/github/copilot-sdk/commit/062b61c8aa63b9b5d45fa1d7b01723e6660ffa83)
 
+### Notice
+
+- **This repository is now archived.** The official GitHub Copilot SDK for Java is maintained at [github/copilot-sdk-java](https://github.com/github/copilot-sdk-java). No further changes or releases will be made in this repository.
+
 ## [1.0.11] - 2026-03-12
 
 > **Upstream sync:** [`github/copilot-sdk@062b61c`](https://github.com/github/copilot-sdk/commit/062b61c8aa63b9b5d45fa1d7b01723e6660ffa83)

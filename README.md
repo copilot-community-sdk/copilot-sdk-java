@@ -1,5 +1,7 @@
 # Copilot SDK for Java
 
+> 🚨 **This repository is archived.** The official GitHub Copilot SDK for Java is now maintained at **[github/copilot-sdk-java](https://github.com/github/copilot-sdk-java)**. No further changes or releases will be made here. Please use the official SDK going forward.
+
 [![Build](https://github.com/copilot-community-sdk/copilot-sdk-java/actions/workflows/build-test.yml/badge.svg)](https://github.com/copilot-community-sdk/copilot-sdk-java/actions/workflows/build-test.yml)
 [![Site](https://github.com/copilot-community-sdk/copilot-sdk-java/actions/workflows/deploy-site.yml/badge.svg)](https://github.com/copilot-community-sdk/copilot-sdk-java/actions/workflows/deploy-site.yml)
 [![Coverage](.github/badges/jacoco.svg)](https://copilot-community-sdk.github.io/copilot-sdk-java/snapshot/jacoco/index.html)
@@ -15,8 +17,6 @@
 [![Javadoc](https://javadoc.io/badge2/io.github.copilot-community-sdk/copilot-sdk/javadoc.svg?q=1)](https://javadoc.io/doc/io.github.copilot-community-sdk/copilot-sdk/latest/index.html)
 
 ## Background
-
-> ⚠️ **Disclaimer:** This is an **unofficial, community-driven SDK** and is **not supported or endorsed by GitHub**. This SDK may change in breaking ways. Use at your own risk.
 
 Java SDK for programmatic control of GitHub Copilot CLI, enabling you to build AI-powered applications and agentic workflows.
 
