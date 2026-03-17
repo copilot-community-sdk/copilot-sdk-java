@@ -42,11 +42,13 @@ public class CopilotClientOptions {
     private String cliUrl;
     private String logLevel = "info";
     private boolean autoStart = true;
-    private boolean autoRestart = true;
+    @Deprecated
+    private boolean autoRestart;
     private Map<String, String> environment;
     private String gitHubToken;
     private Boolean useLoggedInUser;
     private Supplier<CompletableFuture<List<ModelInfo>>> onListModels;
+    private TelemetryConfig telemetry;
 
     /**
      * Gets the path to the Copilot CLI executable.
@@ -236,8 +238,11 @@ public class CopilotClientOptions {
     /**
      * Returns whether the client should automatically restart the server on crash.
      *
-     * @return {@code true} to auto-restart (default), {@code false} otherwise
+     * @return {@code false} always; this option has no effect
+     * @deprecated {@code autoRestart} has no effect and will be removed in a future
+     *             release.
      */
+    @Deprecated
     public boolean isAutoRestart() {
         return autoRestart;
     }
@@ -247,9 +252,12 @@ public class CopilotClientOptions {
      * crashes unexpectedly.
      *
      * @param autoRestart
-     *            {@code true} to auto-restart, {@code false} otherwise
+     *            ignored; this option has no effect
      * @return this options instance for method chaining
+     * @deprecated {@code autoRestart} has no effect and will be removed in a future
+     *             release.
      */
+    @Deprecated
     public CopilotClientOptions setAutoRestart(boolean autoRestart) {
         this.autoRestart = autoRestart;
         return this;
@@ -379,6 +387,34 @@ public class CopilotClientOptions {
     }
 
     /**
+     * Gets the OpenTelemetry configuration for the CLI server.
+     *
+     * @return the telemetry config, or {@code null} if telemetry is disabled
+     * @since 1.0.12
+     */
+    public TelemetryConfig getTelemetry() {
+        return telemetry;
+    }
+
+    /**
+     * Sets the OpenTelemetry configuration for the CLI server.
+     * <p>
+     * When set to a non-{@code null} instance, the CLI server is started with
+     * OpenTelemetry instrumentation enabled. The individual properties of
+     * {@link TelemetryConfig} map to specific environment variables consumed by the
+     * CLI.
+     *
+     * @param telemetry
+     *            the telemetry configuration, or {@code null} to disable telemetry
+     * @return this options instance for method chaining
+     * @since 1.0.12
+     */
+    public CopilotClientOptions setTelemetry(TelemetryConfig telemetry) {
+        this.telemetry = telemetry;
+        return this;
+    }
+
+    /**
      * Creates a shallow clone of this {@code CopilotClientOptions} instance.
      * <p>
      * Array properties (like {@code cliArgs}) are copied into new arrays so that
@@ -404,6 +440,7 @@ public class CopilotClientOptions {
         copy.gitHubToken = this.gitHubToken;
         copy.useLoggedInUser = this.useLoggedInUser;
         copy.onListModels = this.onListModels;
+        copy.telemetry = this.telemetry;
         return copy;
     }
 }

@@ -310,14 +310,16 @@ public class SessionEventHandlingTest {
             latch.countDown();
         });
 
-        // Dispatch from a named thread to simulate the jsonrpc-reader
+        // Dispatch from a named thread
         var t = new Thread(() -> dispatchEvent(createAssistantMessageEvent("async")), "jsonrpc-reader-mock");
         t.start();
         assertTrue(latch.await(5, TimeUnit.SECONDS), "Handler should be invoked within timeout");
         t.join(5000);
 
-        assertEquals("jsonrpc-reader-mock", handlerThreadName.get(),
-                "Handler should run on the dispatch thread, not a different one");
+        // With serial dispatch, handlers run on the dedicated event-dispatch thread,
+        // not on the calling thread.
+        assertEquals("copilot-session-events", handlerThreadName.get(),
+                "Handler should run on the dedicated event-dispatch thread");
     }
 
     @Test
@@ -336,20 +338,22 @@ public class SessionEventHandlingTest {
 
         assertTrue(latch.await(5, TimeUnit.SECONDS), "Handler should be invoked within timeout");
         assertNotEquals(mainThreadName, handlerThreadName.get(), "Handler should NOT run on the main/test thread");
-        assertEquals("background-dispatcher", handlerThreadName.get(),
-                "Handler should run on the background dispatch thread");
+        // With serial dispatch, handlers always run on the dedicated event-dispatch
+        // thread
+        assertEquals("copilot-session-events", handlerThreadName.get(),
+                "Handler should run on the dedicated event-dispatch thread");
     }
 
     @Test
     void testConcurrentDispatchFromMultipleThreads() throws Exception {
         var totalEvents = 100;
         var receivedCount = new AtomicInteger();
-        var threadNames = ConcurrentHashMap.<String>newKeySet();
+        var handlerThreadNames = ConcurrentHashMap.<String>newKeySet();
         var latch = new CountDownLatch(totalEvents);
 
         session.on(AssistantMessageEvent.class, msg -> {
             receivedCount.incrementAndGet();
-            threadNames.add(Thread.currentThread().getName());
+            handlerThreadNames.add(Thread.currentThread().getName());
             latch.countDown();
         });
 
@@ -359,7 +363,14 @@ public class SessionEventHandlingTest {
             var threadIdx = i;
             var t = new Thread(() -> {
                 for (int j = 0; j < 10; j++) {
-                    dispatchEvent(createAssistantMessageEvent("msg-" + threadIdx + "-" + j));
+                    try {
+                        Method dispatchMethod = CopilotSession.class.getDeclaredMethod("dispatchEvent",
+                                AbstractSessionEvent.class);
+                        dispatchMethod.setAccessible(true);
+                        dispatchMethod.invoke(session, createAssistantMessageEvent("msg-" + threadIdx + "-" + j));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }, "dispatcher-" + i);
             threads.add(t);
@@ -375,7 +386,10 @@ public class SessionEventHandlingTest {
         }
 
         assertEquals(totalEvents, receivedCount.get(), "All " + totalEvents + " events should be delivered");
-        assertTrue(threadNames.size() > 1, "Events should have been dispatched from multiple threads");
+        // With serial dispatch, all handlers run on the single event-dispatch thread
+        assertEquals(1, handlerThreadNames.size(), "All handlers should run on the same serial event-dispatch thread");
+        assertEquals("copilot-session-events", handlerThreadNames.iterator().next(),
+                "Handlers should run on the dedicated event-dispatch thread");
     }
 
     // Helper methods to dispatch events using reflection
@@ -843,9 +857,17 @@ public class SessionEventHandlingTest {
             Method dispatchMethod = CopilotSession.class.getDeclaredMethod("dispatchEvent", AbstractSessionEvent.class);
             dispatchMethod.setAccessible(true);
             dispatchMethod.invoke(session, event);
+            // Drain the event dispatcher so handlers have run before we check state.
+            awaitEventDispatch();
         } catch (Exception e) {
             throw new RuntimeException("Failed to dispatch event", e);
         }
+    }
+
+    private void awaitEventDispatch() throws Exception {
+        Method method = CopilotSession.class.getDeclaredMethod("awaitEventDispatch");
+        method.setAccessible(true);
+        method.invoke(session);
     }
 
     // Factory methods for creating test events

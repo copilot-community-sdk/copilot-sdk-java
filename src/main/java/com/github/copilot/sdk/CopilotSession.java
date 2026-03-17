@@ -10,9 +10,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -113,13 +114,20 @@ public final class CopilotSession implements AutoCloseable {
     private volatile String sessionId;
     private volatile String workspacePath;
     private final JsonRpcClient rpc;
-    private final Set<Consumer<AbstractSessionEvent>> eventHandlers = ConcurrentHashMap.newKeySet();
+    private final CopyOnWriteArrayList<Consumer<AbstractSessionEvent>> eventHandlers = new CopyOnWriteArrayList<>();
     private final Map<String, ToolDefinition> toolHandlers = new ConcurrentHashMap<>();
     private final AtomicReference<PermissionHandler> permissionHandler = new AtomicReference<>();
     private final AtomicReference<UserInputHandler> userInputHandler = new AtomicReference<>();
     private final AtomicReference<SessionHooks> hooksHandler = new AtomicReference<>();
     private volatile EventErrorHandler eventErrorHandler;
     private volatile EventErrorPolicy eventErrorPolicy = EventErrorPolicy.PROPAGATE_AND_LOG_ERRORS;
+
+    /**
+     * Single-threaded executor that serializes event dispatch. Events are enqueued
+     * by {@link #dispatchEvent} and processed one at a time, preserving arrival
+     * order and ensuring handlers are never called concurrently.
+     */
+    private final ExecutorService eventDispatcher;
 
     /** Tracks whether this session instance has been terminated via close(). */
     private volatile boolean isTerminated = false;
@@ -156,6 +164,11 @@ public final class CopilotSession implements AutoCloseable {
         this.sessionId = sessionId;
         this.rpc = rpc;
         this.workspacePath = workspacePath;
+        this.eventDispatcher = Executors.newSingleThreadExecutor(r -> {
+            var t = new Thread(r, "copilot-session-events");
+            t.setDaemon(true);
+            return t;
+        });
     }
 
     /**
@@ -563,20 +576,16 @@ public final class CopilotSession implements AutoCloseable {
     /**
      * Dispatches an event to all registered handlers.
      * <p>
-     * This is called internally when events are received from the server. Each
-     * handler is invoked in its own try/catch block. Errors are always logged at
-     * {@link Level#WARNING}. Whether dispatch continues after a handler error
-     * depends on the configured {@link EventErrorPolicy}:
-     * <ul>
-     * <li>{@link EventErrorPolicy#PROPAGATE_AND_LOG_ERRORS} (default) — dispatch
-     * stops after the first error</li>
-     * <li>{@link EventErrorPolicy#SUPPRESS_AND_LOG_ERRORS} — remaining handlers
-     * still execute</li>
-     * </ul>
+     * This is called internally when events are received from the server. Broadcast
+     * request events (protocol v3) are handled concurrently and immediately.
+     * User-registered handlers are invoked serially on a single background thread,
+     * preserving event arrival order and ensuring handlers are never called
+     * concurrently with each other on the same session.
      * <p>
-     * The configured {@link EventErrorHandler} is always invoked (if set),
-     * regardless of the policy. If the error handler itself throws, dispatch stops
-     * regardless of policy and the error is logged at {@link Level#SEVERE}.
+     * Handler exceptions are caught, logged, and do not halt delivery of subsequent
+     * events. The configured {@link EventErrorHandler} is invoked when set. Whether
+     * remaining handlers for the same event execute depends on the configured
+     * {@link EventErrorPolicy}.
      *
      * @param event
      *            the event to dispatch
@@ -584,28 +593,35 @@ public final class CopilotSession implements AutoCloseable {
      * @see #setEventErrorPolicy(EventErrorPolicy)
      */
     void dispatchEvent(AbstractSessionEvent event) {
-        // Handle broadcast request events (protocol v3) before dispatching to user
-        // handlers. These are fire-and-forget: the response is sent asynchronously.
+        // Handle broadcast request events (protocol v3) concurrently (fire-and-forget).
+        // Done outside the serial queue so a stalled broadcast handler doesn't block
+        // user event delivery.
         handleBroadcastEventAsync(event);
 
-        for (Consumer<AbstractSessionEvent> handler : eventHandlers) {
-            try {
-                handler.accept(event);
-            } catch (Exception e) {
-                LOG.log(Level.WARNING, "Error in event handler", e);
-                EventErrorHandler errorHandler = this.eventErrorHandler;
-                if (errorHandler != null) {
+        // Enqueue for serial processing by user handlers on the background thread.
+        // If the executor has been shut down (session closed), silently drop.
+        if (!eventDispatcher.isShutdown()) {
+            eventDispatcher.execute(() -> {
+                for (Consumer<AbstractSessionEvent> handler : eventHandlers) {
                     try {
-                        errorHandler.handleError(event, e);
-                    } catch (Exception errorHandlerException) {
-                        LOG.log(Level.SEVERE, "Error in event error handler", errorHandlerException);
-                        break; // error handler itself failed — stop regardless of policy
+                        handler.accept(event);
+                    } catch (Exception e) {
+                        LOG.log(Level.WARNING, "Error in event handler", e);
+                        EventErrorHandler errorHandler = this.eventErrorHandler;
+                        if (errorHandler != null) {
+                            try {
+                                errorHandler.handleError(event, e);
+                            } catch (Exception errorHandlerException) {
+                                LOG.log(Level.SEVERE, "Error in event error handler", errorHandlerException);
+                                break; // error handler itself failed — stop regardless of policy
+                            }
+                        }
+                        if (eventErrorPolicy == EventErrorPolicy.PROPAGATE_AND_LOG_ERRORS) {
+                            break;
+                        }
                     }
                 }
-                if (eventErrorPolicy == EventErrorPolicy.PROPAGATE_AND_LOG_ERRORS) {
-                    break;
-                }
-            }
+            });
         }
     }
 
@@ -708,6 +724,12 @@ public final class CopilotSession implements AutoCloseable {
                 var invocation = new PermissionInvocation();
                 invocation.setSessionId(sessionId);
                 handler.handle(permissionRequest, invocation).thenAccept(result -> {
+                    // If the handler returns no-result, leave the request unanswered
+                    // (another client in a multi-client scenario may handle it).
+                    if (PermissionRequestResultKind.NO_RESULT
+                            .equals(new PermissionRequestResultKind(result.getKind()))) {
+                        return;
+                    }
                     try {
                         rpc.invoke("session.permissions.handlePendingPermissionRequest",
                                 Map.of("sessionId", sessionId, "requestId", requestId, "result", result), Object.class);
@@ -990,6 +1012,39 @@ public final class CopilotSession implements AutoCloseable {
      *
      * <pre>{@code
      * session.setModel("gpt-4.1").get();
+     * session.setModel("claude-sonnet-4.6", "high").get();
+     * }</pre>
+     *
+     * @param model
+     *            the model ID to switch to (e.g., {@code "gpt-4.1"})
+     * @param reasoningEffort
+     *            the reasoning effort level (e.g., {@code "low"}, {@code "medium"},
+     *            {@code "high"}, {@code "xhigh"}), or {@code null} to use the
+     *            model's default
+     * @return a future that completes when the model switch is acknowledged
+     * @throws IllegalStateException
+     *             if this session has been terminated
+     * @since 1.0.12
+     */
+    public CompletableFuture<Void> setModel(String model, String reasoningEffort) {
+        ensureNotTerminated();
+        var params = new java.util.HashMap<String, Object>();
+        params.put("sessionId", sessionId);
+        params.put("modelId", model);
+        if (reasoningEffort != null) {
+            params.put("reasoningEffort", reasoningEffort);
+        }
+        return rpc.invoke("session.model.switchTo", params, Void.class);
+    }
+
+    /**
+     * Changes the model for this session.
+     * <p>
+     * The new model takes effect for the next message. Conversation history is
+     * preserved.
+     *
+     * <pre>{@code
+     * session.setModel("gpt-4.1").get();
      * }</pre>
      *
      * @param model
@@ -1000,8 +1055,7 @@ public final class CopilotSession implements AutoCloseable {
      * @since 1.0.11
      */
     public CompletableFuture<Void> setModel(String model) {
-        ensureNotTerminated();
-        return rpc.invoke("session.model.switchTo", Map.of("sessionId", sessionId, "modelId", model), Void.class);
+        return setModel(model, null);
     }
 
     /**
@@ -1165,6 +1219,10 @@ public final class CopilotSession implements AutoCloseable {
             isTerminated = true;
         }
 
+        // Shut down the event dispatcher: no new events will be accepted, but
+        // already-queued events will still be delivered to handlers.
+        eventDispatcher.shutdown();
+
         try {
             rpc.invoke("session.destroy", Map.of("sessionId", sessionId), Void.class).get(5, TimeUnit.SECONDS);
         } catch (Exception e) {
@@ -1190,6 +1248,20 @@ public final class CopilotSession implements AutoCloseable {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private record AgentSelectResponse(@JsonProperty("agent") AgentInfo agent) {
+    }
+
+    /**
+     * Package-private test helper: submits a barrier task to the event dispatcher
+     * and blocks until all previously queued events have been processed.
+     * <p>
+     * This ensures that any events dispatched before this call have been fully
+     * delivered to all registered handlers.
+     */
+    void awaitEventDispatch() throws Exception {
+        if (!eventDispatcher.isShutdown()) {
+            eventDispatcher.submit(() -> {
+            }).get(5, TimeUnit.SECONDS);
+        }
     }
 
 }

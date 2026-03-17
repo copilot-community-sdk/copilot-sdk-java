@@ -24,6 +24,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * no handler and couldn't ask user</li>
  * <li>{@link PermissionRequestResultKind#DENIED_INTERACTIVELY_BY_USER} — denied
  * by the user interactively</li>
+ * <li>{@link PermissionRequestResultKind#NO_RESULT} — leave the request
+ * unanswered (another client may handle it)</li>
  * </ul>
  *
  * @see PermissionHandler

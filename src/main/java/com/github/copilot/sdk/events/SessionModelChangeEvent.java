@@ -33,6 +33,8 @@ public final class SessionModelChangeEvent extends AbstractSessionEvent {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record SessionModelChangeData(@JsonProperty("previousModel") String previousModel,
-            @JsonProperty("newModel") String newModel) {
+            @JsonProperty("newModel") String newModel,
+            @JsonProperty("previousReasoningEffort") String previousReasoningEffort,
+            @JsonProperty("reasoningEffort") String reasoningEffort) {
     }
 }

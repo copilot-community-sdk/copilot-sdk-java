@@ -28,6 +28,7 @@ public class PermissionRequestResultKindTest {
                 PermissionRequestResultKind.DENIED_COULD_NOT_REQUEST_FROM_USER.getValue());
         assertEquals("denied-interactively-by-user",
                 PermissionRequestResultKind.DENIED_INTERACTIVELY_BY_USER.getValue());
+        assertEquals("no-result", PermissionRequestResultKind.NO_RESULT.getValue());
     }
 
     @Test
