@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Building and Using the Java SDK for Copilot Using AI Agents — JavaOne</title>
+
+  <link rel="stylesheet" href="vendor/dist/reset.css" />
+  <link rel="stylesheet" href="vendor/dist/reveal.css" />
+  <link rel="stylesheet" href="vendor/dist/theme/black.css" id="theme" />
+  <link rel="stylesheet" href="vendor/highlight/github-dark.min.css" />
+
+  <style>
+    :root {
+      --r-main-font-size: 32px;
+      --r-heading-color: #f9826c;
+      --r-link-color: #58a6ff;
+      --copilot-blue: #58a6ff;
+      --copilot-orange: #f9826c;
+      --copilot-green: #3fb950;
+      --copilot-purple: #bc8cff;
+    }
+
+    .reveal .slides section {
+      text-align: left;
+    }
+
+    .reveal h1, .reveal h2, .reveal h3 {
+      text-align: center;
+    }
+
+    .reveal h1 { font-size: 1.6em; }
+    .reveal h2 { font-size: 1.3em; }
+
+    .reveal pre {
+      font-size: 0.52em;
+      width: 100%;
+      box-shadow: 0 2px 12px rgba(0,0,0,.5);
+    }
+
+    .reveal code {
+      border-radius: 4px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.5em;
+      font-weight: bold;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+
+    .tag-new   { background: var(--copilot-green);  color: #000; }
+    .tag-ai    { background: var(--copilot-purple); color: #000; }
+    .tag-demo  { background: var(--copilot-orange); color: #000; }
+
+    .cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4em;
+      align-items: start;
+    }
+
+    .cols3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1em;
+      align-items: start;
+    }
+
+    .card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 8px;
+      padding: .8em 1em;
+    }
+
+    .card h3 {
+      color: var(--copilot-blue);
+      margin: 0 0 .4em;
+      font-size: .85em;
+      text-align: left;
+    }
+
+    .card p, .card li {
+      font-size: .65em;
+      margin: .2em 0;
+    }
+
+    .card ul { padding-left: 1.2em; }
+
+    .highlight { color: var(--copilot-orange); font-weight: bold; }
+    .blue      { color: var(--copilot-blue); }
+    .green     { color: var(--copilot-green); }
+    .purple    { color: var(--copilot-purple); }
+
+    .center { text-align: center !important; }
+    .small  { font-size: .65em; }
+    .emoji  { font-size: 1.4em; }
+
+    .title-slide h1 { font-size: 1.4em; margin-bottom: .3em; }
+    .title-slide .subtitle { color: #ccc; font-size: .75em; margin-bottom: 1em; text-align: center; }
+    .title-slide .meta { color: #aaa; font-size: .6em; text-align: center; }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.55em;
+      margin: 2px;
+    }
+
+    .pill-blue   { background: rgba(88,166,255,.25); border: 1px solid var(--copilot-blue); color: var(--copilot-blue); }
+    .pill-orange { background: rgba(249,130,108,.25); border: 1px solid var(--copilot-orange); color: var(--copilot-orange); }
+    .pill-green  { background: rgba(63,185,80,.25);  border: 1px solid var(--copilot-green); color: var(--copilot-green); }
+    .pill-purple { background: rgba(188,140,255,.25); border: 1px solid var(--copilot-purple); color: var(--copilot-purple); }
+
+    .arch-box {
+      border: 2px solid rgba(255,255,255,.2);
+      border-radius: 8px;
+      padding: .5em .8em;
+      text-align: center;
+      font-size: .65em;
+    }
+
+    .arch-arrow {
+      text-align: center;
+      font-size: 1.2em;
+      color: var(--copilot-blue);
+      margin: .1em 0;
+    }
+
+    blockquote {
+      border-left: 4px solid var(--copilot-orange);
+      padding-left: .8em;
+      color: #ddd;
+      font-style: italic;
+      font-size: .8em;
+      background: rgba(249,130,108,.07);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .reveal .progress { color: var(--copilot-orange); }
+
+    footer-note {
+      display: block;
+      font-size: .42em;
+      color: #888;
+      margin-top: .8em;
+    }
+
+    .step-list {
+      list-style: none;
+      padding: 0;
+      counter-reset: steps;
+    }
+
+    .step-list li {
+      counter-increment: steps;
+      padding: .3em 0 .3em 2.2em;
+      position: relative;
+      font-size: .72em;
+    }
+
+    .step-list li::before {
+      content: counter(steps);
+      position: absolute;
+      left: 0;
+      width: 1.5em;
+      height: 1.5em;
+      border-radius: 50%;
+      background: var(--copilot-blue);
+      color: #000;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .9em;
+    }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ─────────────────────────────────────────────
+     TITLE
+     ───────────────────────────────────────────── -->
+<section class="title-slide" data-background-gradient="radial-gradient(ellipse at 60% 40%, #0d1117 0%, #161b22 60%, #0d1117 100%)">
+  <h1>Building and Using the Java SDK for Copilot<br/><span class="highlight">Using AI Agents</span></h1>
+  <p class="subtitle">GitHub Copilot is a programmable AI platform — let me show you how!</p>
+  <div style="text-align:center; margin: 1em 0;">
+    <span class="pill pill-blue">☕ Java 17+</span>
+    <span class="pill pill-orange">🤖 AI-Assisted Dev</span>
+    <span class="pill pill-green">🔧 Open Source</span>
+    <span class="pill pill-purple">⚡ JSON-RPC</span>
+  </div>
+  <p class="meta">JavaOne &nbsp;|&nbsp; 2026</p>
+  <p class="meta blue">github.com/github/copilot-sdk-java</p>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     AGENDA
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>What We'll Cover</h2>
+  <div class="cols">
+    <div>
+      <p class="green">🏗️ <strong>The SDK</strong></p>
+      <ul class="small">
+        <li>Copilot as a programmable platform</li>
+        <li>Architecture &amp; core concepts</li>
+        <li>Sessions, events, tools, MCP</li>
+        <li>Live code walk-through</li>
+      </ul>
+    </div>
+    <div>
+      <p class="purple">🤖 <strong>Built with AI Agents</strong></p>
+      <ul class="small">
+        <li>Agentic upstream sync</li>
+        <li>Documentation assessment</li>
+        <li>Test coverage checks</li>
+        <li>PR automation from start to finish</li>
+      </ul>
+    </div>
+  </div>
+  <br/>
+  <blockquote>Whether you want to <strong>extend Copilot</strong> or rethink how you <strong>ship software with AI</strong>, this talk has something for you.</blockquote>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     GITHUB COPILOT IS PROGRAMMABLE
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>GitHub Copilot Is More Than an Editor Plugin</h2>
+  <div class="cols3">
+    <div class="card">
+      <h3>📝 Code Completion</h3>
+      <p>What most developers use today: inline suggestions, chat, code review.</p>
+    </div>
+    <div class="card" style="border-color: var(--copilot-orange);">
+      <h3>⚙️ Copilot CLI</h3>
+      <p>A standalone process you can <strong>spawn and control programmatically</strong> — the foundation of the SDK.</p>
+    </div>
+    <div class="card">
+      <h3>🤖 Copilot Coding Agent</h3>
+      <p>Autonomous agent that can open PRs, fix issues, run tests — orchestrated through GitHub.</p>
+    </div>
+  </div>
+  <br/>
+  <p class="center small">The <span class="highlight">Copilot CLI</span> exposes a <strong>JSON-RPC API over stdio</strong>.</p>
+  <p class="center small">The SDK wraps that API with idiomatic Java — sessions, events, tools.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     SDK OVERVIEW
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Copilot SDK for Java</h2>
+  <div class="cols">
+    <div>
+      <ul class="small">
+        <li>Unofficial, community-driven port of the official .NET SDK</li>
+        <li>Tracks upstream .NET reference implementation</li>
+        <li>Available on <strong>Maven Central</strong></li>
+        <li>Java 17+ — uses modern language features</li>
+        <li>Minimal dependencies (Jackson only)</li>
+        <li>MIT licensed</li>
+      </ul>
+      <br/>
+      <pre><code class="xml">&lt;dependency&gt;
+  &lt;groupId&gt;com.github&lt;/groupId&gt;
+  &lt;artifactId&gt;copilot-sdk-java&lt;/artifactId&gt;
+  &lt;version&gt;0.1.32-java.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Core capabilities</h3>
+        <ul>
+          <li>Conversational AI sessions</li>
+          <li>Streaming responses</li>
+          <li>Custom tool registration</li>
+          <li>MCP server integration</li>
+          <li>Session persistence &amp; resume</li>
+          <li>Multiple concurrent sessions</li>
+          <li>Model selection per session</li>
+          <li>Custom agent selection</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     ARCHITECTURE
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Architecture</h2>
+  <div style="max-width: 620px; margin: 0 auto;">
+    <div class="arch-box" style="border-color: var(--copilot-blue);">
+      <strong>Your Java Application</strong><br/>
+      <span class="small blue">CopilotClient &nbsp;·&nbsp; CopilotSession &nbsp;·&nbsp; ToolDefinition</span>
+    </div>
+    <div class="arch-arrow">⬇ &nbsp; JSON-RPC over stdio &nbsp; ⬆</div>
+    <div class="arch-box" style="border-color: var(--copilot-orange);">
+      <strong>GitHub Copilot CLI</strong><br/>
+      <span class="small">Local process — spawned automatically</span>
+    </div>
+    <div class="arch-arrow">⬇ &nbsp; HTTPS &nbsp; ⬆</div>
+    <div class="arch-box" style="border-color: var(--copilot-green);">
+      <strong>GitHub Copilot API</strong><br/>
+      <span class="small">LLM inference &nbsp;·&nbsp; Tool orchestration &nbsp;·&nbsp; MCP routing</span>
+    </div>
+  </div>
+  <br/>
+  <p class="center small">The CLI handles auth, protocol, model routing. Your app just <span class="highlight">sends messages and handles events</span>.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     HELLO WORLD
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Hello, Copilot! <span class="tag tag-demo">DEMO</span></h2>
+  <pre><code class="java">// Works with JBang — no project setup needed!
+// //DEPS com.github:copilot-sdk-java:0.1.32-java.0
+
+import com.github.copilot.sdk.*;
+import com.github.copilot.sdk.events.*;
+import com.github.copilot.sdk.json.*;
+
+try (var client = new CopilotClient()) {
+    client.start().get();                                          // spawn Copilot CLI
+
+    var session = client.createSession(
+        new SessionConfig()
+            .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+            .setModel("claude-sonnet-4.5")
+    ).get();
+
+    var response = session.sendAndWait(
+        new MessageOptions().setPrompt("What is 2 + 2?")
+    ).get();
+
+    System.out.println(response.getData().content());             // 4
+}</code></pre>
+  <footer-note>Three objects: <code>CopilotClient</code> · <code>CopilotSession</code> · <code>MessageOptions</code></footer-note>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     STREAMING EVENTS
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Streaming Responses &amp; Events</h2>
+  <pre><code class="java">var done = new CompletableFuture&lt;Void&gt;();
+
+// Print each word as it arrives
+session.on(AssistantMessageDeltaEvent.class, delta -&gt; {
+    System.out.print(delta.getData().deltaContent());     // streaming chunk
+});
+
+// Know exactly when the model is done
+session.on(SessionIdleEvent.class, idle -&gt; {
+    System.out.println();
+    done.complete(null);
+});
+
+// Track token consumption
+session.on(SessionUsageInfoEvent.class, usage -&gt; {
+    var d = usage.getData();
+    System.out.printf("Tokens: %d / %d%n",
+        (int) d.currentTokens(), (int) d.tokenLimit());
+});
+
+session.send(new MessageOptions().setPrompt("Tell me a haiku about Java")).get();
+done.get();</code></pre>
+  <footer-note>30+ event types: assistant messages, tool calls, errors, model changes, plan mode…</footer-note>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     CUSTOM TOOLS
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Custom Tools <span class="tag tag-demo">DEMO</span></h2>
+  <pre><code class="java">// Give Copilot the ability to call your code
+var weatherTool = ToolDefinition.create(
+    "get_weather",
+    "Return current weather for a city",
+    Map.of(
+        "type", "object",
+        "properties", Map.of(
+            "city", Map.of("type", "string", "description", "City name")
+        ),
+        "required", List.of("city")
+    ),
+    invocation -&gt; {
+        String city = (String) invocation.getArguments().get("city");
+        String weather = MyWeatherService.fetch(city);   // your logic
+        return CompletableFuture.completedFuture(
+            new ToolResult().setContent(weather)
+        );
+    }
+);
+
+var session = client.createSession(
+    new SessionConfig()
+        .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+        .setTools(List.of(weatherTool))
+).get();</code></pre>
+  <footer-note>Copilot decides <em>when</em> to call the tool; you define <em>what</em> it does.</footer-note>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     MCP SERVERS
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>MCP Servers — Plug in External Tools</h2>
+  <div class="cols">
+    <div>
+      <p class="small">Mount a <strong>Model Context Protocol</strong> server and Copilot gains tools automatically.</p>
+      <pre><code class="java">// Give Copilot access to your filesystem
+Map&lt;String, Object&gt; fsServer = Map.of(
+    "type",    "local",
+    "command", "npx",
+    "args",    List.of(
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/tmp"
+    ),
+    "tools",   List.of("*")
+);
+
+var session = client.createSession(
+    new SessionConfig()
+        .setOnPermissionRequest(
+            PermissionHandler.APPROVE_ALL)
+        .setMcpServers(Map.of("fs", fsServer))
+).get();</code></pre>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Popular MCP Servers</h3>
+        <ul>
+          <li><strong>filesystem</strong> — read/write files</li>
+          <li><strong>github</strong> — issues, PRs, repos</li>
+          <li><strong>sqlite</strong> — query databases</li>
+          <li><strong>puppeteer</strong> — browser automation</li>
+          <li><strong>postgres</strong> — PostgreSQL queries</li>
+          <li>… 200+ in the community registry</li>
+        </ul>
+      </div>
+      <br/>
+      <div class="card">
+        <h3>Remote MCP (HTTP/SSE)</h3>
+        <pre><code class="java" style="font-size:.75em">Map.of(
+  "type", "http",
+  "url",  "https://api.example.com/mcp",
+  "headers", Map.of(
+    "Authorization", "Bearer " + token),
+  "tools", List.of("*")
+)</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     SESSION FEATURES
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>More Session Features</h2>
+  <div class="cols3">
+    <div class="card">
+      <h3>🔁 Resume Sessions</h3>
+      <pre><code class="java" style="font-size:.7em">// Save
+String id = session.getSessionId();
+
+// Later…
+var s2 = client.resumeSession(
+  new ResumeSessionConfig()
+    .setSessionId(id)
+    .setOnPermissionRequest(...)
+).get();</code></pre>
+    </div>
+    <div class="card">
+      <h3>🔀 Multi-Session</h3>
+      <pre><code class="java" style="font-size:.7em">// Run sessions concurrently
+var coder = client.createSession(
+    new SessionConfig()
+      .setModel("gpt-5")).get();
+
+var reviewer = client.createSession(
+    new SessionConfig()
+      .setModel("claude-sonnet-4.5")
+).get();</code></pre>
+    </div>
+    <div class="card">
+      <h3>🗜️ Compact</h3>
+      <pre><code class="java" style="font-size:.7em">// Summarise history to
+// stay within token limit
+session.compact().get();
+</code></pre>
+      <h3 style="margin-top:.8em">🔄 Switch Model</h3>
+      <pre><code class="java" style="font-size:.7em">// Hot-swap model mid-chat
+session.setModel("o3").get();</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     PERMISSION HOOKS
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Security: Permission Hooks</h2>
+  <pre><code class="java">// Every createSession / resumeSession MUST provide a permission handler
+var session = client.createSession(
+    new SessionConfig()
+        .setOnPermissionRequest((request, invocation) -&gt; {
+            // request.getPermissionKind() — what is being asked
+            // invocation.getToolName()    — which tool wants permission
+            // invocation.getArguments()  — what arguments it will use
+
+            if (request.getPermissionKind().equals("write_file")) {
+                boolean ok = promptUser("Allow writing to " + invocation.getArguments().get("path") + "?");
+                return CompletableFuture.completedFuture(
+                    new PermissionRequestResult().setKind(ok ? "allow" : "deny")
+                );
+            }
+
+            // Approve everything else (convenient for development)
+            return CompletableFuture.completedFuture(
+                new PermissionRequestResult().setKind("allow")
+            );
+        })
+).get();</code></pre>
+  <footer-note>5 hook types: <code>onPermissionRequest</code> · <code>onBeforeToolExecution</code> · <code>onAfterToolExecution</code> · <code>onBeforeUserInput</code> · <code>onUserInput</code></footer-note>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     REAL PROJECT: JMETER PLUGIN
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Real-World Usage: JMeter Copilot Plugin</h2>
+  <div class="cols">
+    <div>
+      <p class="small">The <strong>JMeter Copilot Plugin</strong> (<a href="https://github.com/brunoborges/jmeter-copilot-plugin">github.com/brunoborges/jmeter-copilot-plugin</a>) adds an AI-powered load-test assistant to Apache JMeter.</p>
+      <ul class="small">
+        <li>Runs as a JMeter extension (JAR on classpath)</li>
+        <li>Creates a <code>CopilotSession</code> on plugin startup</li>
+        <li>Users describe test scenarios in plain English</li>
+        <li>Copilot generates JMeter test plans as JSON / XML</li>
+        <li>Plugin parses the response and injects it into the JMeter UI</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color: var(--copilot-purple);">
+      <h3>💡 What You Can Build</h3>
+      <ul>
+        <li>JBang CLI utilities</li>
+        <li>Maven / Gradle plugins</li>
+        <li>Spring Boot AI services</li>
+        <li>IDE extensions</li>
+        <li>CI/CD pipeline assistants</li>
+        <li>Documentation generators</li>
+        <li>Code review bots</li>
+        <li>Test generation tools</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     HOW WE BUILT THIS — TRANSITION
+     ───────────────────────────────────────────── -->
+<section data-background-gradient="radial-gradient(ellipse at 50% 50%, #1a0a2e 0%, #0d1117 80%)">
+  <h2 class="center" style="color: var(--copilot-purple);">🤖 Building the SDK with AI Agents</h2>
+  <p class="center small">How we used <strong>GitHub Copilot's own agentic capabilities</strong><br/>to build and maintain the SDK</p>
+  <br/>
+  <div style="text-align:center">
+    <span class="pill pill-purple">Upstream Sync</span>
+    <span class="pill pill-purple">Documentation</span>
+    <span class="pill pill-purple">Test Coverage</span>
+    <span class="pill pill-purple">PR Automation</span>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     UPSTREAM SYNC
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Agentic Upstream Sync <span class="tag tag-ai">AI</span></h2>
+  <div class="cols">
+    <div>
+      <p class="small">The SDK tracks the official <strong>.NET reference implementation</strong>.</p>
+      <ul class="step-list">
+        <li>Weekly GitHub Actions cron job checks for new upstream commits</li>
+        <li>If changes found, <strong>creates an issue</strong> labeled <code>upstream-sync</code></li>
+        <li><strong>Assigns it to the Copilot coding agent</strong></li>
+        <li>Agent reads the .NET diff, ports changes to Java idioms</li>
+        <li>Opens a PR with tests, docs, and CHANGELOG entry</li>
+        <li>Closes the old issue automatically</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card" style="border-color: var(--copilot-purple);">
+        <h3>The .lastmerge file</h3>
+        <p>Tracks the last upstream commit SHA.</p>
+        <pre><code class="text" style="font-size:.8em">a3f91cb</code></pre>
+        <p>Each release records the upstream sync point in <code>CHANGELOG.md</code>.</p>
+      </div>
+      <br/>
+      <div class="card">
+        <h3>Prompt-as-code</h3>
+        <p>The merge workflow is a <code>.prompt.md</code> file — 11 explicit steps, referenced by VS Code Copilot Chat as a slash command.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     DOCUMENTATION COVERAGE
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Documentation Coverage Assessment <span class="tag tag-ai">AI</span></h2>
+  <p class="small">A reusable prompt asks the agent to <strong>audit documentation</strong> against the public API.</p>
+  <div class="cols">
+    <div class="card">
+      <h3>What the agent checks</h3>
+      <ul>
+        <li>Every public method has Javadoc</li>
+        <li>All event types are listed in docs</li>
+        <li>New features have code examples</li>
+        <li>Getting-started guide is up to date</li>
+        <li>Cookbook recipes compile against current API</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Outcome</h3>
+      <ul>
+        <li>Gaps filed as GitHub issues</li>
+        <li>Agent opens PRs with new docs</li>
+        <li><code>DocumentationSamplesTest</code> guards against regressions:
+          <ul>
+            <li>Scans README, jbang-example, site docs</li>
+            <li>Rejects removed API usage</li>
+            <li>Enforces required handler patterns</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     PR AUTOMATION
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>PR Automation — End to End <span class="tag tag-ai">AI</span></h2>
+  <p class="small">Every pull request in this repo follows an agentic workflow:</p>
+  <div class="cols3">
+    <div class="card">
+      <h3>1. Branch &amp; Code</h3>
+      <p>Agent creates a feature branch, implements the change, runs <code>mvn spotless:apply</code>.</p>
+    </div>
+    <div class="card">
+      <h3>2. Test &amp; Review</h3>
+      <p>Runs <code>mvn verify</code>, triggers <strong>code_review</strong> and <strong>codeql_checker</strong> tools, addresses feedback.</p>
+    </div>
+    <div class="card">
+      <h3>3. Ship It</h3>
+      <p><strong>commit-as-pull-request</strong> skill: creates branch, pushes, opens PR, squash-merges, syncs <code>main</code>.</p>
+    </div>
+  </div>
+  <br/>
+  <blockquote>The agent <em>uses the SDK it is maintaining</em> to orchestrate its own merge workflows — meta AI engineering.</blockquote>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     SKILLS AS REUSABLE PROMPTS
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Skills = Reusable Prompts</h2>
+  <div class="cols">
+    <div>
+      <p class="small">Custom skills defined as <code>.prompt.md</code> files are registered in <code>.github/copilot-instructions.md</code>.</p>
+      <div class="card" style="margin-top:.6em">
+        <h3>Available Skills</h3>
+        <ul>
+          <li><code>/agentic-merge-upstream</code> — port .NET changes to Java</li>
+          <li><code>/documentation-coverage</code> — audit docs vs public API</li>
+          <li><code>/commit-as-pull-request</code> — automate the full PR workflow</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <p class="small">Skills can be invoked from:</p>
+      <ul class="small">
+        <li><strong>VS Code Copilot Chat</strong> — <code>/skill-name</code></li>
+        <li><strong>GitHub Copilot Coding Agent</strong> — assigned via issue labels</li>
+        <li><strong>Workflow dispatch</strong> — triggered from GitHub Actions UI</li>
+      </ul>
+      <br/>
+      <div class="card">
+        <h3>💡 Key Insight</h3>
+        <p>Treating prompts as <strong>versioned, testable code</strong> (not chat history) is what makes agentic workflows <em>repeatable and maintainable</em>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     LESSONS LEARNED
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Lessons Learned</h2>
+  <div class="cols">
+    <div>
+      <p class="green">✅ What worked well</p>
+      <ul class="small">
+        <li>Prompts as versioned code in the repo</li>
+        <li>Explicit numbered steps in prompts (less ambiguity)</li>
+        <li>Guard tests that prevent documentation drift</li>
+        <li>Having the SDK <em>eat its own dog food</em> in agents</li>
+        <li>Minimal dependency footprint — easy to review agent PRs</li>
+        <li>Sealed event hierarchy — great for exhaustive matching</li>
+      </ul>
+    </div>
+    <div>
+      <p class="highlight">⚠️ Watch out for</p>
+      <ul class="small">
+        <li>Agent PRs still need human review for nuanced .NET → Java translation</li>
+        <li>Context window limits on large upstream diffs</li>
+        <li>Agent can be overly eager to add dependencies</li>
+        <li>Documentation tests can be brittle if API changes fast</li>
+        <li>Always verify security-sensitive permission handler examples</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     HANDS-ON LAB TEASER
+     ───────────────────────────────────────────── -->
+<section data-background-gradient="radial-gradient(ellipse at 30% 70%, #0a2a1a 0%, #0d1117 80%)">
+  <h2>🧪 Hands-On Lab</h2>
+  <p>Build a Copilot-powered CLI in 15 minutes with <strong>JBang</strong> — no project setup needed.</p>
+  <div class="cols">
+    <div class="card" style="border-color: var(--copilot-green);">
+      <h3>Option A — JBang CLI</h3>
+      <p>A single <code>.java</code> file that asks Copilot questions from the terminal. Add custom tools, streaming, and session persistence.</p>
+      <pre><code class="bash" style="font-size:.75em">jbang init MyCopilot.java
+# add //DEPS header
+# run with: jbang MyCopilot.java</code></pre>
+    </div>
+    <div class="card" style="border-color: var(--copilot-blue);">
+      <h3>Option B — Maven Plugin</h3>
+      <p>A Maven plugin that adds an AI-assisted <code>copilot:review</code> goal to any project.</p>
+      <pre><code class="bash" style="font-size:.75em">mvn archetype:generate \
+  -DarchetypeArtifactId=\
+    maven-archetype-plugin
+# add SDK dependency
+# run: mvn copilot:review</code></pre>
+    </div>
+  </div>
+  <br/>
+  <p class="center small">Lab instructions → <span class="blue">docs/javaone/lab.md</span> in the repository</p>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     RESOURCES
+     ───────────────────────────────────────────── -->
+<section>
+  <h2>Resources</h2>
+  <div class="cols">
+    <div>
+      <p class="small"><strong>SDK</strong></p>
+      <ul class="small">
+        <li><a href="https://github.com/github/copilot-sdk-java">github.com/github/copilot-sdk-java</a></li>
+        <li><a href="https://github.github.io/copilot-sdk-java/latest/">Documentation site</a></li>
+        <li><a href="https://central.sonatype.com/artifact/com.github/copilot-sdk-java">Maven Central</a></li>
+        <li><a href="https://javadoc.io/doc/com.github/copilot-sdk-java/latest/">Javadoc</a></li>
+      </ul>
+      <br/>
+      <p class="small"><strong>Related</strong></p>
+      <ul class="small">
+        <li><a href="https://github.com/github/copilot-sdk">Official .NET SDK (github/copilot-sdk)</a></li>
+        <li><a href="https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli">Copilot CLI Installation</a></li>
+        <li><a href="https://modelcontextprotocol.io/">Model Context Protocol</a></li>
+        <li><a href="https://www.jbang.dev/">JBang</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="small"><strong>Try it right now</strong></p>
+      <pre><code class="bash"># Run the example directly from GitHub
+jbang https://github.com/github/copilot-sdk-java/blob/latest/jbang-example.java</code></pre>
+      <br/>
+      <p class="small"><strong>Lab files</strong></p>
+      <pre><code class="text">docs/javaone/
+  slides.html   ← you are here
+  lab.md        ← hands-on instructions</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────
+     CLOSING
+     ───────────────────────────────────────────── -->
+<section class="title-slide" data-background-gradient="radial-gradient(ellipse at 60% 40%, #0d1117 0%, #161b22 60%, #0d1117 100%)">
+  <h2 class="center">Thank You! 🙏</h2>
+  <br/>
+  <p class="center small">GitHub Copilot is a <span class="highlight">programmable AI platform</span>.</p>
+  <p class="center small">The Java SDK lets you build with it <span class="blue">natively in the JVM ecosystem</span>.</p>
+  <p class="center small">And the whole thing was built — and is maintained — <span class="purple">with AI agents</span>.</p>
+  <br/>
+  <div style="text-align:center">
+    <span class="pill pill-green">⭐ Star the repo</span>
+    <span class="pill pill-blue">📖 Read the docs</span>
+    <span class="pill pill-orange">🧪 Try the lab</span>
+    <span class="pill pill-purple">🤝 Contribute</span>
+  </div>
+  <br/>
+  <p class="center blue small">github.com/github/copilot-sdk-java</p>
+  <p class="center small" style="font-size:.45em; color: #888; margin-top:1em;">
+    ⚠️ Unofficial, community-driven SDK. Not supported or endorsed by GitHub.
+  </p>
+</section>
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<script src="vendor/dist/reveal.js"></script>
+<script src="vendor/plugin/highlight/highlight.js"></script>
+<script src="vendor/plugin/notes/notes.js"></script>
+<script src="vendor/plugin/zoom/zoom.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'slide',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'fade',
+    controls: true,
+    progress: true,
+    center: false,
+    width: 1280,
+    height: 720,
+    margin: 0.04,
+    plugins: [RevealHighlight, RevealNotes, RevealZoom]
+  });
+</script>
+</body>
+</html>
