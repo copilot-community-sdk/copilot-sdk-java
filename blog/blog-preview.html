@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The GitHub Copilot SDK for Java is now official</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1f2328;
+      --muted: #656d76;
+      --border: #d0d7de;
+      --surface: #f6f8fa;
+      --accent: #0969da;
+      --maxw: 760px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.7;
+      font-size: 18px;
+    }
+    .page {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 48px 24px 96px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 16px;
+      letter-spacing: .01em;
+    }
+    h1 {
+      font-size: clamp(36px, 6vw, 52px);
+      line-height: 1.15;
+      margin: 0 0 20px;
+      letter-spacing: -0.02em;
+    }
+    h2 {
+      font-size: 31px;
+      line-height: 1.25;
+      margin: 48px 0 14px;
+      letter-spacing: -0.01em;
+    }
+    h3 {
+      font-size: 22px;
+      margin: 28px 0 8px;
+    }
+    p { margin: 14px 0; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .lede {
+      font-size: 22px;
+      line-height: 1.5;
+      color: #24292f;
+      margin-top: 8px;
+    }
+    .hero-terminal {
+      margin: 22px 0 24px;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(31, 35, 40, 0.14);
+    }
+    .hero-terminal-bar {
+      background: #161b22;
+      color: #8b949e;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-bottom: 1px solid #30363d;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .hero-terminal-body {
+      margin: 0;
+      padding: 14px 16px;
+      background: #0d1117;
+      color: #c9d1d9;
+      font-size: 13px;
+      line-height: 1.35;
+      white-space: pre;
+      overflow-x: auto;
+      border: 0;
+      border-radius: 0;
+    }
+    .hero-terminal-body .ok { color: #3fb950; }
+    .hero-terminal-body .accent { color: #58a6ff; }
+    .hero-terminal-body .warn { color: #d29922; }
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: #f1f8ff;
+      padding: 12px 14px;
+      margin: 16px 0;
+      color: #1f2328;
+      font-size: 16px;
+    }
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    p code {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.1em 0.35em;
+      font-size: .9em;
+    }
+    hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="meta">March 2026 · 4 minute read</div>
+    <h1>The GitHub Copilot SDK for Java is now official</h1>
+    <figure class="hero-terminal">
+      <figcaption class="hero-terminal-bar">terminal — copilot-java-launch</figcaption>
+      <pre class="hero-terminal-body"><span class="accent">$</span> copilot sdk status --lang java
+<span class="ok">✓</span> upstream parity: synced
+<span class="ok">✓</span> official repo: github/copilot-sdk-java
+
+   .-----------------------------.
+  /  COPILOT AGENTIC CONSOLE     \
+ |   .-""""-.        .-""""-.     |
+ |  /  _  _  \      /  _  _  \    |
+ | |  (o)(o)  |    |  (o)(o)  |   |
+ | |    __    |    |    __    |   |
+ |  \  '--'  /      \  '--'  /    |
+ |   '-.__.-'        '-.__.-'     |
+  \_______________________________/
+
+                + Java Duke
+                    .-.
+                   (o o)
+                  /  V  \
+                 /(  _  )\
+                  ^^   ^^
+
+<span class="warn">ready:</span> jbang https://github.com/github/copilot-sdk-java/blob/main/jbang-example.java</pre>
+    </figure>
+    <p class="lede">
+      In January, we introduced the GitHub Copilot SDK in technical preview as a way to “take the same Copilot agentic core that powers GitHub Copilot CLI and embed it in any application.” Today, we’re extending that momentum to Java.
+    </p>
+    <p>
+      We’re excited to announce the <strong>Official GitHub Copilot SDK for Java</strong>, built in partnership between <strong>Bruno Borges</strong>, <strong>Ed Burns</strong>, and the <strong>GitHub Copilot SDK team</strong>.
+    </p>
+
+    <h2>Why this matters</h2>
+    <p>
+      Java teams can now build with Copilot’s production-tested execution loop using an officially stewarded SDK. That means a clearer path for long-term support, tighter parity with upstream capabilities, and better consistency across language ecosystems.
+    </p>
+
+    <h2>From community effort to official collaboration</h2>
+    <p>
+      This SDK started as a community-driven Java port of the .NET Copilot SDK. The initial implementation was created with Copilot as the coding agent, then continuously hardened through feature parity work, test validation, and architectural updates.
+    </p>
+    <p>That approach proved itself in real usage. As adoption grew, so did the need for an official home and shared ownership.</p>
+
+    <h2>How we keep Java in sync: weekly agentic upstream merges</h2>
+    <p>A key part of this project is the <strong>weekly upstream sync agentic workflow</strong>.</p>
+    <p>
+      Every week, we run a structured upstream merge process that ports new features and architectural changes from the official SDK baseline into Java. This keeps the Java SDK aligned with upstream direction while preserving Java-first APIs and idioms.
+    </p>
+    <p>The result: faster iteration, less drift, and predictable parity.</p>
+
+    <h2>New official home</h2>
+    <p>Going forward, the official Java SDK will live at:</p>
+    <p><code>https://github.com/github/copilot-sdk-java</code></p>
+
+    <h2>Versioning alignment across SDK languages</h2>
+    <p>
+      The Java SDK will follow the <strong>same versioning scheme</strong> used by the other Copilot SDK language implementations. This makes it easier to reason about compatibility, track feature availability, and adopt updates consistently across polyglot environments.
+    </p>
+
+    <h2>Quick start</h2>
+    <p>If you want to try it now, here’s the fastest path.</p>
+
+    <h3>1) Add the Maven dependency</h3>
+    <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;io.github.copilot-community-sdk&lt;/groupId&gt;
+  &lt;artifactId&gt;copilot-sdk&lt;/artifactId&gt;
+  &lt;version&gt;x.y.z&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+
+    <div class="callout">
+      Replace <code>x.y.z</code> with the latest published SDK version.<br/>
+      During the transition, artifact coordinates may remain under the existing package namespace.
+    </div>
+
+    <h3>2) Minimal Java example</h3>
+    <pre><code>import com.github.copilot.sdk.CopilotClient;
+import com.github.copilot.sdk.PermissionHandler;
+import com.github.copilot.sdk.events.AssistantMessageEvent;
+import com.github.copilot.sdk.json.MessageOptions;
+import com.github.copilot.sdk.json.SessionConfig;
+
+public class HelloCopilot {
+    public static void main(String[] args) throws Exception {
+        try (var client = new CopilotClient()) {
+            client.start().get();
+            var session = client.createSession(
+                new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+            ).get();
+
+            session.on(AssistantMessageEvent.class, msg -&gt;
+                System.out.println(msg.getData().content())
+            );
+
+            session.sendAndWait(new MessageOptions().setPrompt("Say hello from Java")).get();
+        }
+    }
+}</code></pre>
+
+    <h3>3) Run this in 5 minutes with JBang</h3>
+    <p>No project scaffolding required:</p>
+    <pre><code>jbang https://github.com/github/copilot-sdk-java/blob/main/jbang-example.java</code></pre>
+    <p>That single command pulls dependencies and runs a complete SDK example.</p>
+
+    <h2>What’s next</h2>
+    <p>
+      The Java SDK is now part of the official Copilot SDK family. We’ll continue shipping parity updates, documentation improvements, and practical examples for teams building agentic workflows in Java.
+    </p>
+    <p>To everyone who contributed along the way: thank you. This milestone is the result of a deeply collaborative effort.</p>
+    <hr />
+    <p class="meta">Preview rendering for editorial review.</p>
+  </main>
+</body>
+</html>
