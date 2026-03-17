@@ -10,7 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,7 +30,6 @@ import com.github.copilot.sdk.events.UserMessageEvent;
 import com.github.copilot.sdk.json.MessageOptions;
 import com.github.copilot.sdk.json.PermissionHandler;
 import com.github.copilot.sdk.json.SessionConfig;
-
 /**
  * E2E tests for session events to verify event lifecycle.
  * <p>
@@ -275,6 +276,79 @@ public class SessionEventsE2ETest {
             assertTrue(turnStartIdx < toolStartIdx, "turn_start should be before tool.execution_start");
             assertTrue(toolStartIdx < toolCompleteIdx, "tool.execution_start should be before tool.execution_complete");
             assertTrue(toolCompleteIdx < turnEndIdx, "tool.execution_complete should be before turn_end");
+        }
+    }
+
+    /**
+     * Verifies that a handler exception does not halt event delivery to subsequent
+     * events.
+     *
+     * @see Snapshot: session/handler_exception_does_not_halt_event_delivery
+     */
+    @Test
+    void testHandlerExceptionDoesNotHaltEventDelivery() throws Exception {
+        ctx.configureForTest("session", "handler_exception_does_not_halt_event_delivery");
+
+        try (CopilotClient client = ctx.createClient()) {
+            CopilotSession session = client
+                    .createSession(new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
+
+            var eventCount = new AtomicInteger(0);
+            var gotIdle = new CompletableFuture<Void>();
+
+            session.setEventErrorPolicy(EventErrorPolicy.SUPPRESS_AND_LOG_ERRORS);
+            session.on(event -> {
+                int count = eventCount.incrementAndGet();
+                // Throw on the first event to verify the loop keeps going.
+                if (count == 1) {
+                    throw new RuntimeException("boom");
+                }
+                if (event instanceof SessionIdleEvent) {
+                    gotIdle.complete(null);
+                }
+            });
+
+            session.send("What is 1+1?");
+
+            gotIdle.get(30, TimeUnit.SECONDS);
+
+            // Handler saw more than just the first (throwing) event.
+            assertTrue(eventCount.get() > 1, "Handler should be called for events after the throwing one");
+
+            session.close();
+        }
+    }
+
+    /**
+     * Verifies that calling {@code close()} from within an event handler does not
+     * deadlock.
+     *
+     * @see Snapshot: session/disposeasync_from_handler_does_not_deadlock
+     */
+    @Test
+    void testCloseFromHandlerDoesNotDeadlock() throws Exception {
+        ctx.configureForTest("session", "disposeasync_from_handler_does_not_deadlock");
+
+        try (CopilotClient client = ctx.createClient()) {
+            CopilotSession session = client
+                    .createSession(new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)).get();
+
+            var closed = new CompletableFuture<Void>();
+
+            session.on(event -> {
+                if (event instanceof UserMessageEvent) {
+                    // Call close() from within a handler — must not deadlock.
+                    CompletableFuture.runAsync(() -> {
+                        session.close();
+                        closed.complete(null);
+                    });
+                }
+            });
+
+            session.send("What is 1+1?");
+
+            // If this times out, we deadlocked.
+            closed.get(10, TimeUnit.SECONDS);
         }
     }
 }

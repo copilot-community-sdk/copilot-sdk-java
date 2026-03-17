@@ -25,6 +25,7 @@ import com.github.copilot.sdk.json.MessageOptions;
 import com.github.copilot.sdk.json.PermissionHandler;
 import com.github.copilot.sdk.json.PermissionRequest;
 import com.github.copilot.sdk.json.PermissionRequestResult;
+import com.github.copilot.sdk.json.PermissionRequestResultKind;
 import com.github.copilot.sdk.json.SessionConfig;
 import com.github.copilot.sdk.json.ToolDefinition;
 
@@ -356,6 +357,48 @@ public class ToolsTest {
             assertNotNull(response);
             assertTrue(response.getData().content().contains("CUSTOM_GREP_RESULT"),
                     "Response should contain CUSTOM_GREP_RESULT: " + response.getData().content());
+
+            session.close();
+        }
+    }
+
+    /**
+     * Verifies that a tool with skipPermission=true is executed without triggering
+     * a permission prompt.
+     *
+     * @see Snapshot: tools/skippermission_sent_in_tool_definition
+     */
+    @Test
+    void testSkipPermissionSentInToolDefinition() throws Exception {
+        ctx.configureForTest("tools", "skippermission_sent_in_tool_definition");
+
+        var parameters = Map.<String, Object>of("type", "object", "properties",
+                Map.of("id", Map.of("type", "string", "description", "Lookup ID")), "required", List.of("id"));
+
+        var didRunPermissionRequest = new boolean[]{false};
+
+        ToolDefinition safeLookup = ToolDefinition.createSkipPermission("safe_lookup", "A tool that skips permission",
+                parameters, invocation -> {
+                    String id = (String) invocation.getArguments().get("id");
+                    return CompletableFuture.completedFuture("RESULT: " + id);
+                });
+
+        try (CopilotClient client = ctx.createClient()) {
+            CopilotSession session = client.createSession(
+                    new SessionConfig().setTools(List.of(safeLookup)).setOnPermissionRequest((request, invocation) -> {
+                        didRunPermissionRequest[0] = true;
+                        return CompletableFuture.completedFuture(
+                                new PermissionRequestResult().setKind(PermissionRequestResultKind.NO_RESULT));
+                    })).get();
+
+            AssistantMessageEvent response = session
+                    .sendAndWait(new MessageOptions().setPrompt("Use safe_lookup to look up 'test123'"))
+                    .get(60, TimeUnit.SECONDS);
+
+            assertNotNull(response);
+            assertTrue(response.getData().content().contains("RESULT"),
+                    "Response should contain RESULT: " + response.getData().content());
+            assertFalse(didRunPermissionRequest[0], "Permission handler should not be called for skipPermission tools");
 
             session.close();
         }

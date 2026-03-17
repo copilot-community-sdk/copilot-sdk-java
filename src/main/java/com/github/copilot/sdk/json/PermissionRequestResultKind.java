@@ -51,6 +51,18 @@ public final class PermissionRequestResultKind {
     public static final PermissionRequestResultKind DENIED_INTERACTIVELY_BY_USER = new PermissionRequestResultKind(
             "denied-interactively-by-user");
 
+    /**
+     * Indicates that the permission request should be left unanswered (no result).
+     * <p>
+     * When a handler returns this kind, the pending permission request is not
+     * responded to, allowing another client (in a multi-client scenario) to handle
+     * it.
+     * </p>
+     *
+     * @since 1.0.12
+     */
+    public static final PermissionRequestResultKind NO_RESULT = new PermissionRequestResultKind("no-result");
+
     private final String value;
 
     /**
