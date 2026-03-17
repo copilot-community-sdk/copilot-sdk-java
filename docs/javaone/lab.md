@@ -78,7 +78,7 @@ Open `MyCopilot.java` in any editor and paste the following starter:
 
 ```java
 ///usr/bin/env jbang "$0" "$@" ; exit $?
-//DEPS io.github.copilot-community-sdk:copilot-sdk:1.0.11
+//DEPS com.github:copilot-sdk-java:0.1.32-java.0
 
 import com.github.copilot.sdk.*;
 import com.github.copilot.sdk.events.*;
@@ -151,7 +151,7 @@ Replace the `main` method with the version below (keep the same imports and add 
 
 ```java
 ///usr/bin/env jbang "$0" "$@" ; exit $?
-//DEPS io.github.copilot-community-sdk:copilot-sdk:1.0.11
+//DEPS com.github:copilot-sdk-java:0.1.32-java.0
 
 import com.github.copilot.sdk.*;
 import com.github.copilot.sdk.events.*;
@@ -310,9 +310,9 @@ Edit `pom.xml` and add the following inside `<dependencies>`:
 
 ```xml
 <dependency>
-    <groupId>io.github.copilot-community-sdk</groupId>
-    <artifactId>copilot-sdk</artifactId>
-    <version>1.0.11</version>
+    <groupId>com.github</groupId>
+    <artifactId>copilot-sdk-java</artifactId>
+    <version>0.1.32-java.0</version>
 </dependency>
 ```
 
@@ -456,12 +456,12 @@ Once you have the basics working, explore these features:
 
 | Feature | Where to learn |
 |---------|---------------|
-| All 30+ event types | [Event Types Reference](https://copilot-community-sdk.github.io/copilot-sdk-java/latest/documentation.html#Event_Types_Reference) |
-| MCP server integration | [MCP Servers guide](https://copilot-community-sdk.github.io/copilot-sdk-java/latest/mcp.html) |
-| Session hooks (pre/post tool execution) | [Hooks guide](https://copilot-community-sdk.github.io/copilot-sdk-java/latest/hooks.html) |
-| Advanced patterns | [Advanced Usage](https://copilot-community-sdk.github.io/copilot-sdk-java/latest/advanced.html) |
-| Full API reference | [Javadoc](https://javadoc.io/doc/io.github.copilot-community-sdk/copilot-sdk/latest/) |
-| Practical recipes | [Cookbook](https://github.com/copilot-community-sdk/copilot-sdk-java/tree/main/src/site/markdown/cookbook) |
+| All 30+ event types | [Event Types Reference](https://github.github.io/copilot-sdk-java/latest/documentation.html#Event_Types_Reference) |
+| MCP server integration | [MCP Servers guide](https://github.github.io/copilot-sdk-java/latest/mcp.html) |
+| Session hooks (pre/post tool execution) | [Hooks guide](https://github.github.io/copilot-sdk-java/latest/hooks.html) |
+| Advanced patterns | [Advanced Usage](https://github.github.io/copilot-sdk-java/latest/advanced.html) |
+| Full API reference | [Javadoc](https://javadoc.io/doc/com.github/copilot-sdk-java/latest/) |
+| Practical recipes | [Cookbook](https://github.com/github/copilot-sdk-java/tree/main/src/site/markdown/cookbook) |
 
 ### Ideas for further exploration
 
@@ -494,9 +494,9 @@ Once you have the basics working, explore these features:
 
 ## Resources
 
-- **SDK Repository:** <https://github.com/copilot-community-sdk/copilot-sdk-java>
-- **Documentation:** <https://copilot-community-sdk.github.io/copilot-sdk-java/latest/>
-- **Maven Central:** <https://central.sonatype.com/artifact/io.github.copilot-community-sdk/copilot-sdk>
+- **SDK Repository:** <https://github.com/github/copilot-sdk-java>
+- **Documentation:** <https://github.github.io/copilot-sdk-java/latest/>
+- **Maven Central:** <https://central.sonatype.com/artifact/com.github/copilot-sdk-java>
 - **JBang:** <https://www.jbang.dev/>
 - **MCP Servers Directory:** <https://github.com/modelcontextprotocol/servers>
 - **Copilot CLI Docs:** <https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli>
